@@ -1,4 +1,25 @@
 .testComponent *{
 	font: 12px/16px Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
 
+.testComponent{
+	position: relative;
+}
+
+.testComponent .content {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 1;
+}
+
+.testComponent .sizeIndicator{
+	position: absolute;
+	background: #eee;
+	border: 1px dashed #aaa;
+	top: 5px;
+	left: 5px;
+	z-index: 0;
 }
