@@ -1,0 +1,49 @@
+#api_docs .toc{
+	width: 300px;
+	padding: 0;
+	float: left;
+}
+
+#api_docs .toc *{
+	font-family: Arial, sans-serif;
+}
+
+#api_docs .toc li{
+	background: #fff;
+	color: #999;
+	opacity: 0.8;
+	font-style: italic;
+	padding: 5px 5px 5px 25px;
+}
+
+#api_docs .toc li b{
+	color: #111;
+	font-weight: normal;
+	font-style: normal;
+}
+
+#api_docs .toc li.category{
+	padding: 5px;
+	padding-top: 15px;
+	color: #111;
+	font-style: normal;
+	font-weight: bold;
+}
+
+#api_docs .toc li.spacer{
+	height: 2px;
+}
+
+#api_docs .toc li.active{
+	opacity: 1;
+	box-shadow: -3px 2px 4px rgba( 0, 0, 0, 0.5);
+}
+
+#api_docs .api-content{
+	min-height: 600px;
+	background: #fff;
+	float: left;
+	width: 680px;
+	color: #111;
+	box-shadow: -3px 2px 4px rgba( 0, 0, 0, 0.5);
+}

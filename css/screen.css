@@ -1,139 +1,79 @@
-.lm_root{
-	position: relative;
-}
-
-.lm_item{
-	outline: 1px solid black;
-	overflow: hidden;
-}
-
-.lm_row > .lm_item{
-	float: left;
-}
-
-.lm_content{
-	overflow: hidden;
-}
-
-.lm_splitter{
-	position: relative;
-}
-
-.lm_splitter:hover{
-	background: orange;
-}
-
-.lm_splitter.lm_vertical .lm_drag_handle{
-	position: absolute;
-	height: 25px;
-	top: -10px;
-	cursor: n-resize;
-	width: 100%;
-}
-
-.lm_splitter.lm_horizontal{
-	height: 100%;
-	float: left;
-}
-
-.lm_splitter.lm_horizontal .lm_drag_handle{
-	position: absolute;
-	width: 25px;
-	left: -10px;
-	cursor: e-resize;
-	height: 100%;
-}
-
-.lm_header{
-	position: relative;
-}
-
-.lm_header > ul{
-	list-style-type: none;
+/****************************
+* GENERAL
+****************************/
+*{
 	margin: 0;
-	padding: 0;
+	padding: : 0;
+	list-style-type: none;
 }
 
-.lm_header .lm_controls{
-	right: 0;
-	position: absolute;
+html, body{
+	height: 100%;
 }
 
-.lm_header .lm_controls > li{
-	width: 20px;
-	height: 20px;
-	text-align: center;
-	font-weight: bold;
-	cursor: pointer;
+/****************************
+* FONTS
+****************************/
+@font-face {
+	font-family: 'Kalinga';
+	src: url('../fonts/Kalinga.eot');
+	src: local('Kalinga'), url('../fonts/Kalinga.woff') format('woff'), url('../fonts/Kalinga.ttf') format('truetype');
 }
 
-.lm_header .lm_tabs{
+/****************************
+* NAVIGATION
+****************************/
+nav ul{
+	height: 58px;
+	margin-bottom: -2px;
 	overflow: hidden;
-	position: absolute;
-}
-
-.lm_header .lm_tab{
-	float: left;
-	padding: 0px 10px 5px;
-	font: 10px Arial, sans-serif;
-	height: 14px;
-	margin-top: 1px;
-	cursor: pointer;
 	position: relative;
-	padding-right: 25px;
+	z-index: 1;
 }
 
-.lm_header .lm_tab i{
-	height: 19px;
-	width: 2px;
-	position: absolute;
-}
-
-.lm_header .lm_tab i.lm_left{
-	left: -2px;
-	top: 0;
-}
-
-.lm_header .lm_tab i.lm_right{
-	right: -2px;
-	top: 0;
-}
-
-.lm_header .lm_tab .lm_close_tab{
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 14px;
-	height: 14px;
+nav li{
+	
 	text-align: center;
+	width: 100px;
+	float: left;
 }
 
-/***********************************
-* Drag Proxy
-***********************************/
-.lm_dragProxy{
+nav a{
+	padding: 17px 0 16px;
+	display: block;
+	font: 14px Kalinga;
+	color: #202020;
+	text-decoration: none;
+}
+
+nav a:hover{
+	color: #000;
+}
+
+nav .isActive{
+	height: 4px;
+	width: 60px;
+	background: #0da4d3;
+	margin-left: 20px;
+}
+/****************************
+* HEADER WITH LOGO
+****************************/
+header{
+	height: 417px;
+	width: 100%;
+	background: url(../images/bg-slim.jpg) center center;
+	background-size: cover;
+	position: relative;
+}
+
+header h1{
+	width: 329px;
+	height: 48px;
+	background: url(../images/golden-layout.png );
 	position: absolute;
-	z-index: 999;
-	top: 0;
-	left: 0;
-}
-
-.lm_dragProxy .lm_header{
-	background: transparent;
-}
-
-.lm_dragProxy .lm_content{
-	background: #fff;
-	border-top: none;
-	border: 1px solid #ccc;
-	box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.3 );
-	overflow: hidden;
-}
-
-.lm_dropTargetIndicator{
-	position: absolute;
-	z-index: 9;
-	background: rgba( 255, 0, 0, 0.5 );
-	border: 1px dashed red;
-	transition: all 200ms ease;
+	left: 50%;
+	margin-left: -165px;
+	margin-top: 184px;
+	text-indent: -9999px;
 }
