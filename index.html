@@ -5,14 +5,17 @@
 	<title>GOLDEN LAYOUT</title>
 
 	<link rel="stylesheet" type="text/css" href="/css/screen.css" />
-
 </head>
 <body>
-	<nav>
+	<header class="orangeGradient">
+		<h1><a href="/">GoldenLayout the ultimate webapp layout manager</a></h1>
+		<a class="download" href="/download">download</a>
+	</header>
+	<nav >
+		
 		<ul>
-			<li>
+			<li class="active">
 				<a href="/">START</a>
-				<div class="isActive"></div>
 			</li>
 			<li><a href="/download">DOWNLOAD</a></li>
 			<li><a href="/examples">EXAMPLES</a></li>
@@ -23,10 +26,105 @@
 	</nav>
 
 	<div class="content">
-		<header>
-	<h1>Golden Layout - the ultimate js layout manager</h1>
-</header>
-<h2>Coming soon...</h2>
+		<div class="startExample">
+	<img src="/images/hoxton-background.jpg" />
+	<div id="exampleScreen">
+		<div id="tryMeArrow"></div>
+		<div id="exampleLayoutContainer"></div>
+	</div>
+</div>
+<div id="startPageFeatures">
+	Infinitably nestable layouts
+	Drag
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/js/goldenlayout.min.js"></script>
+<link type="text/css" rel="stylesheet" href="/css/goldenlayout-base.css" />
+<link type="text/css" rel="stylesheet" href="/css/goldenlayout-dark-theme.css" />
+<script type="text/javascript">
+
+	var config = {
+		content:[
+			{
+				type: 'row',
+				content:[
+					{
+						width: 80,
+						type: 'column',
+						content:[
+							{
+								type: 'component',
+								componentName: 'watchlist',
+								componentState: { 'instruments': [ 'MSFT', 'GOOG', 'AAPL' ] }
+							},
+							{
+								isClosable: false,
+								type: 'row',
+								content:[
+									{
+										type: 'component',
+										componentName: 'research'
+									},
+									{
+										type: 'component',
+										componentName: 'research'
+									}
+								]
+							},
+							{
+								type: 'stack',
+								content:[
+									{
+										type: 'component',
+										componentName: 'research',
+										componentState: { index: 1 }
+									},
+									{
+										isClosable: false,
+										type: 'component',
+										componentName: 'research',
+										componentState: { index: 2 }
+									},
+									{
+										type: 'component',
+										componentName: 'research',
+										componentState: { index: 3 }
+									}
+								]
+							}
+						]
+					},
+					{
+						width: 20,
+						type: 'column',
+						content: [
+							{
+								height: 30,
+								type: 'component',
+								componentName: 'commentary',
+								componentState: { 'feedTopic': 'us-bluechips' }
+							},
+							{
+								type: 'component',
+								componentName: 'commentary',
+								componentState: { 'feedTopic': 'lse' }
+							}
+						]
+					}
+				]
+			}
+		]
+	};
+	var myLayout = new GoldenLayout( config, '#exampleLayoutContainer' );
+	var Component = function( container, state ){
+		container.getElement().html( 'Do something useful' );
+	};
+	myLayout.registerComponent( 'commentary', Component );
+	myLayout.registerComponent( 'research', Component );
+	myLayout.registerComponent( 'watchlist', Component );
+	myLayout.init();
+</script>
 	</div>
 
 	

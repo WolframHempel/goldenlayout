@@ -5,14 +5,19 @@
 	<title>GOLDEN LAYOUT</title>
 
 	<link rel="stylesheet" type="text/css" href="/css/screen.css" />
-
 </head>
 <body>
-	<nav>
+	<header class="orangeGradient">
+		<h1><a href="/">GoldenLayout the ultimate webapp layout manager</a></h1>
+		<a class="download" href="/download">download</a>
+	</header>
+	<nav class="standalone">
+		
+		<img src="/images/hoxton-background.jpg" />
+		
 		<ul>
-			<li>
+			<li class="active">
 				<a href="/">START</a>
-				<div class="isActive"></div>
 			</li>
 			<li><a href="/download">DOWNLOAD</a></li>
 			<li><a href="/examples">EXAMPLES</a></li>
@@ -23,7 +28,37 @@
 	</nav>
 
 	<div class="content">
-		<h3>Page buy license</h3> 
+		<div id="wrapper_960">
+	<form id="payment" 
+	action="http://frozen-anchorage-5911.herokuapp.com/purchase/07f3459c-639d-41af-9a59-f05299b27180" 
+	
+	method="POST">
+		<label>time</label>
+		<input type="text" name="time" value="1234567891234" />
+		<label>name</label>
+		<input type="text" name="customerName" value="Wolfram Hempel" />
+		<label>company</label>
+		<input type="text" name="company" value="Hoxton One Ltd." />
+		<label>Website Url</label>
+		<input type="text" name="websiteUrl" value="hoxton-one.com" />
+
+		
+
+
+		<input type="hidden" name="redirectTo" value="http://localhost:3000/experiments/golden-layout-website/htdocs/pages/license/" />
+	  <script
+	    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+	    data-key="pk_test_4OUzlBtu1YsKrRACe8jOjzfX"
+	    data-amount="9900"
+	    data-currency="gbp"
+	    data-name="Golden Layout"
+	    data-allow-remember-me="false"
+	    data-label="buy"
+	    data-description="Single Page License"
+	    data-image="/images/logo_128_128.png">
+	  </script>
+	</form>
+</div>
 	</div>
 
 	

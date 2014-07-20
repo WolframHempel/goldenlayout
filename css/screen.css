@@ -23,57 +23,165 @@ html, body{
 /****************************
 * NAVIGATION
 ****************************/
-nav ul{
-	height: 58px;
-	margin-bottom: -2px;
-	overflow: hidden;
+nav{
 	position: relative;
+	height: 30px;
+	margin-bottom: -30px;
+	z-index: 1;
+	overflow: hidden;
+}
+
+nav img{
+	display: none;
+}
+
+nav.standalone{
+	margin-bottom: 0;
+	height: 40px;
+}
+
+nav.standalone img{
+	display: block;
+	width: 100%;
+	height: 622px;
+}
+
+nav ul{
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
 	z-index: 1;
 }
 
 nav li{
-	
-	text-align: center;
-	width: 100px;
+	opacity: 0.8;
 	float: left;
+	transition: opacity 300ms ease;
+}
+
+nav li.active,
+nav li:hover{
+	opacity: 1;
 }
 
 nav a{
-	padding: 17px 0 16px;
+	padding-top: 11px;
+	padding-right: 40px;
 	display: block;
-	font: 14px Kalinga;
-	color: #202020;
+	font: 16px "Courier New", monospace;
+	color: #fff;
 	text-decoration: none;
 }
 
-nav a:hover{
-	color: #000;
-}
-
-nav .isActive{
-	height: 4px;
-	width: 60px;
-	background: #0da4d3;
-	margin-left: 20px;
-}
 /****************************
 * HEADER WITH LOGO
 ****************************/
+.orangeGradient{
+	background: #ef7d17; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ef7d17 0%, #ec6804 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ef7d17), color-stop(100%,#ec6804)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ef7d17 0%,#ec6804 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef7d17', endColorstr='#ec6804',GradientType=0 ); /* IE6-9 */
+}
+
 header{
-	height: 417px;
+	height: 175px;
 	width: 100%;
-	background: url(../images/bg-slim.jpg) center center;
-	background-size: cover;
 	position: relative;
 }
 
 header h1{
-	width: 329px;
-	height: 48px;
+	width: 343px;
+	height: 60px;
 	background: url(../images/golden-layout.png );
 	position: absolute;
-	left: 50%;
-	margin-left: -165px;
-	margin-top: 184px;
+	left: 45%;
+	margin-left: -172px;
+	margin-top: 40px;
 	text-indent: -9999px;
+}
+
+header a.download{
+	background: rgba( 0, 0, 0, 0.4 );
+	font-family: "Courier New", monospace;
+	color: #fff;
+	padding: 3px;
+	padding-right: 111px;
+	text-decoration: none;
+	position: absolute;
+	left: 45%;
+	top: 114px;
+	font-size: 12px;
+	cursor: pointer;
+	transition: all 400ms ease;
+}
+
+header a.download:hover{
+	background: rgba( 0, 0, 0, 0.8 );
+}
+
+/****************************
+* EXAMPLE ON STARTPAGE
+****************************/
+.startExample{
+	position: relative;
+	height: 782px;
+}
+
+.startExample img{
+	width: 100%;
+	height: 622px;
+}
+
+#exampleScreen{
+	width: 900px;
+	height: 832px;
+	background: url(../images/screen.png);
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	margin-left: -450px;
+}
+
+#exampleLayoutContainer{
+	position: absolute;
+	left: 36px;
+	top: 37px;
+	width: 825px;
+	height: 518px;
+}
+
+#tryMeArrow{
+	width: 193px;
+	height: 147px;
+	position: absolute;
+	background: url(../images/try-me.png);
+	z-index: 9999;
+	left: 838px;
+	top: 157px;
+}
+
+/****************************
+* FEATURES OVERVIEW
+****************************/
+#startPageFeatures{
+	border-top: 1px solid #ccc;
+	background: #f6f6f6;
+	height: 400px;
+}
+
+#wrapper_960{
+	width: 960px;
+	margin: 10px auto;
+}
+
+/****************************
+* PAYMENT FORM
+****************************/
+#payment label{
+	display: block;
 }
