@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GOLDEN LAYOUT</title>
+
+	<link rel="stylesheet" type="text/css" href="/css/screen.css" />
+	<link rel="stylesheet" type="text/css" href="/css/api.css" />
+	<link rel="stylesheet" type="text/css" href="/css/syntaxhighlighter.css" />
+
+</head>
+<body>
+	<header class="orangeGradient">
+		<h1><a href="/">GoldenLayout the ultimate webapp layout manager</a></h1>
+		<a class="download" href="/download">download</a>
+	</header>
+	<nav class="standalone">
+		<img src="/images/hoxton-background.jpg" />
+		<ul>
+			<li class="active">
+				<a href="/">START</a>
+			</li>
+			<li><a href="/download">DOWNLOAD</a></li>
+			<li><a href="/examples">EXAMPLES</a></li>
+			<li><a href="/tutorials">TUTORIALS</a></li>
+			<li><a href="/apidocs">API DOCS</a></li>
+			<li><a href="/buylicense">BUY LICENSE</a></li>
+		</ul>
+	</nav>
+
+	<div id="wrapper">
+		<ul id="subnav">
+			
+				<li >
+					<a href="Config.html">Config</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+				<li >
+					<a href="Container.html">Container</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+				<li >
+					<a href="Item.html">Item</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+				<li class="active">
+					<a href="LayoutManager.html">LayoutManager</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+		</ul>
+		<div id="content">
+			<!--Content Start-->
+			<div class="section"><h2>GoldenLayout( configuration, container )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">configuration</td><td class="type">configuration</td><td class="optional">false</td><td class="default">-</td><td class="description">A golden layout configuration object</td></tr><tr><td class="argument">container</td><td class="type">DOM | jQuery element</td><td class="optional">true</td><td class="default">document.body</td><td class="description">The container the layout will be initialised in</td></tr></tbody></table><p>Constructs a new layout. The simplest usecase would look something like this</p><pre><code>config = {
+    content:[{ 
+        type: <span class="hljs-string">'component'</span>, 
+        componentName: <span class="hljs-string">'sayHiComponent'</span>,
+        componentState: { name: <span class="hljs-string">'Wolfram'</span> }
+    }]
+};
+
+SayHiComponent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span>{</span>
+    container.getElement().html( <span class="hljs-string">'Hi '</span> + state.name ); 
+};
+
+myLayout = <span class="hljs-keyword">new</span> GoldenLayout( config );
+myLayout.registerComponent( <span class="hljs-string">'sayHiComponent'</span>, SayHiComponent );
+myLayout.init();
+</code></pre></div><div class="section"><h2>registerComponent( name, component )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">name</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name / id of the component. Will be referenced by the componentName configuration key to create an instance of it.</td></tr><tr><td class="argument">component</td><td class="type">Constructor | Function</td><td class="optional">false</td><td class="default">-</td><td class="description">A component constructor or factory function. Will be invoked with new and two arguments, a container object and a component configuration.</td></tr></tbody></table><p>Register either a component constructor or a component factory function with GoldenLayout. 
+registerComponent is the counterpart to the componentName and componentState config keys in <a href="{link 'apidocs/Config'}">the item config</a>.</p><p>Here&#39;s how it hangs together:</p><pre><code><span class="hljs-comment">// Write your StockChart component constructor</span>
+StockChartComponent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span> {</span>
+    <span class="hljs-comment">//container will be an instance of {link 'apidocs/Container'}</span>
+};
+
+<span class="hljs-comment">// Register it with your GoldenLayout instance</span>
+myGoldenLayout.registerComponent( <span class="hljs-string">'StockChart'</span>, StockChartComponent );
+
+<span class="hljs-comment">//Tell GoldenLayout where to create an instance of the component in</span>
+<span class="hljs-comment">//your &lt;a href="{link 'apidocs/Config'}"&gt;config&lt;/a&gt;</span>
+{
+    componentName: <span class="hljs-string">'StockChart'</span>,
+    componentState: { stocks: [ <span class="hljs-string">'APPL'</span>, <span class="hljs-string">'GOOG'</span> ] }
+}
+</code></pre><p>Alternatively you can provide a constructor function.</p><pre><code>myGoldenLayout.registerComponent( <span class="hljs-string">'StockChart'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span>{</span>
+    <span class="hljs-comment">//For instance if you're using the same chart component and just pass</span>
+    <span class="hljs-comment">//the type as an argument</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> GenericChart( state.type );
+});
+</code></pre></div><div class="section"><h2>init()</h2><p>Renders the layout into the container. If init() is called before the
+document is ready it attaches itself as a listener to the document and executes once it becomes ready.</p></div><div class="section"><h2>getComponent( name )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">name</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of a previously registered component</td></tr></tbody></table><p>Returns a component that was previously registered with GoldenLayout.</p></div><div class="section"><h2>updateSize(width, height)</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">width</td><td class="type">Integer</td><td class="optional">true</td><td class="default">The container elements width</td><td class="description">The outer width the layout should be resized to</td></tr><tr><td class="argument">height</td><td class="type">Integer</td><td class="optional">true</td><td class="default">The container elements height</td><td class="description">The outer height the layout should be resized to</td></tr></tbody></table><p>Resizes the layout. If no arguments are provided GoldenLayout measures its container
+and resizes appropriatly</p></div><div class="section"><h2>createContentItem( itemConfiguration, parent )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">itemConfiguration</td><td class="type">Object</td><td class="optional">false</td><td class="default">-</td><td class="description">An item configuration that can contain children</td></tr><tr><td class="argument">parent</td><td class="type">Item</td><td class="optional">false</td><td class="default">-</td><td class="description">A parent item that this node will life under</td></tr></tbody></table><p>--TODO--</p>
+			<!--Content End-->
+		</div>
+	</div>
+
+	
+</body>
+</html></div>
