@@ -7,28 +7,92 @@
 	<link rel="stylesheet" type="text/css" href="/css/screen.css" />
 </head>
 <body>
-	<header class="orangeGradient">
-		<h1><a href="/">GoldenLayout the ultimate webapp layout manager</a></h1>
-		<a class="download" href="/download">download</a>
-	</header>
-	<nav class="standalone">
-		
-		<img src="/images/hoxton-background.jpg" />
-		
-		<ul>
-			<li class="active">
-				<a href="/">START</a>
-			</li>
-			<li><a href="/download">DOWNLOAD</a></li>
-			<li><a href="/examples">EXAMPLES</a></li>
-			<li><a href="/tutorials">TUTORIALS</a></li>
-			<li><a href="/apidocs">API DOCS</a></li>
-			<li><a href="/buylicense">BUY LICENSE</a></li>
-		</ul>
-	</nav>
+	<div class="topSection">
+		<header class="orangeGradient micro">
+			<h1><a href="/">GoldenLayout the ultimate webapp layout manager</a></h1>
+			<a class="download" href="/download">download</a>
+		</header>
 
+		<nav class="standalone">
+			
+			<img src="/images/hoxton-background.jpg" />
+			
+			<ul>
+				<li class="active">
+					<a href="/">START</a>
+				</li>
+				<li><a href="/download">DOWNLOAD</a></li>
+				<li><a href="/examples">EXAMPLES</a></li>
+				<li><a href="/tutorials">TUTORIALS</a></li>
+				<li><a href="/apidocs">API DOCS</a></li>
+				<li><a href="/buylicense">BUY LICENSE</a></li>
+			</ul>
+		</nav>
+	</div>
 	<div class="content">
-		<h3>Page Examples</h3>
+		<ul class="examplesNavigation">
+	<li class="head">Essential Building Blocks</li>
+	<li><a href="#6fb265dbf110900619f00ed3f2c258ba">row</a></li>
+	<li><a href="#0ad20a5d5652d68ff83ec3ff23bba4a3">column</a></li>
+	<li><a href="#ee9d05f44e56d8ac08817e76f86bcbbe">stack</a></li>
+</ul>
+<div class="codePenContainer">
+	<iframe id="cp_embed_fa463879c4a7e8a47a0bc41de32c4d9f" src="//codepen.io/anon/embed/fa463879c4a7e8a47a0bc41de32c4d9f?height=713&amp;theme-id=7376&amp;slug-hash=fa463879c4a7e8a47a0bc41de32c4d9f&amp;default-tab=result" scrolling="no" frameborder="0" height="713" allowtransparency="true" class="cp_embed_iframe" style="overflow: hidden;"></iframe>
+</div>
+
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script type="text/javascript">
+$(function(){
+
+	var activeExample, resize, loadExample;
+
+	resize = function() {
+		var height = $(window).height() - 40;
+		var width = $(window).width() - 200;
+		
+		$( '.content' ).width( $(window).width() ).height( height ).css( 'overflow', 'hidden');
+		$( '.examplesNavigation, .codePenContainer' ).height( height );
+		$( '.codePenContainer' ).width( width );
+
+		$( 'iframe' ).css({
+			height: height,
+			width: width
+		}).attr({
+			height: height,
+			width: width
+		});
+
+		loadExample();
+	};
+
+	if( window.location.hash.length > 0 ) {
+		activeExample = window.location.hash.substr( 1 );
+	} else {
+		activeExample = '6fb265dbf110900619f00ed3f2c258ba';
+	}
+
+	loadExample = function() {
+		var height = $(window).height() - 40;
+		var url = '//codepen.io/anon/embed/' + activeExample + '?height=' + height + '&amp;theme-id=7376&amp;' +
+				'slug-hash=' + activeExample + '&amp;default-tab=result';
+
+		$( 'iframe' ).attr( 'src', url );
+		$( '.examplesNavigation .active' ).removeClass( 'active' );
+		$( '.examplesNavigation a[href="#' + activeExample + '"]' ).parent().addClass( 'active' );
+	};
+
+	resize(); 
+	$(window).resize( resize );
+
+	$( '.examplesNavigation a' ).click(function( e ){
+		activeExample = $(this).attr( 'href' ).substr( 1 );
+		loadExample();
+	});
+});
+</script>
+</script>
 	</div>
 
 	

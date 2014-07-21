@@ -94,6 +94,11 @@ header{
 	position: relative;
 }
 
+header.micro{
+	width: 200px;
+	height: 40px;
+	float: left;
+}
 header h1{
 	width: 343px;
 	height: 60px;
@@ -103,6 +108,15 @@ header h1{
 	margin-left: -172px;
 	margin-top: 40px;
 	text-indent: -9999px;
+}
+
+header.micro h1{
+	width: 200px;
+	height: 40px;
+	left: 0;
+	top: 0;
+	margin: 0;
+	background: url(../images/golden-layout-small.png ) no-repeat center;
 }
 
 header a.download{
@@ -122,6 +136,10 @@ header a.download{
 
 header a.download:hover{
 	background: rgba( 0, 0, 0, 0.8 );
+}
+
+header.micro a.download{
+	display: none;
 }
 
 /****************************
@@ -184,4 +202,55 @@ header a.download:hover{
 ****************************/
 #payment label{
 	display: block;
+}
+
+
+/****************************
+* EXAMPLES PAGE
+****************************/
+.examplesNavigation{
+	background: #000;
+	width: 200px;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
+	float: left;
+}
+
+.examplesNavigation li,
+.examplesNavigation li a{
+	font: 12px Arial, sans-serif;
+	color: #fff;
+}
+
+.examplesNavigation li{
+	background: #222;
+	margin-bottom: 1px;
+	color:#fff;
+}
+
+.examplesNavigation li a{
+	padding: 5px 5px 5px 30px;
+	display: block;
+	text-decoration: none;
+	transition: all 300ms ease;
+}
+
+.examplesNavigation li.active a{
+	color:#ff8e3c;
+}
+
+.examplesNavigation li a:hover{
+	background: #333;
+}
+
+.examplesNavigation li.head{
+	padding: 5px;
+	background: #555;
+	box-shadow:0 3px 3px rgba(0,0,0,0.9)
+}
+
+.codePenContainer{
+	float: left;
+	padding: 0;
 }
