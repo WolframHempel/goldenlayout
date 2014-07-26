@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GOLDEN LAYOUT</title>
+
+	<link rel="stylesheet" type="text/css" href="..\assets\css\screen.css" />
+	
+	<link rel="stylesheet" type="text/css" href="..\assets\css\api.css" />
+	<link rel="stylesheet" type="text/css" href="..\assets\css\syntaxhighlighter.css" />
+	
+</head>
+<body class="category_tutorials"> 
+	<div class="topSection">
+		<header class="orangeGradient micro">
+			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
+			<a class="download" href="..\download">download</a>
+		</header>
+
+		<nav class="standalone">
+			
+			<img src="..\assets\images\hoxton-background.jpg" />
+			
+			<ul>
+				<li ><a href="..">START</a></li>
+				<li ><a href="..\download">DOWNLOAD</a></li>
+				<li ><a href="..\examples">EXAMPLES</a></li>
+				<li class="active"><a href="..\tutorials">TUTORIALS</a></li>
+				<li ><a href="..\docs">DOCS</a></li>
+				<li ><a href="..\buylicense">BUY</a></li>
+			</ul>
+		</nav>
+	</div>
+	
+	<div id="wrapper">
+		<ul id="subnav">
+			
+				<li class="active">
+					<a href="getting-started.html">getting-started</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+		</ul>
+		<div id="content">
+			<h1>Getting started</h1><p>Getting started with GoldenLayout is a breeze, but a bit off handholding is always nice. This tutorial takes you through the initial steps until you&#39;re up and running with your first managed layout.</p><h3>Include dependencies</h3><p>GoldenLayout needs jQuery to work - that’s it. Either include it directly, using a script tag, e.g.</p><pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"http://code.jquery.com/jquery-1.11.1.min.js"</span>&gt;</span><span class="javascript">
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</code></pre><p>or, if you’re using RequireJs, make jquery available as a path, e.g. by adding this to your require config</p><pre><code>paths: {
+    <span class="hljs-string">'jquery'</span>:  <span class="hljs-string">'../bower_components/jquery/dist/jquery.min'</span>
+}
+</code></pre><p>Next, add GoldenLayout&#39;s main JS and CSS file, e.g.</p><pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"js/goldenlayout.min.js"</span>&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/css"</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"css/goldenlayout-base.css"</span> /&gt;</span>
+</code></pre><p><code>goldenlayout-base.css</code> contains purely the structural bits, so you also need a theme. Just pick one of the available
+ones and include its css file</p><pre><code>&lt;link <span class="hljs-keyword">type</span>=<span class="hljs-string">"text/css"</span> rel=<span class="hljs-string">"stylesheet"</span> href=<span class="hljs-string">"css/goldenlayout-dark-theme.css"</span> /&gt;
+</code></pre><h3>Configure the Layout</h3><p>Next we need to specify the initial layout (the user can later move things around).
+For this example we&#39;ll create a big component on the left of the screen and two smaller ones on the right hand side,
+on top of each other, like so:</p><p><img class="centered" src="../assets/images/tutorial_1_image_1.png" width="204" height="130" /></p><p>All GoldenLayout structures are created from three building blocks: Rows, Columns and Stacks. Row&#39;s arrange items from left to right, Columns from top to bottom and Stacks from front to back (by creating tab-boxes). These can be nested.</p><p>The actual parts your app is composed of (forms, charts, tables etc.) are referred to as &quot;components&quot;. Components can be put into any of these building blocks.</p><p>For our example we start with a row. The first item in this Row is the big component that we want to put on the left hand side (A). To the right we want two components on top of each other (B and C) - so we need to put them into a column.</p><p>The whole structure should look like this:</p><p><img class="centered" src="../assets/images/tutorial_1_image_2.png" width="204" height="130" /></p><p>Or in code</p><pre><code><span class="hljs-keyword">var</span> config = {
+    content: [{
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'row'</span>
+        content:[{
+            <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+            componentName: <span class="hljs-string">'testComponent'</span>,
+            componentState: { label: <span class="hljs-string">'A'</span> }
+        },{
+            <span class="hljs-keyword">type</span>: <span class="hljs-string">'column'</span>,
+            content:[{
+                <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+                componentName: <span class="hljs-string">'testComponent'</span>,
+                componentState: { label: <span class="hljs-string">'B'</span> }
+            },{
+                <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+                componentName: <span class="hljs-string">'testComponent'</span>,
+                componentState: { label: <span class="hljs-string">'C'</span> }
+            }]
+        }]
+    }]
+};
+</code></pre><p>A few things to note about this config:</p><ul>
+<li>Every item (apart from components) can have children, specified in the <code>content</code> array</li>
+<li><code>type</code> can be <code>&#39;row&#39;</code>, <code>&#39;column&#39;</code>, <code>&#39;stack&#39;</code> or <code>&#39;component&#39;</code></li>
+<li><code>componentName</code> specifies which component should be created. More about that below</li>
+<li><code>componentState</code> can be any serialisable value (Strings, Numbers, Objects or Arrays) and will be passed to the component</li>
+</ul>
+<h3>Instantiate the layout</h3><p>Now it&#39;s time to instantiate the Layout with our config</p><pre><code><span class="hljs-attribute">myLayout </span>=<span class="hljs-string"> new GoldenLayout( config );</span>
+</code></pre><p><em>This is not going to do anything just yet! Don&#39;t be disappointed though, the magic happens when we call <code>myLayout.init();</code> later on.</em></p><p>GoldenLayout always takes a configuration. Optionally a DOM element can be provided as a second argument. If none is specified GoldenLayout takes over the entire page by adding itself to <code>document.body</code></p><h3>Register Components</h3><p>In our configuration we asked GoldenLayout to create a <code>&#39;testComponent&#39;</code>, now we need to specify what that is. This is done using</p><pre><code>myLayout.registerComponent( <span class="hljs-string">'testComponent'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, componentState )</span>{</span>
+    container.getElement().html( <span class="hljs-string">'&lt;h2&gt;'</span> + componentState.label + <span class="hljs-string">'&lt;/h2&gt;'</span> );
+});
+</code></pre><p>This needs a bit of explanation. <code>myLayout.registerComponent</code> takes two arguments: the name of the component and a constructor or factory function. 
+This function is called by GoldenLayout with <code>new</code> - which creates an instance of your component if you&#39;ve provided a constructor and just executes the function if not.</p><p>The function receives two arguments.</p><ul>
+<li><code>container</code> is an object that allows you to interact with the box that your compontent lives in. It gives you access to the DOM element, emits all sorts of events like <code>resize</code>, <code>hide</code>, <code>close</code> etc. and provides methods like <code>setSize()</code>. <a href="#" title="Container API Doc">Read more about container here</a></li>
+<li><code>componentState</code> is whatever you specified in the configuration, e.g. <code>{ label: &#39;C&#39; }</code></li>
+</ul>
+<p>Your component&#39;s instance or whatever your function returns is stored and can later be accessed from myLayout.</p><h3>Initialise the Layout</h3><p>That&#39;s it. Now all that&#39;s left to start up your layout is calling</p><pre><code>myLayout<span class="hljs-preprocessor">.init</span>()<span class="hljs-comment">;</span>
+</code></pre>
+		</div>
+	</div>
+	
+
+	
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-53022077-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+	
+</body>
+</html>

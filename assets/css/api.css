@@ -1,5 +1,5 @@
 body{
-	background: #fafafa;
+	background: #eee;
 }
 
 nav{
@@ -71,6 +71,7 @@ nav{
 	background: #fff;
 	margin-bottom: 20px;
 	padding: 20px;
+	box-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
 
 #wrapper > #content h2,
@@ -126,5 +127,57 @@ nav{
 #wrapper > #content pre{
 	margin: 10px 0;
 	box-shadow: 0 0 2px rgba( 0,0,0,0.4 );
+	display: block;
+	overflow-x: auto;
+	padding: 0.5em;
+	background: #23241f;
+	color: #FFF;
+}
+
+#wrapper > #content h1{
+	font-family: Kalinga;
+	font-size: 16px;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 3px;
+	margin-bottom: 10px;
+	font-weight: normal;
+}
+#wrapper > #content h3{
+	font-family: Kalinga;
+	font-size: 14px;
+	border-bottom: 1px solid #ccc;
+	margin-top: 20px;
+	font-weight: normal;
+	padding-bottom: 5px;
+}
+
+#wrapper > #content ul, #wrapper > #content ul li{
+	list-style-type: disc;
+	font:12px Arial, sans-serif;
+}
+
+ #wrapper > #content ul li{
+ 	padding-top: 5px;
+ 	padding-bottom: 5px;
+ }
+
+ #wrapper > #content code{
+ 	color: #f92672;
+ }
+
+#wrapper > #content pre code{
+	color: #fff;
+}
+#wrapper > #content img.centered{
+	margin: 5px auto;
+	display: block;
+}
+
+.category_tutorials #wrapper > #content {
+	margin-left: 40px;
+	width: 700px;
+	float: left;
+	background: #fff;
 	padding: 10px;
 }
+/** category_tutorials **/

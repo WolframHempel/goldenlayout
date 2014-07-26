@@ -1,0 +1,514 @@
+/****************************
+* GENERAL
+****************************/
+*{
+	margin: 0;
+	padding: : 0;
+	list-style-type: none;
+}
+
+html, body{
+	height: 100%;
+}
+
+body{
+	overflow: hidden;
+}
+
+/****************************
+* FONTS
+****************************/
+@font-face {
+	font-family: 'Kalinga';
+	src: url('../fonts/Kalinga.eot');
+	src: local('Kalinga'), url('../fonts/Kalinga.woff') format('woff'), url('../fonts/Kalinga.ttf') format('truetype');
+}
+
+/*
+ * Created with iconvau.lt
+ */
+
+@font-face {
+  font-family: "iconvault";
+  src: url("../fonts/iconvault_02a12fbb1cab6faee7d196b196ae185b.eot");
+  src: url("../fonts/iconvault_02a12fbb1cab6faee7d196b196ae185b.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/iconvault_02a12fbb1cab6faee7d196b196ae185b.woff") format("woff"),
+       url("../fonts/iconvault_02a12fbb1cab6faee7d196b196ae185b.ttf") format("truetype"),
+       url("../fonts/iconvault_02a12fbb1cab6faee7d196b196ae185b.svg#iconvault") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon-food-ice-cream-streamline:before,
+.icon-brush-paint-streamline:before,
+.icon-email-mail-streamline:before,
+.icon-barbecue-eat-food-streamline:before,
+.icon-laptop-macbook-streamline:before,
+.icon-diving-leisure-sea-sport-streamline:before,
+.icon-pen-streamline:before,
+.icon-picture-streamline:before,
+.icon-browser-streamline-window:before,
+.icon-camera-streamline-video:before,
+.icon-settings-streamline:before,
+.icon-painting-pallet-streamline:before,
+.icon-computer-network-streamline:before,
+.icon-computer-streamline:before,
+.icon-earth-globe-streamline:before,
+.icon-cook-pan-pot-streamline:before,
+.icon-cocktail-mojito-streamline:before,
+.icon-streamline-umbrella-weather:before,
+.icon-bubble-love-streamline-talk:before,
+.icon-design-graphic-tablet-streamline-tablet:before,
+.icon-headset-sound-streamline:before,
+.icon-caddie-shop-shopping-streamline:before,
+.icon-crown-king-streamline:before,
+.icon-music-speaker-streamline:before,
+.icon-link-streamline:before,
+.icon-music-note-streamline:before,
+.icon-chaplin-hat-movie-streamline:before,
+.icon-happy-smiley-streamline:before,
+.icon-armchair-chair-streamline:before,
+.icon-camera-photo-streamline:before,
+.icon-caddie-shopping-streamline:before,
+.icon-ibook-laptop:before,
+.icon-barista-coffee-espresso-streamline:before,
+.icon-bag-shopping-streamline:before,
+.icon-notebook-streamline:before,
+.icon-eat-food-hotdog-streamline:before,
+.icon-arrow-streamline-target:before,
+.icon-grid-lines-streamline:before,
+.icon-micro-record-streamline:before,
+.icon-ipod-music-streamline:before,
+.icon-ipod-mini-music-streamline:before,
+.icon-design-pencil-rule-streamline:before,
+.icon-bomb-bug:before,
+.icon-envellope-mail-streamline:before,
+.icon-eye-dropper-streamline:before,
+.icon-like-love-streamline:before,
+.icon-delete-garbage-streamline:before,
+.icon-handle-streamline-vector:before,
+.icon-shoes-snickers-streamline:before,
+.icon-crop-streamline:before,
+.icon-chef-food-restaurant-streamline:before,
+.icon-streamline-sync:before,
+.icon-edit-modify-streamline:before,
+.icon-ipod-streamline:before,
+.icon-pen-streamline:before,
+.icon-settings-streamline:before,
+.icon-lock-locker-streamline:before,
+.icon-drug-medecine-streamline-syringue:before,
+.icon-frame-picture-streamline:before,
+.icon-pen-streamline:before,
+.icon-japan-streamline-tea:before,
+.icon-remote-control-streamline:before,
+.icon-home-house-streamline:before,
+.icon-man-people-streamline-user:before,
+.icon-paint-bucket-streamline:before,
+.icon-stamp-streamline:before,
+.icon-magnet-streamline:before,
+.icon-first-aid-medecine-shield-streamline:before,
+.icon-computer-macintosh-vintage:before,
+.icon-photo-pictures-streamline:before,
+.icon-map-pin-streamline:before,
+.icon-book-read-streamline:before,
+.icon-pen-streamline:before,
+.icon-streamline-suitcase-travel:before,
+.icon-map-streamline-user:before,
+.icon-computer-imac:before,
+.icon-eat-food-fork-knife-streamline:before,
+.icon-macintosh:before,
+.icon-book-dowload-streamline:before,
+.icon-picture-streamline:before,
+.icon-camera-photo-polaroid-streamline:before,
+.icon-database-streamline:before,
+.icon-locker-streamline-unlock:before,
+.icon-backpack-streamline-trekking:before,
+.icon-painting-roll-streamline:before,
+.icon-ink-pen-streamline:before,
+.icon-danger-death-delete-destroy-skull-streamline:before,
+.icon-coffee-streamline:before,
+.icon-magic-magic-wand-streamline:before,
+.icon-speech-streamline-talk-user:before,
+.icon-settings-streamline:before,
+.icon-computer-imac:before,
+.icon-factory-lift-streamline-warehouse:before,
+.icon-ipad-streamline:before,
+.icon-receipt-shopping-streamline:before,
+.icon-clock-streamline-time:before,
+.icon-dashboard-speed-streamline:before,
+.icon-monocle-mustache-streamline:before,
+.icon-iphone-streamline:before,
+.icon-bubble-comment-streamline-talk:before {
+  font-family: "iconvault";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.icon-food-ice-cream-streamline:before { content: "\f100"; }
+.icon-brush-paint-streamline:before { content: "\f101"; }
+.icon-email-mail-streamline:before { content: "\f102"; }
+.icon-barbecue-eat-food-streamline:before { content: "\f103"; }
+.icon-laptop-macbook-streamline:before { content: "\f104"; }
+.icon-diving-leisure-sea-sport-streamline:before { content: "\f105"; }
+.icon-pen-streamline:before { content: "\f106"; }
+.icon-picture-streamline:before { content: "\f107"; }
+.icon-browser-streamline-window:before { content: "\f108"; }
+.icon-camera-streamline-video:before { content: "\f109"; }
+.icon-settings-streamline:before { content: "\f10a"; }
+.icon-painting-pallet-streamline:before { content: "\f10b"; }
+.icon-computer-network-streamline:before { content: "\f10c"; }
+.icon-computer-streamline:before { content: "\f10d"; }
+.icon-earth-globe-streamline:before { content: "\f10e"; }
+.icon-cook-pan-pot-streamline:before { content: "\f10f"; }
+.icon-cocktail-mojito-streamline:before { content: "\f110"; }
+.icon-streamline-umbrella-weather:before { content: "\f111"; }
+.icon-bubble-love-streamline-talk:before { content: "\f112"; }
+.icon-design-graphic-tablet-streamline-tablet:before { content: "\f113"; }
+.icon-headset-sound-streamline:before { content: "\f114"; }
+.icon-caddie-shop-shopping-streamline:before { content: "\f115"; }
+.icon-crown-king-streamline:before { content: "\f116"; }
+.icon-music-speaker-streamline:before { content: "\f117"; }
+.icon-link-streamline:before { content: "\f118"; }
+.icon-music-note-streamline:before { content: "\f119"; }
+.icon-chaplin-hat-movie-streamline:before { content: "\f11a"; }
+.icon-happy-smiley-streamline:before { content: "\f11b"; }
+.icon-armchair-chair-streamline:before { content: "\f11c"; }
+.icon-camera-photo-streamline:before { content: "\f11d"; }
+.icon-caddie-shopping-streamline:before { content: "\f11e"; }
+.icon-ibook-laptop:before { content: "\f11f"; }
+.icon-barista-coffee-espresso-streamline:before { content: "\f120"; }
+.icon-bag-shopping-streamline:before { content: "\f121"; }
+.icon-notebook-streamline:before { content: "\f122"; }
+.icon-eat-food-hotdog-streamline:before { content: "\f123"; }
+.icon-arrow-streamline-target:before { content: "\f124"; }
+.icon-grid-lines-streamline:before { content: "\f125"; }
+.icon-micro-record-streamline:before { content: "\f126"; }
+.icon-ipod-music-streamline:before { content: "\f127"; }
+.icon-ipod-mini-music-streamline:before { content: "\f128"; }
+.icon-design-pencil-rule-streamline:before { content: "\f129"; }
+.icon-bomb-bug:before { content: "\f12a"; }
+.icon-envellope-mail-streamline:before { content: "\f12b"; }
+.icon-eye-dropper-streamline:before { content: "\f12c"; }
+.icon-like-love-streamline:before { content: "\f12d"; }
+.icon-delete-garbage-streamline:before { content: "\f12e"; }
+.icon-handle-streamline-vector:before { content: "\f12f"; }
+.icon-shoes-snickers-streamline:before { content: "\f130"; }
+.icon-crop-streamline:before { content: "\f131"; }
+.icon-chef-food-restaurant-streamline:before { content: "\f132"; }
+.icon-streamline-sync:before { content: "\f133"; }
+.icon-edit-modify-streamline:before { content: "\f134"; }
+.icon-ipod-streamline:before { content: "\f135"; }
+.icon-pen-streamline:before { content: "\f136"; }
+.icon-settings-streamline:before { content: "\f137"; }
+.icon-lock-locker-streamline:before { content: "\f138"; }
+.icon-drug-medecine-streamline-syringue:before { content: "\f139"; }
+.icon-frame-picture-streamline:before { content: "\f13a"; }
+.icon-pen-streamline:before { content: "\f13b"; }
+.icon-japan-streamline-tea:before { content: "\f13c"; }
+.icon-remote-control-streamline:before { content: "\f13d"; }
+.icon-home-house-streamline:before { content: "\f13e"; }
+.icon-man-people-streamline-user:before { content: "\f13f"; }
+.icon-paint-bucket-streamline:before { content: "\f140"; }
+.icon-stamp-streamline:before { content: "\f141"; }
+.icon-magnet-streamline:before { content: "\f142"; }
+.icon-first-aid-medecine-shield-streamline:before { content: "\f143"; }
+.icon-computer-macintosh-vintage:before { content: "\f144"; }
+.icon-photo-pictures-streamline:before { content: "\f145"; }
+.icon-map-pin-streamline:before { content: "\f146"; }
+.icon-book-read-streamline:before { content: "\f147"; }
+.icon-pen-streamline:before { content: "\f148"; }
+.icon-streamline-suitcase-travel:before { content: "\f149"; }
+.icon-map-streamline-user:before { content: "\f14a"; }
+.icon-computer-imac:before { content: "\f14b"; }
+.icon-eat-food-fork-knife-streamline:before { content: "\f14c"; }
+.icon-macintosh:before { content: "\f14d"; }
+.icon-book-dowload-streamline:before { content: "\f14e"; }
+.icon-picture-streamline:before { content: "\f14f"; }
+.icon-camera-photo-polaroid-streamline:before { content: "\f150"; }
+.icon-database-streamline:before { content: "\f151"; }
+.icon-locker-streamline-unlock:before { content: "\f152"; }
+.icon-backpack-streamline-trekking:before { content: "\f153"; }
+.icon-painting-roll-streamline:before { content: "\f154"; }
+.icon-ink-pen-streamline:before { content: "\f155"; }
+.icon-danger-death-delete-destroy-skull-streamline:before { content: "\f156"; }
+.icon-coffee-streamline:before { content: "\f157"; }
+.icon-magic-magic-wand-streamline:before { content: "\f158"; }
+.icon-speech-streamline-talk-user:before { content: "\f159"; }
+.icon-settings-streamline:before { content: "\f15a"; }
+.icon-computer-imac:before { content: "\f15b"; }
+.icon-factory-lift-streamline-warehouse:before { content: "\f15c"; }
+.icon-ipad-streamline:before { content: "\f15d"; }
+.icon-receipt-shopping-streamline:before { content: "\f15e"; }
+.icon-clock-streamline-time:before { content: "\f15f"; }
+.icon-dashboard-speed-streamline:before { content: "\f160"; }
+.icon-monocle-mustache-streamline:before { content: "\f161"; }
+.icon-iphone-streamline:before { content: "\f162"; }
+.icon-bubble-comment-streamline-talk:before { content: "\f163"; }
+/****************************
+* NAVIGATION
+****************************/
+nav{
+	position: relative;
+	height: 30px;
+	margin-bottom: -30px;
+	z-index: 1;
+	overflow: hidden;
+}
+
+nav img{
+	display: none;
+}
+
+nav.standalone{
+	margin-bottom: 0;
+	height: 40px;
+}
+
+nav.standalone img{
+	display: block;
+	width: 100%;
+	height: 622px;
+}
+
+nav ul{
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+nav li{
+	opacity: 0.8;
+	float: left;
+	transition: opacity 300ms ease;
+}
+
+nav li.active,
+nav li:hover{
+	opacity: 1;
+}
+
+nav a{
+	padding-top: 11px;
+	padding-right: 40px;
+	display: block;
+	font: 16px "Courier New", monospace;
+	color: #fff;
+	text-decoration: none;
+}
+
+/****************************
+* HEADER WITH LOGO
+****************************/
+.orangeGradient{
+	background: #ef7d17; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ef7d17 0%, #ec6804 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ef7d17), color-stop(100%,#ec6804)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ef7d17 0%,#ec6804 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef7d17', endColorstr='#ec6804',GradientType=0 ); /* IE6-9 */
+}
+
+header{
+	height: 175px;
+	width: 100%;
+	position: relative;
+}
+
+header.micro{
+	width: 200px;
+	height: 40px;
+	float: left;
+}
+header h1{
+	width: 343px;
+	height: 60px;
+	background: url(../images/golden-layout.png );
+	position: absolute;
+	left: 45%;
+	margin-left: -172px;
+	margin-top: 40px;
+	text-indent: -9999px;
+}
+
+header.micro h1{
+	width: 200px;
+	height: 40px;
+	left: 0;
+	top: 0;
+	margin: 0;
+	background: url(../images/golden-layout-small.png ) no-repeat center;
+}
+
+header a.download{
+	background: rgba( 0, 0, 0, 0.4 );
+	font-family: "Courier New", monospace;
+	color: #fff;
+	padding: 3px;
+	padding-right: 111px;
+	text-decoration: none;
+	position: absolute;
+	left: 45%;
+	top: 114px;
+	font-size: 12px;
+	cursor: pointer;
+	transition: all 400ms ease;
+}
+
+header a.download:hover{
+	background: rgba( 0, 0, 0, 0.8 );
+}
+
+header.micro a.download{
+	display: none;
+}
+
+/****************************
+* EXAMPLE ON STARTPAGE
+****************************/
+.startExample{
+	position: relative;
+	height: 782px;
+}
+
+.startExample img{
+	width: 100%;
+	height: 622px;
+}
+
+#exampleScreen{
+	width: 900px;
+	height: 832px;
+	background: url(../images/screen.png);
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	margin-left: -450px;
+}
+
+#exampleLayoutContainer{
+	position: absolute;
+	left: 36px;
+	top: 37px;
+	width: 825px;
+	height: 518px;
+}
+
+#tryMeArrow{
+	width: 193px;
+	height: 147px;
+	position: absolute;
+	background: url(../images/try-me.png);
+	z-index: 9999;
+	left: 838px;
+	top: 157px;
+}
+
+/****************************
+* FEATURES OVERVIEW
+****************************/
+#startPageFeatures{
+	border-top: 1px solid #ccc;
+	background: #f6f6f6;
+	height: 400px;
+}
+
+#wrapper_960{
+	width: 960px;
+	margin: 10px auto;
+}
+
+#startPageFeatures > ul{
+	width: 960px;
+	margin: 40px auto 0;
+}
+
+#startPageFeatures li{
+	width: 280px;
+	margin: 0 40px 40px 0;
+	float: left;
+}
+
+#startPageFeatures li *{
+	color: #666;
+}
+
+#startPageFeatures li .icon{
+	font-size: 50px;
+	float: left;
+	margin-right: 10px;
+}
+
+#startPageFeatures li h4{
+	font: 14px Arial,sans-serif;
+}
+
+#startPageFeatures li p{
+	font: 12px Arial,sans-serif;
+}
+/****************************
+* PAYMENT FORM
+****************************/
+#payment label{
+	display: block;
+}
+
+
+/****************************
+* EXAMPLES PAGE
+****************************/
+.examplesNavigation{
+	background: #000;
+	width: 200px;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
+	float: left;
+}
+
+.examplesNavigation li,
+.examplesNavigation li a{
+	font: 12px Arial, sans-serif;
+	color: #fff;
+}
+
+.examplesNavigation li{
+	background: #222;
+	margin-bottom: 1px;
+	color:#fff;
+}
+
+.examplesNavigation li a{
+	padding: 5px 5px 5px 30px;
+	display: block;
+	text-decoration: none;
+	transition: all 300ms ease;
+}
+
+.examplesNavigation li.active a{
+	color:#ff8e3c;
+}
+
+.examplesNavigation li a:hover{
+	background: #333;
+}
+
+.examplesNavigation li.head{
+	padding: 5px;
+	background: #555;
+	box-shadow:0 3px 3px rgba(0,0,0,0.9)
+}
+
+.codePenContainer{
+	float: left;
+	padding: 0;
+}
