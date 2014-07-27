@@ -1,4 +1,4 @@
-GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"items":{},"errors":{},"utils":{}};
+GoldenLayout = (function(){var lm={"controls":{},"errors":{},"config":{},"items":{},"utils":{},"container":{}};
 
 lm.utils.F = function () {};
 	
@@ -535,18 +535,17 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		}
 	},
 
-
-	_$normalizeContentItem: function( contentItem ) {
-		if( contentItem instanceof lm.items.AbstractContentItem ) {
-			return contentItem;
-		}
-
+	_$normalizeContentItem: function( contentItem, parent ) {
 		if( !contentItem ) {
 			throw new Error( 'No content item defined' );
 		}
 
+		if( contentItem instanceof lm.items.AbstractContentItem ) {
+			return contentItem;
+		}
+
 		if( contentItem instanceof Object && contentItem.type ) {
-			var newContentItem = this.createContentItem( contentItem, null );
+			var newContentItem = this.createContentItem( contentItem, parent );
 			newContentItem.callDownwards( '_$init' );
 			return newContentItem;
 		} else {
@@ -1803,7 +1802,7 @@ lm.utils.copy( lm.items.RowOrColumn.prototype, {
 	
 		var newItemSize, itemSize, i, splitterElement;
 	
-		contentItem = this.layoutManager._$normalizeContentItem( contentItem );
+		contentItem = this.layoutManager._$normalizeContentItem( contentItem, this );
 		
 		if( index === undefined ) {
 			index = this.contentItems.length;

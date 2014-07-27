@@ -84,7 +84,7 @@ in localStorage or he&#39;s using it for the first time and we provide a default
 } <span class="hljs-keyword">else</span> {
     myLayout = <span class="hljs-keyword">new</span> GoldenLayout( config );
 }
-</code></pre><h3>Saving Component States</h3><p>So far we&#39;ve only saved the layout&#39;s state, but what about the components within it, the ones you&#39;ve build? Well, remember the <code>componentState: { label: &#39;C&#39; }</code> entry that you&#39;ve configured? This is just the initial state, the component itself can update it by calling <code>container.setState();</code>.</p><p>This stores it and emits a <code>stateChanged</code> event that bubbles up to the layout manager.</p><p>Let&#39;s update our testComponent to show a text input with a persistant value:</p><pre><code>layoutManager.registerComponent( <span class="hljs-string">'testComponent'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span>{</span>
+</code></pre><h3>Saving Component States</h3><p>So far we&#39;ve only saved the layout&#39;s state, but what about the components within it, the ones you&#39;ve build? Well, remember the <code>componentState: { label: &#39;C&#39; }</code> entry that you&#39;ve configured? This is just the initial state, the component itself can update it by calling <code>container.setState();</code>.</p><p>This stores it and emits a <code>stateChanged</code> event that bubbles up to the layout manager.</p><p>Let&#39;s update our testComponent to show a text input with a persistant value:</p><pre><code>myLayout.registerComponent( <span class="hljs-string">'testComponent'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span>{</span>
 
     <span class="hljs-comment">// Create the input</span>
     <span class="hljs-keyword">var</span> input = $( <span class="hljs-string">'&lt;input type="text" /&gt;'</span> );
@@ -104,7 +104,8 @@ in localStorage or he&#39;s using it for the first time and we provide a default
     <span class="hljs-comment">// Append it to the DOM</span>
     container.getElement().append( input );
 });
-</code></pre>
+</code></pre><h3>And initialise the layout</h3><pre><code>myLayout<span class="hljs-preprocessor">.init</span>()<span class="hljs-comment">;</span>
+</code></pre><h3>The result</h3><p><p data-height="268" data-theme-id="7376" data-slug-hash="7c599be2a33fb57a47dfb43a53df2437" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/wolframhempel/pen/7c599be2a33fb57a47dfb43a53df2437/'>Saving State</a> by Wolfram Hempel (<a href='http://codepen.io/wolframhempel'>@wolframhempel</a>) on <a href='http://codepen.io'>CodePen</a>.</p></p><script async src="//codepen.io/assets/embed/ei.js"></script>
 		</div>
 	</div>
 	
