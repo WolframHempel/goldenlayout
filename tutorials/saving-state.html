@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GOLDEN LAYOUT</title>
+
+	<link rel="stylesheet" type="text/css" href="..\assets\css\screen.css" />
+	
+	<link rel="stylesheet" type="text/css" href="..\assets\css\api.css" />
+	<link rel="stylesheet" type="text/css" href="..\assets\css\syntaxhighlighter.css" />
+	
+</head>
+<body class="category_tutorials"> 
+	<div class="topSection">
+		<header class="orangeGradient micro">
+			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
+			<a class="download" href="..\download">download</a>
+		</header>
+
+		<nav class="standalone">
+			
+			<img src="..\assets\images\hoxton-background.jpg" />
+			
+			<ul>
+				<li ><a href="..">START</a></li>
+				<li ><a href="..\download">DOWNLOAD</a></li>
+				<li ><a href="..\examples">EXAMPLES</a></li>
+				<li class="active"><a href="..\tutorials">TUTORIALS</a></li>
+				<li ><a href="..\docs">DOCS</a></li>
+				<li ><a href="..\buylicense">BUY</a></li>
+			</ul>
+		</nav>
+	</div>
+	
+	<div id="wrapper">
+		<ul id="subnav">
+			
+				<li >
+					<a href="getting-started.html">getting-started</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+				<li class="active">
+					<a href="saving-state.html">saving-state</a>
+					<div class="isActiveIndicator orangeGradient"></div>
+				</li>
+			
+		</ul>
+		<div id="content">
+			<h1>Saving State</h1><p>You’ve build a marvellous app, configured your layout and the user arranged things just the way he liked. Great!</p><p>But the next time he opens the app he wants to find everything just the way he left it. Or (if you’re feeling fancy) choose from a number of saved layouts.</p><p>GoldenLayout offers a powerful persistence mechanism for that. Not only every aspect of the layout, also the state of the components within it can be converted into a serialisable object that can be saved to a database, to local storage or wherever else your heart desires.</p><p>Here’s how it works:</p><h3>Creating the layout</h3><p>For this tutorial we&#39;ll use the layout created in <a href="getting-started.html">getting-started</a>.</p><pre><code><span class="hljs-keyword">var</span> config = {
+    content: [{
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'row'</span>,
+        content:[{
+            <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+            componentName: <span class="hljs-string">'testComponent'</span>,
+            componentState: { label: <span class="hljs-string">'A'</span> }
+        },{
+            <span class="hljs-keyword">type</span>: <span class="hljs-string">'column'</span>,
+            content:[{
+                <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+                componentName: <span class="hljs-string">'testComponent'</span>,
+                componentState: { label: <span class="hljs-string">'B'</span> }
+            },{
+                <span class="hljs-keyword">type</span>: <span class="hljs-string">'component'</span>,
+                componentName: <span class="hljs-string">'testComponent'</span>,
+                componentState: { label: <span class="hljs-string">'C'</span> }
+            }]
+        }]
+    }]
+};
+</code></pre><p>var myLayout = new GoldenLayout( config );</p><h3>Listening for state changes</h3><p>Your layout instance and all the items within it emit events. These bubble up, just like DOM events. The event we&#39;re interested in at the moment is called <code>stateChanged</code>. It is emitted whenever something happens that modifies the saveable layout state. Listening to it works like this:</p><pre><code>myLayout.on( <span class="hljs-string">'stateChanged'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-comment">//now save the state</span>
+});
+</code></pre><p>The actual state object is created by calling <code>myLayout.toConfig();</code>. For our example we&#39;ll store it in the browser&#39;s localStorage.</p><pre><code>myLayout.on( <span class="hljs-string">'stateChanged'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> state = <span class="hljs-built_in">JSON</span>.stringify( myLayout.toConfig() );
+    localStorage.setItem( <span class="hljs-string">'savedState'</span>, state );
+});
+</code></pre><h3>Creating Layouts from saved states</h3><p>So now the next time the user opens the app there&#39;s a choice. Either he has used it before and the app&#39;s state is stored
+in localStorage or he&#39;s using it for the first time and we provide a default config.</p><pre><code><span class="hljs-keyword">var</span> myLayout,
+    savedState = localStorage.getItem( <span class="hljs-string">'savedState'</span> );
+
+<span class="hljs-keyword">if</span>( savedState !== <span class="hljs-literal">null</span> ) {
+    myLayout = <span class="hljs-keyword">new</span> GoldenLayout( <span class="hljs-built_in">JSON</span>.parse( savedState ) );
+} <span class="hljs-keyword">else</span> {
+    myLayout = <span class="hljs-keyword">new</span> GoldenLayout( config );
+}
+</code></pre><h3>Saving Component States</h3><p>So far we&#39;ve only saved the layout&#39;s state, but what about the components within it, the ones you&#39;ve build? Well, remember the <code>componentState: { label: &#39;C&#39; }</code> entry that you&#39;ve configured? This is just the initial state, the component itself can update it by calling <code>container.setState();</code>.</p><p>This stores it and emits a <code>stateChanged</code> event that bubbles up to the layout manager.</p><p>Let&#39;s update our testComponent to show a text input with a persistant value:</p><pre><code>layoutManager.registerComponent( <span class="hljs-string">'testComponent'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( container, state )</span>{</span>
+
+    <span class="hljs-comment">// Create the input</span>
+    <span class="hljs-keyword">var</span> input = $( <span class="hljs-string">'&lt;input type="text" /&gt;'</span> );
+
+    <span class="hljs-comment">// Set the initial / saved state</span>
+    <span class="hljs-keyword">if</span>( state.label ) {
+        input.val( state.label );
+    }
+
+    <span class="hljs-comment">// Store state updates</span>
+    input.on( <span class="hljs-string">'change'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        container.setState({
+            label: input.val()
+        });
+    });
+
+    <span class="hljs-comment">// Append it to the DOM</span>
+    container.getElement().append( input );
+});
+</code></pre>
+		</div>
+	</div>
+	
+
+	
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-53022077-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+	
+</body>
+</html>

@@ -168,6 +168,16 @@ nav{
 #wrapper > #content pre code{
 	color: #fff;
 }
+
+#wrapper > #content div.info{
+	border-left: 2px solid #00509a;
+	color:#00509a;
+	background:#c9e5ff;
+	font: 12px Arial, sans-serif;
+	padding: 5px;
+	font-weight: bold;
+}
+
 #wrapper > #content img.centered{
 	margin: 5px auto;
 	display: block;

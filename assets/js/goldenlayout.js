@@ -1,4 +1,4 @@
-GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
+GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"items":{},"errors":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -682,97 +682,6 @@ lm.config.defaultConfig = {
 		popout: 'open in new window'
 	}
 };
-lm.container.ItemContainer = function( config, parent, layoutManager ) {
-	lm.utils.EventEmitter.call( this );
-
-	this.width = null;
-	this.height = null;
-	this.title = config.componentName;
-	this._parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
-	this.isHidden = false;
-	this._element = $([
-		'<div class="lm_item_container">',
-			'<div class="lm_content"></div>',
-		'</div>'
-	].join( '' ));
-	this._contentElement = this._element.find( '.lm_content' );
-};
-
-lm.utils.copy( lm.container.ItemContainer.prototype, {
-
-	/**
-	 * Get the inner DOM element the container's content
-	 * is intended to live in
-	 *
-	 * @returns {DOM element}
-	 */
-	getElement: function() {
-		return this._contentElement;
-	},
-	
-	/**
-	 * Hide the container. Notifies the containers content first
-	 * and then hides the DOM node. If the container is already hidden
-	 * this should have no effect
-	 *
-	 * @returns {void}
-	 */
-	hide: function() {
-		this.emit( 'hide' );
-		this.isHidden = true;
-		this._element.hide();
-	},
-	
-	/**
-	 * Shows a previously hidden container. Notifies the
-	 * containers content first and then shows the DOM element.
-	 * If the container is already visible this has no effect.
-	 *
-	 * @returns {void}
-	 */
-	show: function() {
-		this.emit( 'show' );
-		this.isHidden = false;
-		this._element.show();
-	},
-	
-	/**
-	 * Set's the containers size. Can be called by both
-	 * the containers content as well as the contentItem
-	 * containing it. Both arguments are optional, if
-	 * one is omitted the parent elements size is used instead
-	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
-	 * 
-	 * @returns {void}
-	 */
-	setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
-		}
-	},
-	
-	/**
-	 * Closes the container if it is closable. Can be called by
-	 * both the component within at as well as the contentItem containing
-	 * it. Emits a close event before the container itself is closed.
-	 *
-	 * @returns {void}
-	 */
-	close: function() {
-		if( this._config.isClosable ) {
-			this.emit( 'close' );
-			this._parent.close();
-		}
-	}
-});
-	
 lm.controls.BrowserPopout = function( contentItem ) {
 	this._contentItem = contentItem;
 	this._contentItem.parent.removeChild( this._contentItem, true );
@@ -1204,6 +1113,107 @@ lm.utils.copy( lm.controls.Tab.prototype,{
 
 });
 
+lm.container.ItemContainer = function( config, parent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.width = null;
+	this.height = null;
+	this.title = config.componentName;
+	this._parent = parent;
+	this._config = config;
+	this._layoutManager = layoutManager;
+	this.isHidden = false;
+	this._element = $([
+		'<div class="lm_item_container">',
+			'<div class="lm_content"></div>',
+		'</div>'
+	].join( '' ));
+	
+	this._contentElement = this._element.find( '.lm_content' );
+};
+
+lm.utils.copy( lm.container.ItemContainer.prototype, {
+
+	/**
+	 * Get the inner DOM element the container's content
+	 * is intended to live in
+	 *
+	 * @returns {DOM element}
+	 */
+	getElement: function() {
+		return this._contentElement;
+	},
+	
+	/**
+	 * Hide the container. Notifies the containers content first
+	 * and then hides the DOM node. If the container is already hidden
+	 * this should have no effect
+	 *
+	 * @returns {void}
+	 */
+	hide: function() {
+		this.emit( 'hide' );
+		this.isHidden = true;
+		this._element.hide();
+	},
+	
+	/**
+	 * Shows a previously hidden container. Notifies the
+	 * containers content first and then shows the DOM element.
+	 * If the container is already visible this has no effect.
+	 *
+	 * @returns {void}
+	 */
+	show: function() {
+		this.emit( 'show' );
+		this.isHidden = false;
+		this._element.show();
+	},
+	
+	/**
+	 * Set's the containers size. Can be called by both
+	 * the containers content as well as the contentItem
+	 * containing it. Both arguments are optional, if
+	 * one is omitted the parent elements size is used instead
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
+	},
+	
+	/**
+	 * Closes the container if it is closable. Can be called by
+	 * both the component within at as well as the contentItem containing
+	 * it. Emits a close event before the container itself is closed.
+	 *
+	 * @returns {void}
+	 */
+	close: function() {
+		if( this._config.isClosable ) {
+			this.emit( 'close' );
+			this._parent.close();
+		}
+	},
+
+	/**
+	 * Notifies the layout manager of a stateupdate
+	 *
+	 * @param {serialisable} state
+	 */
+	setState: function( state ) {
+		this._config.componentState = state;
+		this._parent._$emitBubblingEvent( 'stateChanged' );
+	}
+});
 lm.errors.ConfigurationError = function( message, node ) {
 	Error.call( this );
 
@@ -1214,15 +1224,6 @@ lm.errors.ConfigurationError = function( message, node ) {
 
 lm.errors.ConfigurationError.prototype = new Error();
 
-lm.utils.BubblingEvent = function( name, origin ) {
-	this.name = name;
-	this.origin = origin;
-	this.isPropagationStopped = false;
-};
-
-lm.utils.BubblingEvent.prototype.stopPropagation = function() {
-	this.isPropagationStopped = true;
-};
 
 /**
  * This is the baseclass that all content items inherit from.
@@ -1682,9 +1683,9 @@ lm.items.Component = function( layoutManager, config, parent ) {
 lm.utils.extend( lm.items.Component, lm.items.AbstractContentItem );
 
 lm.utils.copy( lm.items.Component.prototype, {
-	_$destroy: function() {
-		this.container.emit( 'destroy' );
-		lm.items.AbstractContentItem.prototype._$destroy.call( this );
+	
+	close: function() {
+		this.parent.removeChild( this );
 	},
 
 	setSize: function() {
@@ -1701,6 +1702,11 @@ lm.utils.copy( lm.items.Component.prototype, {
 		lm.items.AbstractContentItem.prototype._$show.call( this );
 	},
 
+	_$destroy: function() {
+		this.container.emit( 'destroy' );
+		lm.items.AbstractContentItem.prototype._$destroy.call( this );
+	},
+
 	/**
 	 * Dragging onto a component directly is not an option
 	 *
@@ -1708,10 +1714,6 @@ lm.utils.copy( lm.items.Component.prototype, {
 	 */
 	_$getArea: function() {
 		return null;
-	},
-
-	close: function() {
-		this.parent.removeChild( this );
 	}
 });
 lm.items.Root = function( layoutManager, config, containerElement ) {
@@ -2520,4 +2522,13 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		this.layoutManager.dropTargetIndicator.highlightArea( highlightArea );
 		this._dropSegment = segment;
 	}
-});return lm.LayoutManager;})()
+});
+lm.utils.BubblingEvent = function( name, origin ) {
+	this.name = name;
+	this.origin = origin;
+	this.isPropagationStopped = false;
+};
+
+lm.utils.BubblingEvent.prototype.stopPropagation = function() {
+	this.isPropagationStopped = true;
+};return lm.LayoutManager;})()
