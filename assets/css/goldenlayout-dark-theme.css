@@ -34,6 +34,14 @@
 	height: 20px;
 }
 
+.lm_header.lm_selectable{
+	cursor: pointer;
+}
+
+.lm_selected .lm_header{
+	background-color: #452500;
+}
+
 .lm_maximised .lm_header{
 	background-color: #000;
 }

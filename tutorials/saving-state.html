@@ -34,18 +34,19 @@
 	
 	<div id="wrapper">
 		<ul id="subnav">
-			
-				<li >
-					<a href="getting-started.html">getting-started</a>
-					<div class="isActiveIndicator orangeGradient"></div>
-				</li>
-			
-				<li class="active">
-					<a href="saving-state.html">saving-state</a>
-					<div class="isActiveIndicator orangeGradient"></div>
-				</li>
-			
-		</ul>
+	<li >
+		<a href="getting-started.html">Getting Started</a>
+		<div class="isActiveIndicator orangeGradient"></div>
+	</li>
+	<li class="active">
+		<a href="saving-state.html">Saving State</a>
+		<div class="isActiveIndicator orangeGradient"></div>
+	</li>
+	<li >
+		<a href="dynamically-adding-components.html">Adding Items</a>
+		<div class="isActiveIndicator orangeGradient"></div>
+	</li>
+</ul>
 		<div id="content">
 			<h1>Saving State</h1><p>You’ve build a marvellous app, configured your layout and the user arranged things just the way he liked. Great!</p><p>But the next time he opens the app he wants to find everything just the way he left it. Or (if you’re feeling fancy) choose from a number of saved layouts.</p><p>GoldenLayout offers a powerful persistence mechanism for that. Not only every aspect of the layout, also the state of the components within it can be converted into a serialisable object that can be saved to a database, to local storage or wherever else your heart desires.</p><p>Here’s how it works:</p><h3>Creating the layout</h3><p>For this tutorial we&#39;ll use the layout created in <a href="getting-started.html">getting-started</a>.</p><pre><code><span class="hljs-keyword">var</span> config = {
     content: [{

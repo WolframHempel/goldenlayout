@@ -1,4 +1,4 @@
-GoldenLayout = (function(){var lm={"controls":{},"errors":{},"config":{},"items":{},"utils":{},"container":{}};
+GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"items":{},"utils":{},"errors":{}};
 
 lm.utils.F = function () {};
 	
@@ -207,13 +207,18 @@ lm.utils.DragListener = function(eElement, nButtonCode)
 
 	this._fMove = lm.utils.fnBind( this.onMouseMove, this );
 	this._fUp = lm.utils.fnBind( this.onMouseUp, this );
+	this._fDown = lm.utils.fnBind( this.onMouseDown, this );
 
-	this._eElement.mousedown( lm.utils.fnBind( this.onMouseDown, this ) );
+	this._eElement.mousedown( this._fDown );
 };
 
 lm.utils.DragListener.timeout = null;
 
 lm.utils.copy( lm.utils.DragListener.prototype, {
+	destroy: function() {
+		this._eElement.unbind( 'mousedown', this._fDown );
+	},
+
 	onMouseDown: function(oEvent)
 	{
 		oEvent.preventDefault();
@@ -272,6 +277,10 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 });
 
 
+/**
+ * @event selectionChanged item
+ */
+
 lm.LayoutManager = function( config, container ) {
 
 	lm.utils.EventEmitter.call( this );
@@ -288,6 +297,7 @@ lm.LayoutManager = function( config, container ) {
 	this.width = null;
 	this.height = null;
 	this.root =  null;
+	this.selectedItem = null;
 	this.config = this._createConfig( config );
 	this.container = container;
 	this.dropTargetIndicator = null;
@@ -378,6 +388,16 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		return this._components[ name ];
 	},
 
+	/**
+	 * Creates the actual layout. Must be called after all initial components
+	 * are registered. Recourses through the configuration and sets up
+	 * the item tree.
+	 *
+	 * If called before the document is ready it adds itself as a listener
+	 * to the document.ready event
+	 *
+	 * @returns {void}
+	 */
 	init: function() {
 		if( document.readyState === 'loading' ) {
 			$(document).ready(this.init.bind( this ));
@@ -415,7 +435,16 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		}
 	},
 
+	/**
+	 * Destroys the LayoutManager instance itself as well as every ContentItem
+	 * within it. After this is called nothing should be left of the LayoutManager.
+	 *
+	 * @returns {void}
+	 */
 	destroy: function() {
+		if( this.isInitialised === false ) {
+			return;
+		}
 		$( window ).off( 'resize', this._resizeFunction );
 		this.root.callDownwards( '_$destroy', [], true );
 		this.root.contentItems = [];
@@ -423,6 +452,15 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		this.dropTargetIndicator.element.remove();
 	},
 
+	/**
+	 * Recoursively creates new item tree structures based on a provided
+	 * ItemConfiguration object 
+	 *
+	 * @param   {Object} config ItemConfig
+	 * @param   {[ContentItem]} parent The item the newly created item should be a child of
+	 *
+	 * @returns {lm.items.ContentItem}
+	 */
 	createContentItem: function( config, parent ) {
 		var typeErrorMsg, contentItem;
 
@@ -454,6 +492,44 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		contentItem = new this._typeToItem[ config.type ]( this, config, parent );
 
 		return contentItem;
+	},
+
+	/**
+	 * Attaches DragListener to any given DOM element
+	 * and turns it into a way of creating new ContentItems
+	 * by 'dragging' the DOM element into the layout
+	 *
+	 * @param   {jQuery DOM element} element
+	 * @param   {Object} itemConfig for the new item to be created
+	 *
+	 * @returns {void}
+	 */
+	createDragSource: function( element, itemConfig ) {
+		this.config.settings.constrainDragToContainer = false;
+		new lm.controls.DragSource( $( element ), itemConfig, this );
+	},
+
+	selectItem: function( item, _$silent ) {
+
+		if( this.config.settings.selectionEnabled !== true ) {
+			throw new Error( 'Please set selectionEnabled to true to use this feature' );
+		}
+
+		if( item === this.selectedItem ) {
+			return;
+		}
+
+		if( this.selectedItem !== null ) {
+			this.selectedItem.deselect();
+		}
+
+		if( item && _$silent !== true ) {
+			item.select();
+		}
+
+		this.selectedItem = item;
+
+		this.emit( 'selectionChanged', item );
 	},
 
 	/*************************
@@ -664,7 +740,8 @@ lm.config.itemDefaultConfig = {
 lm.config.defaultConfig = {
 	settings:{
 		hasHeaders: true,
-		constrainDragToContainer: true
+		constrainDragToContainer: true,
+		selectionEnabled: false
 	},
 	dimensions: {
 		borderWidth: 5,
@@ -838,9 +915,10 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 
 		/**
 		 * No valid drop area found during the duration of the drag. Return
-		 * content item to its original position
+		 * content item to its original position if a original parent is provided.
+		 * (Which is not the case if the drag had been initiated by createDragSource)
 		 */
-		} else {
+		} else if ( this._originalParent ){
 			this._originalParent.addChild( this._contentItem );
 		}
 		
@@ -848,7 +926,13 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 	},
 	
 	_updateTree: function() {
-		this._contentItem.parent.removeChild( this._contentItem, true );
+		/**
+		 * parent is null if the drag had been initiated by a external drag source
+		 */
+		if( this._contentItem.parent ) {
+			this._contentItem.parent.removeChild( this._contentItem, true );
+		}
+		
 		this._contentItem._$setParent( this );
 	},
 	
@@ -865,6 +949,56 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 		this._contentItem.callDownwards( 'setSize' );
 	}
 });
+/**
+ * Allows for any DOM item to create a component on drag
+ * start tobe dragged into the Layout
+ *
+ * @param {jQuery element} element
+ * @param {Object} itemConfig the configuration for the contentItem that will be created
+ * @param {LayoutManager} layoutManager
+ *
+ * @constructor
+ */
+lm.controls.DragSource = function( element, itemConfig, layoutManager ) {
+	this._element = element;
+	this._itemConfig = itemConfig;
+	this._layoutManager = layoutManager;
+	this._dragListener = null;
+
+	this._createDragListener();
+};
+
+lm.utils.copy( lm.controls.DragSource.prototype, {
+	
+	/**
+	 * Called initially and after every drag
+	 *
+	 * @returns {void}
+	 */
+	_createDragListener: function() {
+		if( this._dragListener !== null ) {
+			this._dragListener.destroy();
+		}
+		
+		this._dragListener = new lm.utils.DragListener( this._element );
+		this._dragListener.on( 'dragStart', this._onDragStart, this );
+		this._dragListener.on( 'dragStop', this._createDragListener, this );
+	},
+
+	/**
+	 * Callback for the DragListener's dragStart event
+	 *
+	 * @param   {int} x the x position of the mouse on dragStart
+	 * @param   {int} y the x position of the mouse on dragStart
+	 *
+	 * @returns {void}
+	 */
+	_onDragStart: function( x, y ) {
+		var contentItem = this._layoutManager._$normalizeContentItem( this._itemConfig );
+		new lm.controls.DragProxy( x, y, this._dragListener, this._layoutManager, contentItem, null );
+	}
+});
+
 lm.controls.DropTargetIndicator = function() {
 	this.element = $( lm.controls.DropTargetIndicator._template );
 	$(document.body).append( this.element );
@@ -895,6 +1029,12 @@ lm.controls.Header = function( layoutManager, parent ) {
 
 	this.layoutManager = layoutManager;
 	this.element = $( lm.controls.Header._template );
+
+	if( this.layoutManager.config.settings.selectionEnabled === true ) {
+		this.element.addClass( 'lm_selectable' );
+		this.element.click( lm.utils.fnBind( this._onHeaderClick, this ) );
+	}
+	
 	this.element.height( layoutManager.config.dimensions.headerHeight );
 	this.tabsContainer = this.element.find( '.lm_tabs' );
 	this.controlsContainer = this.element.find( '.lm_controls' );
@@ -970,6 +1110,12 @@ lm.utils.copy( lm.controls.Header.prototype, {
 		}
 	
 		this.element.remove();
+	},
+
+	_onHeaderClick: function( event ) {
+		if( event.target === this.element[ 0 ] ) {
+			this.parent.select();
+		}
 	},
 	
 	setActiveContentItem: function( contentItem ) {
@@ -1234,6 +1380,14 @@ lm.errors.ConfigurationError.prototype = new Error();
  * @param {item node configuration} config
  * @param {lm.item} parent
  *
+ * @event stateChanged
+ * @event itemDestroyed
+ * @event itemCreated
+ * @event componentCreated
+ * @event rowCreated
+ * @event columnCreated
+ * @event stackCreated
+ *
  * @constructor
  */
 lm.items.AbstractContentItem = function( layoutManager, config, parent ) {
@@ -1255,6 +1409,7 @@ lm.items.AbstractContentItem = function( layoutManager, config, parent ) {
 
 	this.layoutManager = layoutManager;
 	this._pendingEventPropagations = {};
+	this._throttledEvents = [ 'stateChanged' ];
 
 	this.on( lm.utils.EventEmitter.ALL_EVENT, this._propagateEvent, this );
 	
@@ -1428,6 +1583,20 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		this._$emitBubblingEvent( 'stateChanged' );
 	},
 
+	select: function() {
+		if( this.layoutManager.selectedItem !== this ) {
+			this.layoutManager.selectItem( this, true );
+			this.element.addClass( 'lm_selected' );
+		}
+	},
+
+	deselect: function() {
+		if( this.layoutManager.selectedItem === this ) {
+			this.layoutManager.selectedItem = null;
+			this.element.removeClass( 'lm_selected' );
+		}
+	},
+
 	/****************************************
 	* SELECTOR
 	****************************************/
@@ -1513,6 +1682,7 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 	_$destroy: function() {
 		this.callDownwards( '_$destroy', [], true, true );
 		this.element.remove();
+		this._$emitBubblingEvent( 'itemDestroyed' );
 	},
 
 	/**
@@ -1557,13 +1727,23 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 	_$init: function() {
 		var i;
 		this.setSize();
+
 		for( i = 0; i < this.contentItems.length; i++ ) {
 			this.childElementContainer.append( this.contentItems[ i ].element );
 		}
 
 		this.isInitialised = true;
+		this._$emitBubblingEvent( 'itemCreated' );
+		this._$emitBubblingEvent( this.type + 'Created' );
 	},
 
+	/**
+	 * Emit an event that bubbles up the item tree.
+	 *
+	 * @param   {String} name The name of the event
+	 *
+	 * @returns {void}
+	 */
 	_$emitBubblingEvent: function( name ) {
 		var event = new lm.utils.BubblingEvent( name, this );
 		this.emit( name, event );
@@ -1621,17 +1801,23 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		if( event instanceof lm.utils.BubblingEvent &&
 			event.isPropagationStopped === false &&
 			this.isInitialised === true ) {
-			if( this.isRoot === false ) {
-				if( !this.parent ) debugger;
+			
+			/**
+			 * In some cases (e.g. if an element is created from a DragSource) it
+			 * doesn't have a parent and is not below root. If that's the case
+			 * propagate the bubbling event from the top level of the substree directly
+			 * to the layoutManager
+			 */
+			if( this.isRoot === false && this.parent ) {
 				this.parent.emit.apply( this.parent, Array.prototype.slice.call( arguments, 0 ) );
 			} else {
-				this._scheduleEventPropagationToLayoutManager( name );
+				this._scheduleEventPropagationToLayoutManager( name, event );
 			}
 		}
 	},
 
 	/**
-	 * All raw events bubble up to the root element. The events that
+	 * All raw events bubble up to the root element. Some events that
 	 * are propagated to - and emitted by - the layoutManager however are
 	 * only string-based, batched and sanitized to make them more usable
 	 *
@@ -1640,11 +1826,16 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 	 * @private
 	 * @returns {void}
 	 */
-	_scheduleEventPropagationToLayoutManager: function( name ) {
-		if( this._pendingEventPropagations[ name ] !== true ) {
-			this._pendingEventPropagations[ name ] = true;
-			lm.utils.animFrame( lm.utils.fnBind( this._propagateEventToLayoutManager, this, [ name ] ) );
+	_scheduleEventPropagationToLayoutManager: function( name, event ) {
+		if( lm.utils.indexOf( name, this._throttledEvents ) === -1 ) {
+			this.layoutManager.emit( name, event.origin );
+		} else {
+			if( this._pendingEventPropagations[ name ] !== true ) {
+				this._pendingEventPropagations[ name ] = true;
+				lm.utils.animFrame( lm.utils.fnBind( this._propagateEventToLayoutManager, this, [ name, event ] ) );
+			}
 		}
+		
 	},
 
 	/**
@@ -1655,11 +1846,10 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 	 * @private
 	 * @returns {void}
 	 */
-	_propagateEventToLayoutManager: function( name ) {
+	_propagateEventToLayoutManager: function( name, event ) {
 		this._pendingEventPropagations[ name ] = false;
-		this.layoutManager.emit( name );
+		this.layoutManager.emit( name, event );
 	}
-	
 });
 /**
  * @param {[type]} layoutManager [description]
