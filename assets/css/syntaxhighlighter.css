@@ -1,149 +1,104 @@
-/*
+code[class*="language-"],
+pre[class*="language-"] {
+    direction: ltr;
+    font-family: Consolas, Monaco, 'Andale Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
 
-Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-license.org/
+    -webkit-font-smoothing: subpixel-antialiased;
 
-*/
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: #23241f;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
 }
 
-.hljs,
-.hljs-tag,
-.css .hljs-rules,
-.css .hljs-value,
-.css .hljs-function
-.hljs-preprocessor,
-.hljs-pragma {
-  color: #f8f8f2;
+/* code blocks */
+pre[class*="language-"] {
+    padding: 0.5em;
+    margin: 0.5em 0;
+    overflow: auto;
 }
 
-.hljs-strongemphasis,
-.hljs-strong,
-.hljs-emphasis {
-  color: #a8a8a2;
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #272822;
 }
 
-.hljs-bullet,
-.hljs-blockquote,
-.hljs-horizontal_rule,
-.hljs-number,
-.hljs-regexp,
-.alias .hljs-keyword,
-.hljs-literal,
-.hljs-hexcolor {
-  color: #ae81ff;
+/* inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
 }
 
-.hljs-tag .hljs-value,
-.hljs-code,
-.hljs-title,
-.css .hljs-class,
-.hljs-class .hljs-title:last-child {
-  color: #a6e22e;
+.namespace {
+    opacity: .7;
 }
 
-.hljs-link_url {
-  font-size: 80%;
+.token {
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
-.hljs-strong,
-.hljs-strongemphasis {
-  font-weight: bold;
+/* foreground */
+code[class*="language-"],
+pre[class*="language-"]
+.token.punctuation,
+.token.entity,
+.token.url {
+    color: #f8f8f2; /* white */
 }
 
-.hljs-emphasis,
-.hljs-strongemphasis,
-.hljs-class .hljs-title:last-child {
-  font-style: italic;
+/* comment */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #75715e; /* grey */
 }
 
-.hljs-keyword,
-.hljs-function,
-.hljs-change,
-.hljs-winutils,
-.hljs-flow,
-.lisp .hljs-title,
-.clojure .hljs-built_in,
-.nginx .hljs-title,
-.tex .hljs-special,
-.hljs-header,
-.hljs-attribute,
-.hljs-symbol,
-.hljs-symbol .hljs-string,
-.hljs-tag .hljs-title,
-.hljs-value,
-.alias .hljs-keyword:first-child,
-.css .hljs-tag,
-.css .unit,
-.css .hljs-important {
-  color: #f92672;
+/* string */
+.token.regex,
+.token.string,
+.token.attr-value {
+    color: #e6db74; /* yellow */
 }
 
-.hljs-function .hljs-keyword,
-.hljs-class .hljs-keyword:first-child,
-.hljs-constant,
-.css .hljs-attribute {
-  color: #66d9ef;
+/* constant + number */
+.token.boolean,
+.token.number {
+    color: #ae81ff; /* purple */
 }
 
-.hljs-variable,
-.hljs-params,
-.hljs-class .hljs-title {
-  color: #f8f8f2;
+/* tag name + keyword */
+.token.atrule,
+.token.tag,
+.token.keyword,
+.token.operator,
+.token.important {
+    color: #f92672; /* magenta */
 }
 
-.hljs-string,
-.css .hljs-id,
-.hljs-subst,
-.haskell .hljs-type,
-.ruby .hljs-class .hljs-parent,
-.hljs-built_in,
-.django .hljs-template_tag,
-.django .hljs-variable,
-.smalltalk .hljs-class,
-.django .hljs-filter .hljs-argument,
-.smalltalk .hljs-localvars,
-.smalltalk .hljs-array,
-.hljs-attr_selector,
-.hljs-pseudo,
-.hljs-addition,
-.hljs-stream,
-.hljs-envvar,
-.apache .hljs-tag,
-.apache .hljs-cbracket,
-.tex .hljs-command,
-.hljs-prompt,
-.hljs-link_label,
-.hljs-link_url {
-  color: #e6db74;
+/* CSS selector */
+.token.attr-name,
+.token.selector {
+    color: #9ee22d; /* green */
 }
 
-.hljs-comment,
-.hljs-javadoc,
-.java .hljs-annotation,
-.python .hljs-decorator,
-.hljs-template_comment,
-.hljs-pi,
-.hljs-doctype,
-.hljs-deletion,
-.hljs-shebang,
-.apache .hljs-sqbracket,
-.tex .hljs-formula {
-  color: #75715e;
+/* CSS property */
+
+.token.property {
+    color: #66d9ef; /* blue */
 }
 
-.coffeescript .javascript,
-.javascript .xml,
-.tex .hljs-formula,
-.xml .javascript,
-.xml .vbscript,
-.xml .css,
-.xml .hljs-cdata,
-.xml .php,
-.php .xml {
-  opacity: 0.5;
+.token.important {
+    font-weight: bold;
+}
+
+.token.entity {
+    cursor: help;
 }

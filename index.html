@@ -6,15 +6,19 @@
 
 	<link rel="stylesheet" type="text/css" href="assets\css\screen.css" />
 	
+	<script type="text/javascript">
+	document.createElement( 'header' );
+	document.createElement( 'nav' );
+	</script>
 </head>
 <body class="category_"> 
 	<div class="topSection">
-		<header class="orangeGradient ">
+		<div id="header" class="orangeGradient ">
 			<h1><a href=".">GoldenLayout the ultimate webapp layout manager</a></h1>
 			<a class="download" href="download">download</a>
-		</header>
+		</div>
 
-		<nav >
+		<div id="nav" >
 			
 			<ul>
 				<li ><a href=".">START</a></li>
@@ -24,7 +28,7 @@
 				<li ><a href="docs">DOCS</a></li>
 				<li ><a href="buylicense">BUY</a></li>
 			</ul>
-		</nav>
+		</div>
 	</div>
 	
 	<div class="content">
@@ -162,6 +166,30 @@
 	</div>
 	
 
+	<div id="footer">
+		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
+		<ul class="footerItems">
+			<li class="news">
+				<h4>News</h4>
+				<ul>
+					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>New DragSource feature. Drag any element into your layout</li>
+				</ul>
+			</li>
+
+			<li class="contact">
+				<h4>Contact</h4>
+				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+			</li>
+
+			<li class="footerItem about">
+				<h4>About</h4>
+				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+			</li>
+		</ul>
+	</div>
+	
 	
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

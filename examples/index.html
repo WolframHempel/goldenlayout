@@ -6,15 +6,19 @@
 
 	<link rel="stylesheet" type="text/css" href="..\assets\css\screen.css" />
 	
+	<script type="text/javascript">
+	document.createElement( 'header' );
+	document.createElement( 'nav' );
+	</script>
 </head>
 <body class="category_examples"> 
 	<div class="topSection">
-		<header class="orangeGradient micro">
+		<div id="header" class="orangeGradient micro">
 			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
 			<a class="download" href="..\download">download</a>
-		</header>
+		</div>
 
-		<nav class="standalone">
+		<div id="nav" class="standalone">
 			
 			<img src="..\assets\images\hoxton-background.jpg" />
 			
@@ -26,7 +30,7 @@
 				<li ><a href="..\docs">DOCS</a></li>
 				<li ><a href="..\buylicense">BUY</a></li>
 			</ul>
-		</nav>
+		</div>
 	</div>
 	
 	<div class="content">
@@ -36,7 +40,11 @@
 	<li><a href="#0ad20a5d5652d68ff83ec3ff23bba4a3">column</a></li>
 	<li><a href="#ee9d05f44e56d8ac08817e76f86bcbbe">stack</a></li>
 	<li class="head">Configurations</li>
-	<li><a href="#849a1cd2afcc95b474f621635ef5b590">Golden Spiral</a></li>
+	<li><a href="#849a1cd2afcc95b474f621635ef5b590">Golden Spiral</a></li>	
+	<li class="head">Adding Items</li>
+	<li><a href="#d508753b29c3001c24218bf3a6b25141">By drag</a></li>
+	<li><a href="#9dd68b285dc421364ac9ec13f2bdc999">By selection</a></li>
+	<li><a href="#cdcb9de8e7b305d2ec81b4ae4e392832">To element</a></li>
 </ul>
 <div class="codePenContainer">
 	<iframe id="cp_embed_fa463879c4a7e8a47a0bc41de32c4d9f" src="//codepen.io/anon/embed/fa463879c4a7e8a47a0bc41de32c4d9f?height=713&amp;theme-id=7376&amp;slug-hash=fa463879c4a7e8a47a0bc41de32c4d9f&amp;default-tab=result" scrolling="no" frameborder="0" height="713" allowtransparency="true" class="cp_embed_iframe" style="overflow: hidden;"></iframe>
@@ -98,6 +106,30 @@ $(function(){
 	</div>
 	
 
+	<div id="footer">
+		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
+		<ul class="footerItems">
+			<li class="news">
+				<h4>News</h4>
+				<ul>
+					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>New DragSource feature. Drag any element into your layout</li>
+				</ul>
+			</li>
+
+			<li class="contact">
+				<h4>Contact</h4>
+				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+			</li>
+
+			<li class="footerItem about">
+				<h4>About</h4>
+				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+			</li>
+		</ul>
+	</div>
+	
 	
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

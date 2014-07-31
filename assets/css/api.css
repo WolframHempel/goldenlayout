@@ -67,6 +67,10 @@ nav{
 /***********************
 * CONTENT
 ***********************/
+#wrapper > #content{
+	margin-bottom: 10px;
+}
+
 #wrapper > #content .section{
 	background: #fff;
 	margin-bottom: 20px;
