@@ -23,6 +23,8 @@ nav{
 	margin-top: 18px;
 }
 
+
+
 #wrapper > #content{
 	margin-left: 50px;
 	width: 700px;
@@ -38,6 +40,20 @@ nav{
 	border-right: 3px solid transparent;
 	padding-right: 10px;
 	position: relative;
+}
+
+#wrapper > #subnav li.head{
+	font-family: Kalinga;
+	font-size: 14px;
+	color: #888;
+	border-bottom: 1px solid #CCC;
+	margin-top: 30px;
+	padding-right: 0;
+	margin-right: 10px;
+}
+
+#wrapper > #subnav li.head.first{
+	margin-top: 0;
 }
 
 #wrapper > #subnav li .isActiveIndicator{

@@ -61,27 +61,15 @@
 		<a href="Container.html">Container</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
-	<li >
+	<li class="active">
 		<a href="EventEmitter.html">EventEmitter</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 </ul>
 		<div id="content">
-			<h3>Page Apidocs</h3>
-<ul>
-	<li>
-		<a href="..\docs\Config.html">Configuration</a>
-	</li>
-	<li>
-		<a href="..\docs\Container.html">Container</a>
-	</li>
-	<li>
-		<a href="..\docs\Item.html">Item</a>
-	</li>
-	<li>
-		<a href="..\docs\LayoutManager.html">LayoutManager</a>
-	</li>
-</ul>
+			<div class="section"><h2>on( eventName, callback, context )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">eventName</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of the event to describe to</td></tr><tr><td class="argument">callback</td><td class="type">Function</td><td class="optional">false</td><td class="default">-</td><td class="description">The function that should be invoked when the event occurs</td></tr><tr><td class="argument">context</td><td class="type">Object</td><td class="optional">true</td><td class="default">-</td><td class="description">The value of the <code>this</code> pointer in the callback function</td></tr></tbody></table><p>Subscribe to an event</p></div><div class="section"><h2>emit( eventName, arg1, arg2, ...argN )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">eventName</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of the event to emit</td></tr></tbody></table><p>Notify listeners of an event and pass arguments along</p></div><div class="section"><h2>trigger</h2><p>Alias for <code>emit</code></p></div><div class="section"><h2>unbind( eventName, callback, context )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">eventName</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of the event to unsubscribe from</td></tr><tr><td class="argument">callback</td><td class="type">Function</td><td class="optional">true</td><td class="default">-</td><td class="description">The function that should be invoked when the event occurs</td></tr><tr><td class="argument">context</td><td class="type">Object</td><td class="optional">true</td><td class="default">-</td><td class="description">The value of the <code>this</code> pointer in the callback function</td></tr></tbody></table><p>Unsubscribes either all listeners if just an eventName is provided, just a specific callback
+if invoked with eventName and callback or just a specific callback with a specific context if invoked
+with all three arguments.</p></div><div class="section"><h2>off( eventName, callback, context )</h2><p>Alias for <code>unbind</code></p><p></div></p>
 			
 			<h3>Comments and Questions</h3>
 			<div id="disqusContainer">
