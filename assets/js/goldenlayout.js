@@ -1,4 +1,4 @@
-GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"items":{},"utils":{},"errors":{}};
+GoldenLayout = (function(){var lm={"config":{},"container":{},"errors":{},"utils":{},"controls":{},"items":{}};
 
 lm.utils.F = function () {};
 	
@@ -106,6 +106,14 @@ lm.utils.removeFromArray = function( item, array ) {
 	}
 
 	array.splice( index, 1 );
+};
+
+lm.utils.now = function() {
+	if( typeof Date.now === 'function' ) {
+		return Date.now();
+	} else {
+		return ( new Date() ).getTime();
+	}
 };
 lm.utils.EventEmitter = function()
 {
@@ -301,6 +309,7 @@ lm.LayoutManager = function( config, container ) {
 	this.config = this._createConfig( config );
 	this.container = container;
 	this.dropTargetIndicator = null;
+	this.transitionIndicator = null;
 	this.tabDropPlaceholder = $( '<div class="lm_drop_tab_placeholder"></div>' );
 
 	this._typeToItem = {
@@ -406,6 +415,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 
 		this._setContainer();
 		this.dropTargetIndicator = new lm.controls.DropTargetIndicator( this.container );
+		this.transitionIndicator = new lm.controls.TransitionIndicator();
 		this.updateSize();
 		this._create( this.config );
 		this._bindEvents();
@@ -449,7 +459,8 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		this.root.callDownwards( '_$destroy', [], true );
 		this.root.contentItems = [];
 		this.tabDropPlaceholder.remove();
-		this.dropTargetIndicator.element.remove();
+		this.dropTargetIndicator.destroy();
+		this.transitionIndicator.destroy();
 	},
 
 	/**
@@ -758,6 +769,107 @@ lm.config.defaultConfig = {
 		popout: 'open in new window'
 	}
 };
+lm.container.ItemContainer = function( config, parent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.width = null;
+	this.height = null;
+	this.title = config.componentName;
+	this._parent = parent;
+	this._config = config;
+	this._layoutManager = layoutManager;
+	this.isHidden = false;
+	this._element = $([
+		'<div class="lm_item_container">',
+			'<div class="lm_content"></div>',
+		'</div>'
+	].join( '' ));
+	
+	this._contentElement = this._element.find( '.lm_content' );
+};
+
+lm.utils.copy( lm.container.ItemContainer.prototype, {
+
+	/**
+	 * Get the inner DOM element the container's content
+	 * is intended to live in
+	 *
+	 * @returns {DOM element}
+	 */
+	getElement: function() {
+		return this._contentElement;
+	},
+	
+	/**
+	 * Hide the container. Notifies the containers content first
+	 * and then hides the DOM node. If the container is already hidden
+	 * this should have no effect
+	 *
+	 * @returns {void}
+	 */
+	hide: function() {
+		this.emit( 'hide' );
+		this.isHidden = true;
+		this._element.hide();
+	},
+	
+	/**
+	 * Shows a previously hidden container. Notifies the
+	 * containers content first and then shows the DOM element.
+	 * If the container is already visible this has no effect.
+	 *
+	 * @returns {void}
+	 */
+	show: function() {
+		this.emit( 'show' );
+		this.isHidden = false;
+		this._element.show();
+	},
+	
+	/**
+	 * Set's the containers size. Can be called by both
+	 * the containers content as well as the contentItem
+	 * containing it. Both arguments are optional, if
+	 * one is omitted the parent elements size is used instead
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
+	},
+	
+	/**
+	 * Closes the container if it is closable. Can be called by
+	 * both the component within at as well as the contentItem containing
+	 * it. Emits a close event before the container itself is closed.
+	 *
+	 * @returns {void}
+	 */
+	close: function() {
+		if( this._config.isClosable ) {
+			this.emit( 'close' );
+			this._parent.close();
+		}
+	},
+
+	/**
+	 * Notifies the layout manager of a stateupdate
+	 *
+	 * @param {serialisable} state
+	 */
+	setState: function( state ) {
+		this._config.componentState = state;
+		this._parent._$emitBubblingEvent( 'stateChanged' );
+	}
+});
 lm.controls.BrowserPopout = function( contentItem ) {
 	this._contentItem = contentItem;
 	this._contentItem.parent.removeChild( this._contentItem, true );
@@ -994,8 +1106,10 @@ lm.utils.copy( lm.controls.DragSource.prototype, {
 	 * @returns {void}
 	 */
 	_onDragStart: function( x, y ) {
-		var contentItem = this._layoutManager._$normalizeContentItem( this._itemConfig );
-		new lm.controls.DragProxy( x, y, this._dragListener, this._layoutManager, contentItem, null );
+		var contentItem = this._layoutManager._$normalizeContentItem( this._itemConfig ),
+			dragProxy = new lm.controls.DragProxy( x, y, this._dragListener, this._layoutManager, contentItem, null );
+		
+		this._layoutManager.transitionIndicator.transitionElements( this._element, dragProxy.element );
 	}
 });
 
@@ -1007,6 +1121,10 @@ lm.controls.DropTargetIndicator = function() {
 lm.controls.DropTargetIndicator._template = '<div class="lm_dropTargetIndicator"></div>';
 
 lm.utils.copy( lm.controls.DropTargetIndicator.prototype, {
+	destroy: function() {
+		this.element.remove();
+	},
+
 	highlight: function( x1, y1, x2, y2 ) {
 		this.highlightArea({ x1:x1, y1:y1, x2:x2, y2:y2 });
 	},
@@ -1258,105 +1376,66 @@ lm.utils.copy( lm.controls.Tab.prototype,{
 
 });
 
-lm.container.ItemContainer = function( config, parent, layoutManager ) {
-	lm.utils.EventEmitter.call( this );
+lm.controls.TransitionIndicator = function() {
+	this._element = $( '<div class="lm_transition_indicator"></div>' );
+	$( document.body ).append( this._element );
 
-	this.width = null;
-	this.height = null;
-	this.title = config.componentName;
-	this._parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
-	this.isHidden = false;
-	this._element = $([
-		'<div class="lm_item_container">',
-			'<div class="lm_content"></div>',
-		'</div>'
-	].join( '' ));
-	
-	this._contentElement = this._element.find( '.lm_content' );
+	this._toElement = null;
+	this._fromDimensions = null;
+	this._totalAnimationDuration = 200;
+	this._animationStartTime = null;
 };
 
-lm.utils.copy( lm.container.ItemContainer.prototype, {
-
-	/**
-	 * Get the inner DOM element the container's content
-	 * is intended to live in
-	 *
-	 * @returns {DOM element}
-	 */
-	getElement: function() {
-		return this._contentElement;
-	},
-	
-	/**
-	 * Hide the container. Notifies the containers content first
-	 * and then hides the DOM node. If the container is already hidden
-	 * this should have no effect
-	 *
-	 * @returns {void}
-	 */
-	hide: function() {
-		this.emit( 'hide' );
-		this.isHidden = true;
-		this._element.hide();
-	},
-	
-	/**
-	 * Shows a previously hidden container. Notifies the
-	 * containers content first and then shows the DOM element.
-	 * If the container is already visible this has no effect.
-	 *
-	 * @returns {void}
-	 */
-	show: function() {
-		this.emit( 'show' );
-		this.isHidden = false;
-		this._element.show();
-	},
-	
-	/**
-	 * Set's the containers size. Can be called by both
-	 * the containers content as well as the contentItem
-	 * containing it. Both arguments are optional, if
-	 * one is omitted the parent elements size is used instead
-	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
-	 * 
-	 * @returns {void}
-	 */
-	setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
-		}
-	},
-	
-	/**
-	 * Closes the container if it is closable. Can be called by
-	 * both the component within at as well as the contentItem containing
-	 * it. Emits a close event before the container itself is closed.
-	 *
-	 * @returns {void}
-	 */
-	close: function() {
-		if( this._config.isClosable ) {
-			this.emit( 'close' );
-			this._parent.close();
-		}
+lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
+	destroy: function() {
+		this._element.remove();
 	},
 
-	/**
-	 * Notifies the layout manager of a stateupdate
-	 *
-	 * @param {serialisable} state
-	 */
-	setState: function( state ) {
-		this._config.componentState = state;
-		this._parent._$emitBubblingEvent( 'stateChanged' );
+	transitionElements: function( fromElement, toElement ) {
+		/**
+		 * TODO - This is not quite as cool as expected. Review.
+		 */
+		return;
+		this._toElement = toElement;
+		this._animationStartTime = lm.utils.now();
+		this._fromDimensions = this._measure( fromElement );
+		this._fromDimensions.opacity = 0.8;
+		this._element.show().css( this._fromDimensions );
+		lm.utils.animFrame( this._nextAnimationFrame.bind( this ) );
+	},
+
+	_nextAnimationFrame: function() {
+		var toDimensions = this._measure( this._toElement ),
+			animationProgress = ( lm.utils.now() - this._animationStartTime ) / this._totalAnimationDuration,
+			currentFrameStyles = {},
+			cssProperty;
+
+		if( animationProgress >= 1 ) {
+			this._element.hide();
+			return;
+		}
+
+		toDimensions.opacity = 0;
+
+		for( cssProperty in this._fromDimensions ) {
+			currentFrameStyles[ cssProperty ] = this._fromDimensions[ cssProperty ] +
+			( toDimensions[ cssProperty] - this._fromDimensions[ cssProperty ] ) *
+			animationProgress;
+		}
+		
+		this._element.css( currentFrameStyles );
+		lm.utils.animFrame( this._nextAnimationFrame.bind( this ) );
+	},
+
+	_measure: function( element ) {
+		var offset = element.offset();
+
+		return {
+			left: offset.left,
+			top: offset.top,
+			width: element.outerWidth(),
+			height: element.outerHeight()
+		};
 	}
 });
 lm.errors.ConfigurationError = function( message, node ) {
@@ -2017,6 +2096,7 @@ lm.utils.copy( lm.items.RowOrColumn.prototype, {
 		newItemSize = ( 1 / this.contentItems.length ) * 100;
 		
 		if( _$suspendResize === true ) {
+			this._$emitBubblingEvent( 'stateChanged' );
 			return;
 		}
 		
@@ -2490,6 +2570,7 @@ lm.utils.copy( lm.items.Stack.prototype, {
 			hasCorrectParent = ( isVertical && this.parent.isColumn ) || ( isHorizontal && this.parent.isRow ),
 			type = isVertical ? 'column' : 'row',
 			dimension = isVertical ? 'height' : 'width',
+			index,
 			stack,
 			rowOrColumn;
 
@@ -2507,8 +2588,11 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		 * layd out in the correct way. Just add it as a child
 		 */
 		if( hasCorrectParent ) {
-			this.parent.addChild( contentItem, insertBefore ? 0 : undefined );
-
+			index = lm.utils.indexOf( this, this.parent.contentItems );
+			this.parent.addChild( contentItem, insertBefore ? index : index + 1, true );
+			this.config[ dimension ] *= 0.5;
+			contentItem.config[ dimension ] = this.config[ dimension ];
+			this.parent.callDownwards( 'setSize' );
 		/*
 		 * This handles items that are dropped on top or bottom of a row or left / right of a column. We need
 		 * to create the appropriate contentItem for them to life in
