@@ -15,29 +15,30 @@
 	</script>
 </head>
 <body class="category_docs"> 
-	<div class="topSection">
-		<div id="header" class="orangeGradient micro">
-			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
-			<a class="download" href="..\download">download</a>
-		</div>
+	<div id="outerWrapper">
+		<div class="topSection">
+			<div id="header" class="orangeGradient micro">
+				<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
+				<a class="download" href="..\download">download</a>
+			</div>
 
-		<div id="nav" class="standalone">
-			
-			<img src="..\assets\images\hoxton-background.jpg" />
-			
-			<ul>
-				<li ><a href="..">START</a></li>
-				<li ><a href="..\download">DOWNLOAD</a></li>
-				<li ><a href="..\examples">EXAMPLES</a></li>
-				<li ><a href="..\tutorials">TUTORIALS</a></li>
-				<li class="active"><a href="..\docs">DOCS</a></li>
-				<li ><a href="..\buylicense">BUY</a></li>
-			</ul>
+			<div id="nav" class="standalone">
+				
+				<img src="..\assets\images\hoxton-background.jpg" />
+				
+				<ul>
+					<li ><a href="..">START</a></li>
+					<li ><a href="..\download">DOWNLOAD</a></li>
+					<li ><a href="..\examples">EXAMPLES</a></li>
+					<li ><a href="..\tutorials">TUTORIALS</a></li>
+					<li class="active"><a href="..\docs">DOCS</a></li>
+					<li ><a href="..\buylicense">BUY</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
-	
-	<div id="wrapper">
-		<ul id="subnav">
+		
+		<div id="wrapper" class="main">
+			<ul id="subnav">
 	<li class="head first">Configuration</li>
 	<li >
 		<a href="Config.html">Layout Config</a>
@@ -66,56 +67,68 @@
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 </ul>
-		<div id="content">
-			<div class="section"><h2>Properties</h2><h3>config</h3><p>This items configuration in its current state</p><h3>type</h3><p>The type of the item. Can be <code>row</code>, <code>column</code>, <code>stack</code>, <code>component</code> or <code>root</code></p><h3>contentItems</h3><p>An array of items that are children of this item</p><h3>parent</h3><p>The item that it this item&#39;s parent (or null if the item is root)</p><h3>id</h3><p>A String or array of identifiers if provided in the configuration</p><h3>isInitialised</h3><p>True if the item had been initialised</p><h3>isMaximised</h3><p>True if the item is maximised</p><h3>isRoot</h3><p>True if the item is the layout&#39;s root item</p><h3>isRow</h3><p>True if the item is a row</p><h3>isColumn</h3><p>True if the item is a column</p><h3>isStack</h3><p>True if the item is a stack</p><h3>isComponent</h3><p>True if the item is a component</p><h3>layoutManager</h3><p>A reference to the layoutManager that controls this item</p><h3>element</h3><p>The item&#39;s outer element</p><h3>childElementContainer</h3><p>The item&#39;s inner element. Can be the same as the outer element.</p></div><div class="section"><h2>Events</h2><h3>stateChanged</h3><p>Fired whenever something happened to this item or its children that changes the state of the layout (as returned by <code>layout.toConfig</code>)</p><h3>itemDestroyed <Bubbling Event></h3><p>Fired whenever this item or one of its children gets destroyed</p><h3>itemCreated <Bubbling Event></h3><p>Fired whenever an item gets created as child of this item</p><h3>componentCreated <Bubbling Event></h3><p>Fired whenever a component gets created as child of this item</p><h3>rowCreated <Bubbling Event></h3><p>Fired whenever a row gets created as child of this item</p><h3>columnCreated <Bubbling Event></h3><p>Fired whenever a column gets created as child of this item</p><h3>stackCreated <Bubbling Event></h3><p>Fired whenever a stack gets created as child of this item</p></div><div class="section"><h2>addChild( itemOrItemConfig, index )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">itemOrItemConfig</td><td class="type">ContentItem or Configuration</td><td class="optional">false</td><td class="default">-</td><td class="description">A content item (or tree of content items) or an ItemConfiguration to create the item from</td></tr><tr><td class="argument">index</td><td class="type">Number</td><td class="optional">true</td><td class="default">last index</td><td class="description">An optional index that determines at which position the new item should be added.</td></tr></tbody></table><p>Adds an item as a child to this item. If the item is already a part of a layout it will be removed from
+			<div id="content">
+				<div class="section"><h2>Properties</h2><h3>config</h3><p>This items configuration in its current state</p><h3>type</h3><p>The type of the item. Can be <code>row</code>, <code>column</code>, <code>stack</code>, <code>component</code> or <code>root</code></p><h3>contentItems</h3><p>An array of items that are children of this item</p><h3>parent</h3><p>The item that it this item&#39;s parent (or null if the item is root)</p><h3>id</h3><p>A String or array of identifiers if provided in the configuration</p><h3>isInitialised</h3><p>True if the item had been initialised</p><h3>isMaximised</h3><p>True if the item is maximised</p><h3>isRoot</h3><p>True if the item is the layout&#39;s root item</p><h3>isRow</h3><p>True if the item is a row</p><h3>isColumn</h3><p>True if the item is a column</p><h3>isStack</h3><p>True if the item is a stack</p><h3>isComponent</h3><p>True if the item is a component</p><h3>layoutManager</h3><p>A reference to the layoutManager that controls this item</p><h3>element</h3><p>The item&#39;s outer element</p><h3>childElementContainer</h3><p>The item&#39;s inner element. Can be the same as the outer element.</p></div><div class="section"><h2>Events</h2><h3>stateChanged</h3><p>Fired whenever something happened to this item or its children that changes the state of the layout (as returned by <code>layout.toConfig</code>)</p><h3>itemDestroyed <Bubbling Event></h3><p>Fired whenever this item or one of its children gets destroyed</p><h3>itemCreated <Bubbling Event></h3><p>Fired whenever an item gets created as child of this item</p><h3>componentCreated <Bubbling Event></h3><p>Fired whenever a component gets created as child of this item</p><h3>rowCreated <Bubbling Event></h3><p>Fired whenever a row gets created as child of this item</p><h3>columnCreated <Bubbling Event></h3><p>Fired whenever a column gets created as child of this item</p><h3>stackCreated <Bubbling Event></h3><p>Fired whenever a stack gets created as child of this item</p></div><div class="section"><h2>addChild( itemOrItemConfig, index )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">itemOrItemConfig</td><td class="type">ContentItem or Configuration</td><td class="optional">false</td><td class="default">-</td><td class="description">A content item (or tree of content items) or an ItemConfiguration to create the item from</td></tr><tr><td class="argument">index</td><td class="type">Number</td><td class="optional">true</td><td class="default">last index</td><td class="description">An optional index that determines at which position the new item should be added.</td></tr></tbody></table><p>Adds an item as a child to this item. If the item is already a part of a layout it will be removed from
 its original position before adding it to this item.</p></div><div class="section"><h2>removeChild( contentItem, keepChild )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">contentItem</td><td class="type">ContentItem</td><td class="optional">false</td><td class="default">-</td><td class="description">The contentItem that should be removed</td></tr><tr><td class="argument">keepChild</td><td class="type">Boolean</td><td class="optional">true</td><td class="default">false</td><td class="description">If true the item won&#39;t be destroyed. (Use cautiosly, if the item isn&#39;t destroyed it&#39;s up to you to destroy it later)</td></tr></div><div class="section"><h2>replaceChild( oldChild, newChild )</h2><tr><td class="argument">oldChild</td><td class="type">ContentItem</td><td class="optional">false</td><td class="default">-</td><td class="description">The contentItem that should be removed</td></tr><tr><td class="argument">newChild</td><td class="type">ContentItem or Configuration</td><td class="optional">false</td><td class="default">-</td><td class="description">A content item (or tree of content items) or an ItemConfiguration to create the item from</td></tr></tbody></table><p>Replaces oldChild with newChild</p></div><div class="section"><h2>setSize()</h2><p>Updates the items size. To actually assign a new size from within a component, use <code>container.setSize( width, height )</code></p></div><div class="section"><h2>callDownwards(functionName, functionArguments, bottomUp, skipSelf)</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">functionName</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of the method to invoke</td></tr><tr><td class="argument">functionArguments</td><td class="type">Array</td><td class="optional">true</td><td class="default">-</td><td class="description">An array of arguments to pass to every function</td></tr><tr><td class="argument">bottomUp</td><td class="type">Boolean</td><td class="optional">true</td><td class="default">false</td><td class="description">If true, the method is invoked on the lowest parts of the tree first and then bubbles upwards</td></tr><tr><td class="argument">skipSelf</td><td class="type">Boolean</td><td class="optional">true</td><td class="default">false</td><td class="description">If true, the method will only be invoked on the item&#39;s children, but not on the item itself</td></tr></tbody></table><p>A powerful, yet admittedly confusing method to recursively call methods on item in a tree. Usually you wouldn&#39;t need to use it directly, but it&#39;s used internally to setSizes, destroy parts of the item tree etc.</p></div><div class="section"><h2>remove()</h2><p>Convenience method for <code>item.parent.removeChild( item )</code></p></div><div class="section"><h2>popout()</h2><p>Removes the item from its current position in the layout and opens it in a window</p></div><div class="section"><h2>toggleMaximise()</h2><p>Maximises the item or minimises it if it&#39;s already maximised</p></div><div class="section"><h2>select</h2><p>Selects the item. Only relevant if <code>settings.selectionEnabled</code> is set to true</p></div><div class="section"><h2>deselect</h2><p>Unselects the item. Only relevant if <code>settings.selectionEnabled</code> is set to true</p></div><div class="section"><h2>getItemsByFilter(filterFunction)</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">filterFunction</td><td class="type">Function</td><td class="optional">false</td><td class="default">-</td><td class="description">A function that determines whether an item matches certain criteria</td></tr></tbody></table><p>Calls filterFunction recursively for every item in the tree. If the function returns true the item
 is added to the resulting array</p></div><div class="section"><h2>getItemsById( id )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">id</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">An id specified in the itemConfig</td></tr></tbody></table><p>Returns all items with the specified id.</p></div><div class="section"><h2>getItemsByType( type )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">type</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">&#39;row&#39;, &#39;column&#39;, &#39;stack&#39;, &#39;component&#39; or &#39;root&#39;</td></tr></tbody></table><p>Returns all items with the specified type</p></div><div class="section"><h2>getComponentsByName( componentName )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">type</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">a componentName as specified in the itemConfig</td></tr></tbody></table><p>Returns all instances of the component with the specified componentName</p><p></div></p>
-			
-			<h3>Comments and Questions</h3>
-			<div id="disqusContainer">
-				<div id="disqus_thread"></div>
-			    <script type="text/javascript">
-			        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-			        var disqus_shortname = 'goldenlayoutcom'; // required: replace example with your forum shortname
+				
+				<h3>Comments and Questions</h3>
+				<div id="disqusContainer">
+					<div id="disqus_thread"></div>
+				    <script type="text/javascript">
+				        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+				        var disqus_shortname = 'goldenlayoutcom'; // required: replace example with your forum shortname
 
-			        /* * * DON'T EDIT BELOW THIS LINE * * */
-			        (function() {
-			            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-			            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-			            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			        })();
-			    </script>
-			    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-			    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-		    
-				
-				
+				        /* * * DON'T EDIT BELOW THIS LINE * * */
+				        (function() {
+				            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+				        })();
+				    </script>
+				    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+				    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			    
+					
+					
+				</div>
 			</div>
 		</div>
+
+		
+		<div id="footerPush"></div>
 	</div>
-
-	
-
 	<div id="footer">
 		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
 		<ul class="footerItems">
 			<li class="news">
 				<h4>News</h4>
 				<ul>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>First official version released</li>
 				</ul>
 			</li>
 
 			<li class="contact">
 				<h4>Contact</h4>
-				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				<p>
+					Like to learn more?
+					<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				</p>
+				<p>
+					Support for licensees
+					<a href="mailto:support@golden-layout.com">support@goldenlayout.com</a>
+				</p>
+				<p>
+					For technical questions please also check the comment section at the bottom of docs and tutorials
+				</p>
 			</li>
 
 			<li class="footerItem about">
 				<h4>About</h4>
-				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				<p>
+					GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				</p>
+				<p>It's run by <a href="http://wolframhempel.com/">Wolfram Hempel</a></p>
 			</li>
 		</ul>
 	</div>

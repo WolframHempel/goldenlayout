@@ -15,29 +15,30 @@
 	</script>
 </head>
 <body class="category_docs"> 
-	<div class="topSection">
-		<div id="header" class="orangeGradient micro">
-			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
-			<a class="download" href="..\download">download</a>
-		</div>
+	<div id="outerWrapper">
+		<div class="topSection">
+			<div id="header" class="orangeGradient micro">
+				<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
+				<a class="download" href="..\download">download</a>
+			</div>
 
-		<div id="nav" class="standalone">
-			
-			<img src="..\assets\images\hoxton-background.jpg" />
-			
-			<ul>
-				<li ><a href="..">START</a></li>
-				<li ><a href="..\download">DOWNLOAD</a></li>
-				<li ><a href="..\examples">EXAMPLES</a></li>
-				<li ><a href="..\tutorials">TUTORIALS</a></li>
-				<li class="active"><a href="..\docs">DOCS</a></li>
-				<li ><a href="..\buylicense">BUY</a></li>
-			</ul>
+			<div id="nav" class="standalone">
+				
+				<img src="..\assets\images\hoxton-background.jpg" />
+				
+				<ul>
+					<li ><a href="..">START</a></li>
+					<li ><a href="..\download">DOWNLOAD</a></li>
+					<li ><a href="..\examples">EXAMPLES</a></li>
+					<li ><a href="..\tutorials">TUTORIALS</a></li>
+					<li class="active"><a href="..\docs">DOCS</a></li>
+					<li ><a href="..\buylicense">BUY</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
-	
-	<div id="wrapper">
-		<ul id="subnav">
+		
+		<div id="wrapper" class="main">
+			<ul id="subnav">
 	<li class="head first">Configuration</li>
 	<li >
 		<a href="Config.html">Layout Config</a>
@@ -66,8 +67,8 @@
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 </ul>
-		<div id="content">
-			<div class="section"><h2>Properties</h2><h3>root</h3><p>The topmost item in the layout item tree. In browser terms: Think of the GoldenLayout instance as
+			<div id="content">
+				<div class="section"><h2>Properties</h2><h3>root</h3><p>The topmost item in the layout item tree. In browser terms: Think of the GoldenLayout instance as
 window object and of goldenLayout.root as the document.</p><h3>container</h3><p>A reference to the jQuery-object containing the layout</p><h3>isInitialised</h3><p>True if the layout item tree has been created and the <code>initialised</code> event has been fired.</p><h3>config</h3><p>A reference of the current extended top level config.</p><div class="info">Don&#39;t rely on this object for state saving / serialisation. Use layout.toConfig() instead.</div>
 
 <h3>selectedItem</h3><p>The currently selected item or null of no item is selected. Only relevant if <code>settings.selectionEnabled</code> is set to true.</p><h3>width</h3><p>The current outer width of the layout in pixels</p><h3>height</h3><p>The current height width of the layout in pixels</p></div><div class="section"><h2>Events</h2><h3>initialised</h3><p>Fired after <code>layout.init()</code> had been called and the layout tree had been created.</p><h3>stateChanged</h3><p>Fired whenever something happened that changes the state of the layout (as returned by <code>layout.toConfig</code>)</p><h3>selectionChanged <item></h3><p>Fired when the user selects a new / different item. Only relevant if <code>settings.selectionEnabled</code> is true.</p><h3>itemDestroyed <item></h3><p>Fired whenever an item gets destroyed</p><h3>itemCreated <item></h3><p>Fired whenever an item gets created</p><h3>componentCreated <component></h3><p>Fired whenever a component gets created</p><h3>rowCreated <row></h3><p>Fired whenever a row gets created</p><h3>columnCreated <column></h3><p>Fired whenever a column gets created</p><h3>stackCreated <stack></h3><p>Fired whenever a stack gets created</p></div><div class="section"><h2>GoldenLayout( configuration, container )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">configuration</td><td class="type">configuration</td><td class="optional">false</td><td class="default">-</td><td class="description">A golden layout configuration object</td></tr><tr><td class="argument">container</td><td class="type">DOM | jQuery element</td><td class="optional">true</td><td class="default">document.body</td><td class="description">The container the layout will be initialised in</td></tr></tbody></table><p>Constructs a new layout. The simplest use case would look something like this</p><pre><code>config <span class="token operator" >=</span> <span class="token punctuation" >{</span>
@@ -109,52 +110,64 @@ registerComponent is the counterpart to the componentName and componentState con
 document is ready it attaches itself as a listener to the document and executes once it becomes ready.</p></div><div class="section"><h2>toConfig()</h2><p>Returns the current state of the layout and its components as a serialisable object.</p></div><div class="section"><h2>getComponent( name )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">name</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of a previously registered component</td></tr></tbody></table><p>Returns a component that was previously registered with <code>layout.registerComponent()</code>.</p></div><div class="section"><h2>updateSize(width, height)</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">width</td><td class="type">Integer</td><td class="optional">true</td><td class="default">The container elements width</td><td class="description">The outer width the layout should be resized to</td></tr><tr><td class="argument">height</td><td class="type">Integer</td><td class="optional">true</td><td class="default">The container elements height</td><td class="description">The outer height the layout should be resized to</td></tr></tbody></table><p>Resizes the layout. If no arguments are provided GoldenLayout measures its container
 and resizes accordingly.</p></div><div class="section"><h2>destroy()</h2><p>Destroys the layout. Recursively calls destroy on all components and content items,
 removes all event listeners and finally removes itself from the DOM.</p></div><div class="section"><h2>createContentItem( itemConfiguration, parent )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">itemConfiguration</td><td class="type">Object</td><td class="optional">false</td><td class="default">-</td><td class="description">An item configuration (can be an entire tree of items)</td></tr><tr><td class="argument">parent</td><td class="type">Item</td><td class="optional">true</td><td class="default">-</td><td class="description">A parent item</td></tr></tbody></table><p>Creates a new content item or tree of content items from configuration. Usually you wouldn&#39;t call this directly, but instead use methods like <code>layout.createDragSource()</code>, <code>item.addChild()</code> or <code>item.replaceChild()</code> that all call this method implicitly.</p></div><div class="section"><h2>createDragSource( element, itemConfiguration )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">element</td><td class="type">DOM or jQuery element</td><td class="optional">false</td><td class="default">-</td><td class="description">The DOM element that will be turned into a dragSource</td></tr><tr><td class="argument">itemConfiguration</td><td class="type">Object</td><td class="optional">false</td><td class="default">-</td><td class="description">An item configuration (can be an entire tree of items)</td></tr></tbody></table><p>Turns a DOM element into a dragSource, meaning that the user can drag the element directly onto the layout where it turns into a contentItem.</p></div><div class="section"><h2>selectItem( contentItem )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">contentItem</td><td class="type">Object</td><td class="optional">false</td><td class="default">-</td><td class="description">A ContentItem instance</td></tr></tbody></table><p>If <code>settings.selectionEnabled</code> is set to true, this allows to select items programmatically.</p><p></div></p>
-			
-			<h3>Comments and Questions</h3>
-			<div id="disqusContainer">
-				<div id="disqus_thread"></div>
-			    <script type="text/javascript">
-			        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-			        var disqus_shortname = 'goldenlayoutcom'; // required: replace example with your forum shortname
+				
+				<h3>Comments and Questions</h3>
+				<div id="disqusContainer">
+					<div id="disqus_thread"></div>
+				    <script type="text/javascript">
+				        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+				        var disqus_shortname = 'goldenlayoutcom'; // required: replace example with your forum shortname
 
-			        /* * * DON'T EDIT BELOW THIS LINE * * */
-			        (function() {
-			            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-			            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-			            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			        })();
-			    </script>
-			    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-			    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-		    
-				
-				
+				        /* * * DON'T EDIT BELOW THIS LINE * * */
+				        (function() {
+				            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+				        })();
+				    </script>
+				    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+				    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			    
+					
+					
+				</div>
 			</div>
 		</div>
+
+		
+		<div id="footerPush"></div>
 	</div>
-
-	
-
 	<div id="footer">
 		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
 		<ul class="footerItems">
 			<li class="news">
 				<h4>News</h4>
 				<ul>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>First official version released</li>
 				</ul>
 			</li>
 
 			<li class="contact">
 				<h4>Contact</h4>
-				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				<p>
+					Like to learn more?
+					<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				</p>
+				<p>
+					Support for licensees
+					<a href="mailto:support@golden-layout.com">support@goldenlayout.com</a>
+				</p>
+				<p>
+					For technical questions please also check the comment section at the bottom of docs and tutorials
+				</p>
 			</li>
 
 			<li class="footerItem about">
 				<h4>About</h4>
-				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				<p>
+					GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				</p>
+				<p>It's run by <a href="http://wolframhempel.com/">Wolfram Hempel</a></p>
 			</li>
 		</ul>
 	</div>

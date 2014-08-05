@@ -12,27 +12,28 @@
 	</script>
 </head>
 <body class="category_"> 
-	<div class="topSection">
-		<div id="header" class="orangeGradient ">
-			<h1><a href=".">GoldenLayout the ultimate webapp layout manager</a></h1>
-			<a class="download" href="download">download</a>
-		</div>
+	<div id="outerWrapper">
+		<div class="topSection">
+			<div id="header" class="orangeGradient ">
+				<h1><a href=".">GoldenLayout the ultimate webapp layout manager</a></h1>
+				<a class="download" href="download">download</a>
+			</div>
 
-		<div id="nav" >
-			
-			<ul>
-				<li ><a href=".">START</a></li>
-				<li ><a href="download">DOWNLOAD</a></li>
-				<li ><a href="examples">EXAMPLES</a></li>
-				<li ><a href="tutorials">TUTORIALS</a></li>
-				<li ><a href="docs">DOCS</a></li>
-				<li ><a href="buylicense">BUY</a></li>
-			</ul>
+			<div id="nav" >
+				
+				<ul>
+					<li ><a href=".">START</a></li>
+					<li ><a href="download">DOWNLOAD</a></li>
+					<li ><a href="examples">EXAMPLES</a></li>
+					<li ><a href="tutorials">TUTORIALS</a></li>
+					<li ><a href="docs">DOCS</a></li>
+					<li ><a href="buylicense">BUY</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
-	
-	<div class="content">
-		<div class="startExample">
+		
+		<div class="content main">
+			<div class="startExample">
 	<img src="assets\images\hoxton-background.jpg" />
 	<div id="exampleScreen">
 		<div id="tryMeArrow"></div>
@@ -163,29 +164,41 @@
 	myLayout.registerComponent( 'watchlist', Component );
 	myLayout.init();
 </script>
+		</div>
+		
+		<div id="footerPush"></div>
 	</div>
-	
-
 	<div id="footer">
 		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
 		<ul class="footerItems">
 			<li class="news">
 				<h4>News</h4>
 				<ul>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>First official version released</li>
 				</ul>
 			</li>
 
 			<li class="contact">
 				<h4>Contact</h4>
-				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				<p>
+					Like to learn more?
+					<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				</p>
+				<p>
+					Support for licensees
+					<a href="mailto:support@golden-layout.com">support@goldenlayout.com</a>
+				</p>
+				<p>
+					For technical questions please also check the comment section at the bottom of docs and tutorials
+				</p>
 			</li>
 
 			<li class="footerItem about">
 				<h4>About</h4>
-				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				<p>
+					GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				</p>
+				<p>It's run by <a href="http://wolframhempel.com/">Wolfram Hempel</a></p>
 			</li>
 		</ul>
 	</div>

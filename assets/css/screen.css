@@ -11,6 +11,17 @@ html, body{
 	height: 100%;
 }
 
+#outerWrapper{
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	overflow: hidden;
+	margin-bottom: -147px;
+}
+
+#footerPush{
+	height: 147px;
+}
 
 /****************************
 * FONTS
@@ -373,6 +384,7 @@ html, body{
 * FOOTER
 ****************************/
 #footer{
+	height: 136px;
 	clear: left;
 	padding: 5px;
 	background: url(../images/bg_dark_pattern.png);
@@ -383,7 +395,7 @@ html, body{
 
 #footer *{
 	color: #CCC;
-	font: 12px/16px Arial, sans-serif;
+	font: 11px/15px Arial, sans-serif;
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
@@ -415,6 +427,9 @@ html, body{
 	border-right: 1px solid #AAA;
 }
 
+#footer ul.footerItems > li p{
+	margin-bottom: 3px;
+}
 #footer ul.footerItems > li.about{
 	border: none;
 }
@@ -503,13 +518,13 @@ html, body{
 #startPageFeatures li p{
 	font: 12px Arial,sans-serif;
 }
+
 /****************************
 * PAYMENT FORM
 ****************************/
 #payment label{
 	display: block;
 }
-
 
 /****************************
 * EXAMPLES PAGE
@@ -556,6 +571,9 @@ html, body{
 	box-shadow:0 3px 3px rgba(0,0,0,0.9)
 }
 
+/**********************************
+* EMBEDDED CONTENT
+**********************************/
 .codePenContainer{
 	float: left;
 	padding: 0;
@@ -565,4 +583,156 @@ html, body{
 	background: #fff;
 	border-top: 1px solid #fff;
 	padding: 10px;
+}
+
+/**********************************
+* LICENSE PAGE
+**********************************/
+#license{
+	width: 800px;
+	margin: 20px auto;
+}
+
+.licenseContainer *{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	font: 12px/16px Arial, sans-serif;
+	color: #222;
+}
+
+#license .cc_license_info{
+	overflow: hidden;
+}
+
+#license h2.first{
+	margin-top: 0;
+}
+
+#license h2{
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+	margin-top: 50px;
+	border-bottom: 1px solid #ccc;
+	font: 14px Kalinga;
+}
+
+#license .cc_license_info .ccLicense{
+	text-align: center;
+}
+
+#license .column{
+	width: 300px;
+	margin: 20px 50px;
+	float:left;
+	position: relative;
+}
+
+#license .licenseType h3{
+	font-weight: bold;
+	font-size: 16px;
+}
+
+#license .licenseType p{
+	font-style: italic;
+	margin: 20px 0;
+}
+
+#license .licenseType .price{
+	font-family: Kalinga;
+	font-size: 40px;
+	color: #ec6804;
+	text-align: center;
+}
+
+#license .licenseType .price small{
+	color: #ec6804;
+	font-family: Kalinga;
+}
+
+#license .licenseType form{
+	margin-top: 20px;
+}
+
+#license .licenseType .formInputs{
+	height: 100px;
+}
+
+#license .licenseType .inputGroup input{
+	width: 100%;
+	border: 1px solid #ccc;
+}
+
+#license .licenseType .buttonContainer{
+	text-align: right;
+}
+
+#license .licenseType .buttonContainer input {
+	-moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+	background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+	background-color:#007dc1;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	border:1px solid #124d77;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:13px;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #154682;
+}
+
+#license .licenseType .buttonContainer input:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0061a7), color-stop(1, #007dc1));
+	background:-moz-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-webkit-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-o-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-ms-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0061a7', endColorstr='#007dc1',GradientType=0);
+	background-color:#0061a7;
+}
+
+#license .licenseType .buttonContainer input:active {
+	position:relative;
+	top:1px;
+}
+
+#license .licenseType form label{
+	display: block;
+}
+
+#license .inputGroup{
+	position: relative;
+	margin-top: 10px;
+}
+
+#license .inputGroup .error{
+	display: none;
+	background: #eec4be;
+	color: #ea351c;
+	padding: 3px;
+	font-weight: bold;
+	position: absolute;
+	top: 100%;
+	right: -2px;
+}
+
+#license .error .error{
+	display: block;
+}
+
+#license .error input{
+	border:1px solid #ea351c !important;
 }

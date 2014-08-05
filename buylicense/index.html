@@ -12,82 +12,143 @@
 	</script>
 </head>
 <body class="category_buylicense"> 
-	<div class="topSection">
-		<div id="header" class="orangeGradient micro">
-			<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
-			<a class="download" href="..\download">download</a>
-		</div>
+	<div id="outerWrapper">
+		<div class="topSection">
+			<div id="header" class="orangeGradient micro">
+				<h1><a href="..">GoldenLayout the ultimate webapp layout manager</a></h1>
+				<a class="download" href="..\download">download</a>
+			</div>
 
-		<div id="nav" class="standalone">
-			
-			<img src="..\assets\images\hoxton-background.jpg" />
-			
-			<ul>
-				<li ><a href="..">START</a></li>
-				<li ><a href="..\download">DOWNLOAD</a></li>
-				<li ><a href="..\examples">EXAMPLES</a></li>
-				<li ><a href="..\tutorials">TUTORIALS</a></li>
-				<li ><a href="..\docs">DOCS</a></li>
-				<li ><a href="..\buylicense">BUY</a></li>
-			</ul>
+			<div id="nav" class="standalone">
+				
+				<img src="..\assets\images\hoxton-background.jpg" />
+				
+				<ul>
+					<li ><a href="..">START</a></li>
+					<li ><a href="..\download">DOWNLOAD</a></li>
+					<li ><a href="..\examples">EXAMPLES</a></li>
+					<li ><a href="..\tutorials">TUTORIALS</a></li>
+					<li ><a href="..\docs">DOCS</a></li>
+					<li ><a href="..\buylicense">BUY</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
-	
-	<div class="content">
-		<div id="wrapper_960">
-	<form id="payment" 
-	action="http://frozen-anchorage-5911.herokuapp.com/purchase/07f3459c-639d-41af-9a59-f05299b27180" 
-	
-	method="POST">
-		<label>time</label>
-		<input type="text" name="time" value="1234567891234" />
-		<label>name</label>
-		<input type="text" name="customerName" value="Wolfram Hempel" />
-		<label>company</label>
-		<input type="text" name="company" value="Hoxton One Ltd." />
-		<label>Website Url</label>
-		<input type="text" name="websiteUrl" value="hoxton-one.com" />
-
 		
-
-
-		<input type="hidden" name="redirectTo" value="http://localhost:3000/experiments/golden-layout-website/htdocs/pages/license/" />
-	  <script
-	    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-	    data-key="pk_test_4OUzlBtu1YsKrRACe8jOjzfX"
-	    data-amount="9900"
-	    data-currency="gbp"
-	    data-name="Golden Layout"
-	    data-allow-remember-me="false"
-	    data-label="buy"
-	    data-description="Single Page License"
-	    data-image="..\assets\images\logo_128_128.png">
-	  </script>
-	</form>
-</div>
-	</div>
+		<div class="content main">
+			<div id="license" class="licenseContainer">
 	
+	<h2 class="first">Free for non-commercial use.</h2>
+	<div class="cc_license_info">
+		<div class="description column">
+			GoldenLayout is free for non-commercial use under a Creative Commons Attribution-NonCommercial 4.0 International License. If you would like to use it in a commercial project, please purchase one of the licenses below.
+		</div>
+		<div class="ccLicense column">
+			<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+			  <img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+			</a>
+			<br />
+			<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+			  GoldenLayout
+			</span>
+			by 
+			<a xmlns:cc="http://creativecommons.org/ns#" href="http://golden-layout.com" property="cc:attributionName" rel="cc:attributionURL">
+			  Wolfram Hempel
+			</a>
+			is licensed under a 
+			<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+			  Creative Commons Attribution-NonCommercial 4.0 International License
+			</a>.
+		</div>
+	</div>
 
+	<h2>Commercial Licenses</h2>
+	<div class="purchase">
+		<div class="licenseType column">
+			<h3>Single Domain License</h3>
+			<p>Use GoldenLayout on one Domain (on as many sub-pages of that Domain as you like, with as many developers as you like etc. There are no other restrictions)</p>
+			<div class="price">99.00 <small>&pound;</small></div>
+
+			<form id="singleDomainLicense">
+				<div class="formInputs">
+					<input type="hidden" name="time" value="" />
+					<div class="inputGroup">
+						<div class="error">Please specify a licensee</div>
+						<label>Licensee (Person or Company)</label>
+						<input type="text" name="company" value="" />
+					</div>
+					<div class="inputGroup">
+						<div class="error">Please specify the domain you want to license</div>
+						<label>Domain Name</label>
+						<input type="text" name="websiteUrl" value="" />
+					</div>
+					<input type="hidden" name="redirectTo" value="http://localhost:3000/experiments/golden-layout-website/htdocs/pages/license/" />
+				</div>
+				<div class="buttonContainer">
+					<input type="submit" value="buy" />
+				</div>
+			</form>
+		</div>
+
+		<div class="licenseType column">
+			<h3>Multi Domain License</h3>
+			<p>Use GoldenLayout within your company for as many domains as you like. (On as many sub-pages as you like, with as many developers as you like etc. There are further other restrictions)</p>
+			<div class="price">399.00 <small>&pound;</small></div>
+
+			<form id="multiDomainLicense" action="#" >
+				<div class="formInputs">
+					<div class="inputGroup">
+						<div class="error">Please specify a licensee</div>
+						<label>Licensee (Person or Company)</label>
+						<input type="text" name="company" value="" />
+					</div>
+				</div>
+				<div class="buttonContainer">
+					<input type="submit" value="buy" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<img src="..\assets\images\logo_128_128.png" id="stripeImage" style="display:none" />
+<script type="text/javascript" src="..\assets\js\jquery.js"></script>
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script type="text/javascript" src="..\assets\js\payment.js"></script>
+		</div>
+		
+		<div id="footerPush"></div>
+	</div>
 	<div id="footer">
 		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
 		<ul class="footerItems">
 			<li class="news">
 				<h4>News</h4>
 				<ul>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
-					<li>New DragSource feature. Drag any element into your layout</li>
+					<li>First official version released</li>
 				</ul>
 			</li>
 
 			<li class="contact">
 				<h4>Contact</h4>
-				<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				<p>
+					Like to learn more?
+					<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				</p>
+				<p>
+					Support for licensees
+					<a href="mailto:support@golden-layout.com">support@goldenlayout.com</a>
+				</p>
+				<p>
+					For technical questions please also check the comment section at the bottom of docs and tutorials
+				</p>
 			</li>
 
 			<li class="footerItem about">
 				<h4>About</h4>
-				GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				<p>
+					GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				</p>
+				<p>It's run by <a href="http://wolframhempel.com/">Wolfram Hempel</a></p>
 			</li>
 		</ul>
 	</div>
