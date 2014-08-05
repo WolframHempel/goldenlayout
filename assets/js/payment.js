@@ -50,8 +50,7 @@ $(function(){
 	var sendPayment = function( token ) {
 		var url = 'http://frozen-anchorage-5911.herokuapp.com/purchase/', 
 		data = {};
-
-		url = 'http://localhost:5000/purchase/';
+		
 		if( isSingleDomainLicense ) {
 			url += '07f3459c-639d-41af-9a59-f05299b27180';
 			data.customerName = $( '#singleDomainLicense [name="company"]' ).val().trim();
