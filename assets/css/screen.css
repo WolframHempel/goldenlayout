@@ -22,7 +22,43 @@ html, body{
 #footerPush{
 	height: 147px;
 }
-
+@-webkit-keyframes blink {
+	0%   { opacity: 1; }
+	50% { opacity: 0.5; }
+	100% { opacity: 1; }
+}
+@-moz-keyframes blink {
+	0%   { opacity: 1; }
+	50% { opacity: 0.5; }
+	100% { opacity: 1; }
+}
+@-o-keyframes blink {
+	0%   { opacity: 1; }
+	50% { opacity: 0.5; }
+	100% { opacity: 1; }
+}
+@keyframes blink {
+	0%   { opacity: 1; }
+	50% { opacity: 0.5; }
+	100% { opacity: 1; }
+}
+#development_warning{
+	position: fixed;
+	top: 100%;
+	margin-top: -50px;
+	border: 1px solid #BA0F0F;
+	color: #BA0F0F;
+	width: 100%;
+	padding: 5px;
+	background: #FFDEDE;
+	font: 20px Arial, sans-serif;
+	font-weight: bold;
+	text-decoration: blink;
+	-webkit-animation: blink 2s infinite; /* Safari 4+ */
+  	-moz-animation:    blink 2s infinite; /* Fx 5+ */
+  	-o-animation:      blink 2s infinite; /* Opera 12+ */
+  	animation:         blink 2s infinite; /* IE 10+, Fx 29+ */
+}
 /****************************
 * FONTS
 ****************************/
