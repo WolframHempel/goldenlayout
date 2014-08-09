@@ -1,4 +1,4 @@
-GoldenLayout = (function(){var lm={"config":{},"container":{},"errors":{},"utils":{},"controls":{},"items":{}};
+GoldenLayout = (function(){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -246,7 +246,7 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 		this._nX = oEvent.pageX - this._nOriginalX;
 		this._nY = oEvent.pageY - this._nOriginalY;
-		
+
 		if( this._bDragging === false ) {
 			if(
 				Math.abs( this._nX ) > this._nDistance ||
@@ -992,8 +992,8 @@ lm.controls.DragProxy._template = '<div class="lm_dragProxy">' +
 lm.utils.copy( lm.controls.DragProxy.prototype, {
 
 	_onDrag: function( offsetX, offsetY, event ) {
-		var x = event.clientX,
-			y = event.clientY,
+		var x = event.pageX,
+			y = event.pageY,
 			isWithinContainer = x > this._minX && x < this._maxX && y > this._minY && y < this._maxY;
 	
 		if( !isWithinContainer && this._layoutManager.config.settings.constrainDragToContainer === true ) {

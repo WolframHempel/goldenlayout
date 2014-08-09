@@ -627,6 +627,7 @@ html, body{
 #license{
 	width: 800px;
 	margin: 20px auto;
+	overflow: hidden;
 }
 
 .licenseContainer *{
