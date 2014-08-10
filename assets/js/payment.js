@@ -1,4 +1,5 @@
 $(function(){
+
 	var isSingleDomainLicense;
 
 	/**
@@ -48,6 +49,12 @@ $(function(){
 
 
 	var sendPayment = function( token ) {
+		modal
+			.setContent( '' )
+			.setTitle( 'Processing Payment...' )
+			.setLoading( true )
+			.show();
+
 		var url = 'http://frozen-anchorage-5911.herokuapp.com/purchase/', 
 		data = {};
 		
@@ -74,10 +81,32 @@ $(function(){
 
 	};
 
-	var onLicenseResponse = function( response ) {
-		var data = JSON.parse( response );
-		
-		console.log( 'onLicenseResponse', response );
+	var onLicenseResponse = function( responseText ) {
+
+		modal.setTitle( 'loading license...' );
+
+		var data = JSON.parse( responseText ),
+			element = $( '.templateContainer .purchaseSuccess' ).clone(),
+			link = $( 'a[data-licenseId=' + data.product.id + ']' );
+
+		element.find( '.licenseType' ).html( link.attr( 'title' ) );
+		element.find( '.licenseKey' ).html( data.license.key );
+		element.find( '.licenseUrl' ).html( data.license.url );
+		element.find( '.downloadLink' ).attr( 'href', link.attr( 'href' ) );
+
+		element.find( '.closeModal' ).click(function( e ){
+			e.preventDefault();
+			modal.close();
+		});
+
+		$.get( link.attr( 'href' ), function( licenseText ){
+			element.find( '.yourLicense' ).html( licenseText );
+
+			modal
+				.setContent( element )
+				.setTitle( 'Purchase successful' )
+				.setLoading( false );
+		});
 	};
 
 	var onRequestError = function( xhr, type, message ) {
@@ -100,6 +129,25 @@ $(function(){
 			isSingleDomainLicense = $(this).attr( 'id' ) === 'singleDomainLicense';
 			makePayment();
 		}
+	});
+
+
+	/**
+	 * Read License
+	 */
+	$( 'a.readLicense' ).click(function( e ){
+		e.preventDefault();
+
+		modal
+			.setLoading( true )
+			.setTitle( $(this).attr( 'title' ) )
+			.show();
+
+		$.get( $(this).attr( 'href' ), function( result ){
+			modal
+				.setLoading( false )
+				.setContent( '<pre class="licenseText">' + result + '</pre>' );
+		});
 	});
 });
 
