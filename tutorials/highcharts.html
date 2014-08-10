@@ -91,7 +91,84 @@
 	</li>
 </ul>
 			<div id="content">
-				<h1>Using GoldenLayout with HighCharts</h1><p>TODO</p>
+				<h1>Using GoldenLayout with HighCharts and Yahoo Finance</h1><p>This tutorial shows how to create a layout with multiple historic stockprice charts using GoldenLayout, <a href="http://www.highcharts.com/">HighCharts</a> and data from the <a href="https://developer.yahoo.com/yql/console/?q=show%20tables&amp;env=store://datatables.org/alltableswithkeys#h=select+*+from+yahoo.finance.historicaldata+where+symbol+%3D+%22YHOO%22+and+startDate+%3D+%222009-09-11%22+and+endDate+%3D+%222010-03-10%22">Yahoo Finance API</a></p><h3>Here&#39;s what we&#39;re after</h3><p><p data-height="268" data-theme-id="7376" data-slug-hash="c0c2f3811adfef1f8fc3d78c47686409" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/wolframhempel/pen/c0c2f3811adfef1f8fc3d78c47686409/'>HighCharts, YQL and GoldenLayout</a> by Wolfram Hempel (<a href='http://codepen.io/wolframhempel'>@wolframhempel</a>) on <a href='http://codepen.io'>CodePen</a>.</p></p><script async src="//codepen.io/assets/embed/ei.js"></script>
+
+<h3>Structure</h3><p>There are three parts:</p><ul>
+<li>A <code>StockDataRequest</code> class that retrieves data from Yahoo Finance using YQL (Yahoo Query Language)</li>
+<li>A <code>StockChartComponent</code> class that handles the interaction between the HighCharts, GoldenLayout and the DataProvider</li>
+<li>A bootstrap script to configure and initialise the layout</li>
+</ul>
+<p>For this tutorial we concentrate on the StockChartComponent class and the layout configuration. If you&#39;d like to learn more about the StockDataRequest class, have a look at the code example above.</p><h3>GoldenLayout config</h3><p>Let&#39;s start with the configuration for GoldenLayout.</p><pre><code><span class="token keyword" >var</span> myLayout <span class="token operator" >=</span> <span class="token keyword" >new</span> <span class="token class-name" >GoldenLayout</span><span class="token punctuation" >(</span><span class="token punctuation" >{</span>
+    content<span class="token punctuation" >:</span><span class="token punctuation" >[</span><span class="token punctuation" >{</span>
+        type<span class="token punctuation" >:</span> <span class="token string" >'row'</span><span class="token punctuation" >,</span>
+        content<span class="token punctuation" >:</span> <span class="token punctuation" >[</span><span class="token punctuation" >{</span>
+            type<span class="token punctuation" >:</span> <span class="token string" >'component'</span><span class="token punctuation" >,</span>
+            componentName<span class="token punctuation" >:</span> <span class="token string" >'stockChart'</span><span class="token punctuation" >,</span>
+            componentState<span class="token punctuation" >:</span> <span class="token punctuation" >{</span>
+                companyName<span class="token punctuation" >:</span> <span class="token string" >'Google Inc.'</span><span class="token punctuation" >,</span>
+                tickerSymbol<span class="token punctuation" >:</span> <span class="token string" >'GOOGL'</span><span class="token punctuation" >,</span>
+                color<span class="token punctuation" >:</span><span class="token string" >'#7C7'</span>
+            <span class="token punctuation" >}</span>
+        <span class="token punctuation" >}</span><span class="token punctuation" >,</span><span class="token punctuation" >{</span>
+            type<span class="token punctuation" >:</span> <span class="token string" >'component'</span><span class="token punctuation" >,</span>
+            componentName<span class="token punctuation" >:</span> <span class="token string" >'stockChart'</span><span class="token punctuation" >,</span>
+            componentState<span class="token punctuation" >:</span> <span class="token punctuation" >{</span>
+                companyName<span class="token punctuation" >:</span> <span class="token string" >'Apple Inc.'</span><span class="token punctuation" >,</span>
+                tickerSymbol<span class="token punctuation" >:</span> <span class="token string" >'AAPL'</span><span class="token punctuation" >,</span>
+                color<span class="token punctuation" >:</span> <span class="token string" >'#77C'</span> 
+            <span class="token punctuation" >}</span>
+        <span class="token punctuation" >}</span><span class="token punctuation" >]</span>
+    <span class="token punctuation" >}</span><span class="token punctuation" >]</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+
+myLayout<span class="token punctuation" >.</span><span class="token function" >registerComponent<span class="token punctuation" >(</span></span> <span class="token string" >'stockChart'</span><span class="token punctuation" >,</span> StockChartComponent <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+myLayout<span class="token punctuation" >.</span><span class="token function" >init<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+</code></pre><p>It creates a basic layout with two components in a row (if you&#39;re not familiar with GoldenLayout configs yet, please have a look at the <a href="getting-started.html">getting started tutorial</a>). The <code>componentState</code> attribute contains three keys:</p><ul>
+<li><code>companyName</code> will be used in the chart title and Series description</li>
+<li><code>tickerSymbol</code> is a standardised way of identifying stocks and will be used to download the right historical prices from Yahoo Finance</li>
+<li><code>color</code> defines the line-color for the chart</li>
+</ul>
+<h3>StockChartComponent</h3><pre><code>StockChartComponent <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> container<span class="token punctuation" >,</span> state <span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_container <span class="token operator" >=</span> container<span class="token punctuation" >;</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_chart <span class="token operator" >=</span> <span class="token keyword" >null</span><span class="token punctuation" >;</span>
+
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_highChartsConfig <span class="token operator" >=</span> <span class="token punctuation" >{</span>
+        title<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> text<span class="token punctuation" >:</span> <span class="token string" >'Historic prices for '</span> <span class="token operator" >+</span> state<span class="token punctuation" >.</span>companyName <span class="token punctuation" >}</span><span class="token punctuation" >,</span>
+        series<span class="token punctuation" >:</span> <span class="token punctuation" >[</span><span class="token punctuation" >{</span>
+            color<span class="token punctuation" >:</span> state<span class="token punctuation" >.</span>color<span class="token punctuation" >,</span>
+            name<span class="token punctuation" >:</span> state<span class="token punctuation" >.</span>companyName<span class="token punctuation" >,</span>
+            data<span class="token punctuation" >:</span> <span class="token keyword" >null</span>
+        <span class="token punctuation" >}</span><span class="token punctuation" >]</span><span class="token punctuation" >,</span>
+        plotOptions<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> line<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> marker<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> enabled<span class="token punctuation" >:</span> <span class="token keyword" >false</span> <span class="token punctuation" >}</span> <span class="token punctuation" >}</span> <span class="token punctuation" >}</span><span class="token punctuation" >,</span>
+        xAxis<span class="token punctuation" >:</span><span class="token punctuation" >{</span> type<span class="token punctuation" >:</span> <span class="token string" >'datetime'</span> <span class="token punctuation" >}</span><span class="token punctuation" >,</span>
+        yAxis<span class="token punctuation" >:</span><span class="token punctuation" >{</span> title<span class="token punctuation" >:</span> <span class="token string" >'Price in USD'</span> <span class="token punctuation" >}</span><span class="token punctuation" >,</span>
+        chart<span class="token punctuation" >:</span><span class="token punctuation" >{</span>
+            renderTo<span class="token punctuation" >:</span> container<span class="token punctuation" >.</span><span class="token function" >getElement<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span><span class="token punctuation" >[</span> <span class="token number" >0</span> <span class="token punctuation" >]</span>
+        <span class="token punctuation" >}</span>
+    <span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+
+    <span class="token keyword" >new</span> <span class="token class-name" >StockDataRequest</span><span class="token punctuation" >(</span> state<span class="token punctuation" >.</span>tickerSymbol<span class="token punctuation" >,</span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_onDataReady<span class="token punctuation" >.</span><span class="token function" >bind<span class="token punctuation" >(</span></span> <span class="token keyword" >this</span> <span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+
+StockChartComponent<span class="token punctuation" >.</span>prototype<span class="token punctuation" >.</span>_createChart <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_chart <span class="token operator" >=</span> <span class="token keyword" >new</span> <span class="token class-name" >Highcharts<span class="token punctuation" >.</span>Chart</span><span class="token punctuation" >(</span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_highChartsConfig <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+
+StockChartComponent<span class="token punctuation" >.</span>prototype<span class="token punctuation" >.</span>_onDataReady <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> highchartsData <span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_highChartsConfig<span class="token punctuation" >.</span>series<span class="token punctuation" >[</span> <span class="token number" >0</span> <span class="token punctuation" >]</span><span class="token punctuation" >.</span>data <span class="token operator" >=</span> highchartsData<span class="token punctuation" >;</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span><span class="token function" >_createChart<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span><span class="token function" >_bindContainerEvents<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+
+StockChartComponent<span class="token punctuation" >.</span>prototype<span class="token punctuation" >.</span>_bindContainerEvents <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_container<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'resize'</span><span class="token punctuation" >,</span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_setSize<span class="token punctuation" >.</span><span class="token function" >bind<span class="token punctuation" >(</span></span> <span class="token keyword" >this</span> <span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_container<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'destroy'</span><span class="token punctuation" >,</span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_chart<span class="token punctuation" >.</span>destroy<span class="token punctuation" >.</span><span class="token function" >bind<span class="token punctuation" >(</span></span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_chart <span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+
+StockChartComponent<span class="token punctuation" >.</span>prototype<span class="token punctuation" >.</span>_setSize <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+    <span class="token keyword" >this</span><span class="token punctuation" >.</span>_chart<span class="token punctuation" >.</span><span class="token function" >setSize<span class="token punctuation" >(</span></span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_container<span class="token punctuation" >.</span>width<span class="token punctuation" >,</span> <span class="token keyword" >this</span><span class="token punctuation" >.</span>_container<span class="token punctuation" >.</span>height <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >;</span>
+</code></pre>
 				
 				<h3>Comments and Questions</h3>
 				<div id="disqusContainer">
