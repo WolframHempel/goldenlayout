@@ -20,7 +20,7 @@
 	</script>
 	<script type="text/javascript" src="../assets/js/jquery.js"></script>
 </head>
-<body class="category_docs">
+<body class="category_tutorials">
 	<div id="modal" class="loading">
 		<div class="background"></div>
 		<div class="content-wrapper">
@@ -49,8 +49,8 @@
 					<li ><a href="..">START</a></li>
 					<li ><a href="../download">DOWNLOAD</a></li>
 					<li ><a href="../examples">EXAMPLES</a></li>
-					<li ><a href="../tutorials">TUTORIALS</a></li>
-					<li class="active"><a href="../docs">DOCS</a></li>
+					<li class="active"><a href="../tutorials">TUTORIALS</a></li>
+					<li ><a href="../docs">DOCS</a></li>
 					<li ><a href="../buylicense">BUY</a></li>
 				</ul>
 			</div>
@@ -58,37 +58,40 @@
 		
 		<div id="wrapper" class="main">
 			<ul id="subnav">
-	<li class="head first">Configuration</li>
+	<li class="head first">GoldenLayout</li>
 	<li >
-		<a href="Config.html">Layout Config</a>
+		<a href="getting-started.html">Getting Started</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 	<li >
-		<a href="ItemConfig.html">Item Config</a>
+		<a href="saving-state.html">Saving State</a>
+		<div class="isActiveIndicator orangeGradient"></div>
+	</li>
+	<li >
+		<a href="dynamically-adding-components.html">Adding Items</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 
-	<li class="head">API</li>
+	<li class="head">Usage with...</li>
 	<li >
-		<a href="GoldenLayout.html">GoldenLayout</a>
+		<a href="requirejs.html">RequireJS</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 	<li >
-		<a href="Item.html">ContentItem</a>
+		<a href="angular.html">Angular</a>
+		<div class="isActiveIndicator orangeGradient"></div>
+	</li>
+	<li >
+		<a href="highcharts.html">HighCharts</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 	<li class="active">
-		<a href="Container.html">Container</a>
-		<div class="isActiveIndicator orangeGradient"></div>
-	</li>
-	<li >
-		<a href="EventEmitter.html">EventEmitter</a>
+		<a href="slickgrid.html">SlickGrid</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 </ul>
 			<div id="content">
-				<div class="section"><h2>Properties</h2><h3>width</h3><p>The current width of the container in pixel</p><h3>height</h3><p>The current height of the container in pixel</p><h3>title</h3><p>The current title of the container</p><h3>isHidden</h3><p>True if the item is currently hidden</p></div><div class="section"><h2>Events</h2><h3>destroy</h3><p>Emitted before the container will be destroyed. This will happen when the user clicks close as well as when a higher up part of the tree is destroyed.</p><h3>close</h3><p>Emitted when the container is closed. Closing the container will also call destroy. To clarify: Only subscribe to this event if you want to do something specific when the user clicks close, otherwise always subscribe to destroy</p><h3>hide</h3><p>Emitted before the container is hidden</p><h3>show</h3><p>Emitted before the container is shown</p><h3>resize</h3><p>Emitted after the container has been resized</p></div><div class="section"><h2>getElement()</h2><p>Returns the container&#39;s inner element as a jQuery element</p></div><div class="section"><h2>setState( state )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">state</td><td class="type">Serialisable Object</td><td class="optional">false</td><td class="default">-</td><td class="description">Any serialisable object (Strings, Numbers, Arrays or Objects)</td></tr></tbody></table><p>Mechanism to save the component state. The state will be the value of <code>componentState</code>
-when <code>layout.toConfig()</code> is called and will be passed back to the component&#39;s constructor function</p></div><div class="section"><h2>hide()</h2><p>hides the container or returns false if hiding it is not possible</p></div><div class="section"><h2>show()</h2><p>shows the container or returns false if showing it is not possible</p></div><div class="section"><h2>setSize( width, height )</h2><p>Sets the container to the specified size or returns false if that&#39;s not possible</p></div><div class="section"><h2>close()</h2><p>Closes the container or returns false if that is not possible</p><p></div></p>
+				<h1>Using GoldenLayout with SlickGrid</h1><p>TODO</p>
 				
 				<h3>Comments and Questions</h3>
 				<div id="disqusContainer">
