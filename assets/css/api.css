@@ -114,8 +114,18 @@ nav{
 	padding-bottom: 5px;
 }
 
+
 #wrapper > #content h2:first-child{
 	margin-top: 0;
+}
+
+#wrapper > #content h4{
+	font: 12px Arial, sans-serif;
+	margin-top: 20px;
+	padding-bottom: 2px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
+	font-weight:bold;
 }
 
 #wrapper > #content table.args{
