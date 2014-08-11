@@ -221,3 +221,39 @@ nav{
 	padding: 10px;
 }
 /** category_tutorials **/
+
+#categoryList, #categoryList li{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#categoryList, #categoryList li{
+	overflow: hidden;
+}
+
+#categoryList li img{
+	display: block;
+	float: left;
+	margin-right: 10px;
+}
+
+#categoryList li a{
+	display: block;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+#categoryList li a:hover{
+	background: #eee;
+}
+
+#categoryList li .right{
+	float: left;
+	width: 500px;
+}
+
+#wrapper #content #categoryList li h3{
+	margin: 0 0 5px;
+	border: none;
+}
