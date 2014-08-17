@@ -1,4 +1,4 @@
-(function($){var lm={"container":{},"controls":{},"errors":{},"config":{},"items":{},"utils":{}};
+(function($){var lm={"container":{},"config":{},"controls":{},"items":{},"errors":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -415,7 +415,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 */
 	init: function() {
 		if( document.readyState === 'loading' ) {
-			$(document).ready(this.init.bind( this ));
+			$(document).ready( lm.utils.fnBind( this.init, this ));
 			return;
 		}
 
@@ -776,6 +776,116 @@ lm.config.defaultConfig = {
 		popout: 'open in new window'
 	}
 };
+lm.container.ItemContainer = function( config, parent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.width = null;
+	this.height = null;
+	this.title = config.componentName;
+	this._parent = parent;
+	this._config = config;
+	this._layoutManager = layoutManager;
+	this.isHidden = false;
+	this._element = $([
+		'<div class="lm_item_container">',
+			'<div class="lm_content"></div>',
+		'</div>'
+	].join( '' ));
+	
+	this._contentElement = this._element.find( '.lm_content' );
+};
+
+lm.utils.copy( lm.container.ItemContainer.prototype, {
+
+	/**
+	 * Get the inner DOM element the container's content
+	 * is intended to live in
+	 *
+	 * @returns {DOM element}
+	 */
+	getElement: function() {
+		return this._contentElement;
+	},
+	
+	/**
+	 * Hide the container. Notifies the containers content first
+	 * and then hides the DOM node. If the container is already hidden
+	 * this should have no effect
+	 *
+	 * @returns {void}
+	 */
+	hide: function() {
+		this.emit( 'hide' );
+		this.isHidden = true;
+		this._element.hide();
+	},
+	
+	/**
+	 * Shows a previously hidden container. Notifies the
+	 * containers content first and then shows the DOM element.
+	 * If the container is already visible this has no effect.
+	 *
+	 * @returns {void}
+	 */
+	show: function() {
+		this.emit( 'show' );
+		this.isHidden = false;
+		this._element.show();
+	},
+	
+	/**
+	 * Set's the containers size. Can be called by both
+	 * the containers content as well as the contentItem
+	 * containing it. Both arguments are optional, if
+	 * one is omitted the parent elements size is used instead
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
+	},
+	
+	/**
+	 * Closes the container if it is closable. Can be called by
+	 * both the component within at as well as the contentItem containing
+	 * it. Emits a close event before the container itself is closed.
+	 *
+	 * @returns {void}
+	 */
+	close: function() {
+		if( this._config.isClosable ) {
+			this.emit( 'close' );
+			this._parent.close();
+		}
+	},
+
+	/**
+	 * Notifies the layout manager of a stateupdate
+	 *
+	 * @param {serialisable} state
+	 */
+	setState: function( state ) {
+		this._config.componentState = state;
+		this._parent.emitBubblingEvent( 'stateChanged' );
+	},
+
+	/**
+	 * Set's the components title
+	 *
+	 * @param {String} title
+	 */
+	setTitle: function( title ) {
+		this._parent.setTitle( title );
+	}
+});
 lm.controls.BrowserPopout = function( contentItem ) {
 	this._contentItem = contentItem;
 	this._contentItem.parent.removeChild( this._contentItem, true );
@@ -807,7 +917,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 		 *
 		 * @returns {[type]} [description]
 		 */
-		this._popoutWindow.onload =function(){
+		this._popoutWindow.onload =lm.utils.fnBind( function(){
 			this._popoutWindow.document.body.innerHTML = '';
 			this._popoutWindow.document.head.innerHTML = '';
 			this._popoutWindow.document.body.appendChild( this._contentItem.element[ 0 ] );
@@ -815,7 +925,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 			$( this._popoutWindow ).on( 'beforeunload', lm.utils.fnBind( this._onWindowClose, this ) );
 			this._transferStylesheets();
 			this._contentItem._$setParent( this );
-		}.bind( this );
+		}, this );
 	},
 
 	_transferStylesheets: function() {
@@ -1215,7 +1325,7 @@ lm.controls.Tab = function( header, contentItem ) {
 	this.isActive = false;
 	
 	this.setTitle( contentItem.config.title );
-	this.contentItem.on( 'titleChanged', this.setTitle.bind( this ) );
+	this.contentItem.on( 'titleChanged', this.setTitle, this );
 
 	this._layoutManager = this.contentItem.layoutManager;
 	this._dragListener = new lm.utils.DragListener( this.element );
@@ -1304,7 +1414,7 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 		this._fromDimensions = this._measure( fromElement );
 		this._fromDimensions.opacity = 0.8;
 		this._element.show().css( this._fromDimensions );
-		lm.utils.animFrame( this._nextAnimationFrame.bind( this ) );
+		lm.utils.animFrame( lm.utils.fnBind( this._nextAnimationFrame, this ) );
 	},
 
 	_nextAnimationFrame: function() {
@@ -1327,7 +1437,7 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 		}
 		
 		this._element.css( currentFrameStyles );
-		lm.utils.animFrame( this._nextAnimationFrame.bind( this ) );
+		lm.utils.animFrame( lm.utils.fnBind( this._nextAnimationFrame, this ) );
 	},
 
 	_measure: function( element ) {
@@ -1339,116 +1449,6 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 			width: element.outerWidth(),
 			height: element.outerHeight()
 		};
-	}
-});
-lm.container.ItemContainer = function( config, parent, layoutManager ) {
-	lm.utils.EventEmitter.call( this );
-
-	this.width = null;
-	this.height = null;
-	this.title = config.componentName;
-	this._parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
-	this.isHidden = false;
-	this._element = $([
-		'<div class="lm_item_container">',
-			'<div class="lm_content"></div>',
-		'</div>'
-	].join( '' ));
-	
-	this._contentElement = this._element.find( '.lm_content' );
-};
-
-lm.utils.copy( lm.container.ItemContainer.prototype, {
-
-	/**
-	 * Get the inner DOM element the container's content
-	 * is intended to live in
-	 *
-	 * @returns {DOM element}
-	 */
-	getElement: function() {
-		return this._contentElement;
-	},
-	
-	/**
-	 * Hide the container. Notifies the containers content first
-	 * and then hides the DOM node. If the container is already hidden
-	 * this should have no effect
-	 *
-	 * @returns {void}
-	 */
-	hide: function() {
-		this.emit( 'hide' );
-		this.isHidden = true;
-		this._element.hide();
-	},
-	
-	/**
-	 * Shows a previously hidden container. Notifies the
-	 * containers content first and then shows the DOM element.
-	 * If the container is already visible this has no effect.
-	 *
-	 * @returns {void}
-	 */
-	show: function() {
-		this.emit( 'show' );
-		this.isHidden = false;
-		this._element.show();
-	},
-	
-	/**
-	 * Set's the containers size. Can be called by both
-	 * the containers content as well as the contentItem
-	 * containing it. Both arguments are optional, if
-	 * one is omitted the parent elements size is used instead
-	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
-	 * 
-	 * @returns {void}
-	 */
-	setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
-		}
-	},
-	
-	/**
-	 * Closes the container if it is closable. Can be called by
-	 * both the component within at as well as the contentItem containing
-	 * it. Emits a close event before the container itself is closed.
-	 *
-	 * @returns {void}
-	 */
-	close: function() {
-		if( this._config.isClosable ) {
-			this.emit( 'close' );
-			this._parent.close();
-		}
-	},
-
-	/**
-	 * Notifies the layout manager of a stateupdate
-	 *
-	 * @param {serialisable} state
-	 */
-	setState: function( state ) {
-		this._config.componentState = state;
-		this._parent.emitBubblingEvent( 'stateChanged' );
-	},
-
-	/**
-	 * Set's the components title
-	 *
-	 * @param {String} title
-	 */
-	setTitle: function( title ) {
-		this._parent.setTitle( title );
 	}
 });
 lm.errors.ConfigurationError = function( message, node ) {

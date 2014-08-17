@@ -40,10 +40,16 @@
 	};
 
 	Modal.prototype._bindEvents = function() {
-		this._backgroundElement.click( this.close.bind( this ) );
-		this._closeElement.click( this.close.bind( this ) );
-	};
+		var self = this;
 
+		this._backgroundElement.click(function(){
+			self.close();
+		});
+
+		this._closeElement.click(function(){
+			self.close();
+		});
+	};
 
 	window.modal = new Modal();
 })();

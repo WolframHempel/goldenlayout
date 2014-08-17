@@ -47,6 +47,7 @@ html, body{
 	50% { opacity: 0.5; }
 	100% { opacity: 1; }
 }
+
 #development_warning{
 	position: fixed;
 	top: 100%;
@@ -322,7 +323,7 @@ html, body{
 #nav.standalone img{
 	display: block;
 	width: 100%;
-	height: 622px;
+	height: 1187px;
 }
 
 #nav ul{
@@ -368,7 +369,7 @@ html, body{
 }
 
 #header{
-	height: 175px;
+	height: 140px;
 	width: 100%;
 	position: relative;
 }
@@ -383,7 +384,7 @@ html, body{
 	height: 60px;
 	background: url(../images/golden-layout.png );
 	position: absolute;
-	left: 45%;
+	left: 49%;
 	margin-left: -172px;
 	margin-top: 40px;
 	text-indent: -9999px;
@@ -483,9 +484,10 @@ html, body{
 	height: 782px;
 }
 
-.startExample img{
+#startPageBackground{
+	position: absolute;
 	width: 100%;
-	height: 622px;
+	height: 1187px;
 }
 
 #exampleScreen{
@@ -520,10 +522,10 @@ html, body{
 * FEATURES OVERVIEW
 ****************************/
 #startPageFeatures{
-	border-top: 1px solid #ccc;
-	background: #f6f6f6;
-	height: 400px;
 	overflow: hidden;
+	position: relative;
+	z-index: 2;
+	height: 405px;
 }
 
 #wrapper_960{
@@ -532,34 +534,45 @@ html, body{
 }
 
 #startPageFeatures > ul{
-	width: 960px;
-	margin: 40px auto 0;
+	width: 1240px;
+	margin: 85px auto 0;
 }
 
 #startPageFeatures li{
-	width: 280px;
-	margin: 0 40px 40px 0;
+	width: 400px;
+	height: 110px;
+	position: relative;
+	margin: 0 20px 20px 0;
 	float: left;
+	background: rgba(0, 0, 0, 0.5 );
+}
+
+#startPageFeatures li.last{
+	margin-right: 0;
 }
 
 #startPageFeatures li *{
-	color: #666;
+	position: absolute;
 }
 
-#startPageFeatures li .icon{
-	font-size: 50px;
-	float: left;
-	margin-right: 10px;
+#startPageFeatures li img{
+	top: 10px;
+	left: 10px;
 }
 
-#startPageFeatures li h4{
-	font: 14px Arial,sans-serif;
+#startPageFeatures li small{
+	font: 14px Kalinga, sans-serif;
+	color: #ef7d17;
+	left: 160px;
+	top: 54px;
 }
 
-#startPageFeatures li p{
-	font: 12px Arial,sans-serif;
+#startPageFeatures li strong{
+	font: 24px Kalinga, sans-serif;
+	color: #fff;
+	left: 160px;
+	top: 71px;
 }
-
 /****************************
 * PAYMENT FORM
 ****************************/
