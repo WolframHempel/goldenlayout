@@ -1,4 +1,4 @@
-(function($){var lm={"container":{},"config":{},"controls":{},"items":{},"errors":{},"utils":{}};
+(function($){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -782,7 +782,7 @@ lm.container.ItemContainer = function( config, parent, layoutManager ) {
 	this.width = null;
 	this.height = null;
 	this.title = config.componentName;
-	this._parent = parent;
+	this.parent = parent;
 	this._config = config;
 	this._layoutManager = layoutManager;
 	this.isHidden = false;
@@ -832,25 +832,56 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 		this.isHidden = false;
 		this._element.show();
 	},
-	
+
 	/**
-	 * Set's the containers size. Can be called by both
-	 * the containers content as well as the contentItem
-	 * containing it. Both arguments are optional, if
-	 * one is omitted the parent elements size is used instead
+	 * Set the size from within the container. Traverses up
+	 * the item tree until it finds a row or column element
+	 * and resizes its items accordingly.
 	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
+	 * If this container isn't a descendant of a row or column
+	 * it returns false
+	 * @todo  Rework!!!
+	 * @param {Number} width  The new width in pixel
+	 * @param {Number} height The new height in pixel
 	 * 
-	 * @returns {void}
+	 * @returns {Boolean} resizeSuccesful
 	 */
 	setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
+		var rowOrColumn = this.parent,
+			rowOrColumnChild = this,
+			totalPixelHeight,
+			percentageHeight,
+			heightDelta,
+			i;
+
+		while( !rowOrColumn.isColumn && !rowOrColumn.isRow ) {
+			rowOrColumnChild = rowOrColumn;
+			rowOrColumn = rowOrColumn.parent;
+			
+
+			/**
+			 * No row or column has been found
+			 */
+			if( rowOrColumn.isRoot ) {
+				return false;
+			}
 		}
+
+		totalPixelHeight = this.height * ( 1 / ( rowOrColumnChild.config.height / 100 ) );
+		percentageHeight = ( height / totalPixelHeight ) * 100;
+		heightDelta = ( rowOrColumnChild.config.height - percentageHeight ) / rowOrColumn.contentItems.length;
+
+		for( i = 0; i < rowOrColumn.contentItems.length; i++ ) {
+			if( rowOrColumn.contentItems[ i ] === rowOrColumnChild ) {
+				rowOrColumn.contentItems[ i ].config.height = percentageHeight;
+			} else {
+				rowOrColumn.contentItems[ i ].config.height += heightDelta;
+			}
+		}
+
+		rowOrColumn.callDownwards( 'setSize' );
+
+		return true;
 	},
 	
 	/**
@@ -863,7 +894,7 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 	close: function() {
 		if( this._config.isClosable ) {
 			this.emit( 'close' );
-			this._parent.close();
+			this.parent.close();
 		}
 	},
 
@@ -874,7 +905,7 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 	 */
 	setState: function( state ) {
 		this._config.componentState = state;
-		this._parent.emitBubblingEvent( 'stateChanged' );
+		this.parent.emitBubblingEvent( 'stateChanged' );
 	},
 
 	/**
@@ -883,7 +914,26 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 	 * @param {String} title
 	 */
 	setTitle: function( title ) {
-		this._parent.setTitle( title );
+		this.parent.setTitle( title );
+	},
+
+	/**
+	 * Set's the containers size. Called by the container's component.
+	 * To set the size programmatically from within the container please
+	 * use the public setSize method
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	_$setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
 	}
 });
 lm.controls.BrowserPopout = function( contentItem ) {
@@ -1982,7 +2032,7 @@ lm.utils.copy( lm.items.Component.prototype, {
 	},
 
 	setSize: function() {
-		this.container.setSize( this.element.width(), this.element.height() );
+		this.container._$setSize( this.element.width(), this.element.height() );
 	},
 
 	_$init: function() {

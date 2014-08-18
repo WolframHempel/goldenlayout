@@ -103,32 +103,66 @@
 
 <template id="test-component" type="text/html">
 	<div class="test-component">
-		<ul class="events">
-			<li>
-				<label>open</label>
-				<div class="count">x <span>3</span></div>
-			</li>
-			<li>
-				<label>resize</label>
-				<div class="count">x <span>2</span></div>
-			</li>
-			<li>
-				<label>destroy</label>
-				<div class="count">x <span>1</span></div>
-			</li>
-			<li>
-				<label>close</label>
-				<div class="count">x <span>4</span></div>
-			</li>
-			<li>
-				<label>hide</label>
-				<div class="count">x <span>12</span></div>
-			</li>
-			<li>
-				<label>show</label>
-				<div class="count">x <span>1</span></div>
-			</li>
-		</ul>
+		<div class="category events">
+			<h5>Events</h5>
+			<ul class="events">
+				<li>
+					<label>open</label>
+					<div class="count">x <span>3</span></div>
+				</li>
+				<li>
+					<label>resize</label>
+					<div class="count">x <span>2</span></div>
+				</li>
+				<li>
+					<label>destroy</label>
+					<div class="count">x <span>1</span></div>
+				</li>
+				<li>
+					<label>close</label>
+					<div class="count">x <span>4</span></div>
+				</li>
+				<li>
+					<label>hide</label>
+					<div class="count">x <span>12</span></div>
+				</li>
+				<li>
+					<label>show</label>
+					<div class="count">x <span>1</span></div>
+				</li>
+			</ul>
+		</div>
+		<div class="category metrics">
+			<h5>Metrics</h5>
+			<ul class="metrics">
+				<li>
+					<label>width</label>
+					<div class="count width"></div>
+				</li>
+				<li>
+					<label>height</label>
+					<div class="count height"></div>
+				</li>
+				<li>
+					<label>title</label>
+					<div class="count title"></div>
+				</li>
+			</ul>
+		</div>
+		<div class="category actions">
+			<h5>Actions</h5>
+			<ul class="actions">
+				<li>
+					<label>close</label>
+				</li>
+				<li>
+					<label>maximise</label>
+				</li>
+				<li>
+					<label>changeTitle</label>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
 <script type="text/javascript">
