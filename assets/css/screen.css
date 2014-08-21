@@ -314,6 +314,7 @@ html, body{
 #startPageFeatures > ul{
 	width: 1240px;
 	margin: 85px auto 0;
+	padding: 0;
 }
 
 #startPageFeatures li{
