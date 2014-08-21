@@ -14,9 +14,14 @@
 
 .lm_dropTargetIndicator{
 	box-shadow: inset 0 0 30px #000;
-	background: rgba( 0,0,0,0.2);
 	outline: 1px dashed #ccc;
 	transition: all 200ms ease;
+}
+
+.lm_dropTargetIndicator .lm_inner{
+	background: #000;
+	opacity: 0.2;
+	filter: alpha(opacity=40); /** bit darker to compensate for lack of box shadow **/
 }
 
 .lm_splitter{

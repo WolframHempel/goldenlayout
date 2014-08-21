@@ -414,7 +414,8 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {void}
 	 */
 	init: function() {
-		if( document.readyState === 'loading' ) {
+
+		if( document.readyState === 'loading' || document.body === null ) {
 			$(document).ready( lm.utils.fnBind( this.init, this ));
 			return;
 		}
@@ -698,7 +699,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	},
 
 	_setContainer: function() {
-		var container = $( this.container || document.body );
+		var container = $( this.container || 'body' );
 
 		if( container.length === 0 ) {
 			throw new Error( 'GoldenLayout container not found' );
@@ -1192,7 +1193,7 @@ lm.controls.DropTargetIndicator = function() {
 	$(document.body).append( this.element );
 };
 
-lm.controls.DropTargetIndicator._template = '<div class="lm_dropTargetIndicator"></div>';
+lm.controls.DropTargetIndicator._template = '<div class="lm_dropTargetIndicator"><div class="lm_inner"></div></div>';
 
 lm.utils.copy( lm.controls.DropTargetIndicator.prototype, {
 	destroy: function() {
@@ -1519,6 +1520,15 @@ lm.errors.ConfigurationError = function( message, node ) {
 
 lm.errors.ConfigurationError.prototype = new Error();
 
+lm.utils.BubblingEvent = function( name, origin ) {
+	this.name = name;
+	this.origin = origin;
+	this.isPropagationStopped = false;
+};
+
+lm.utils.BubblingEvent.prototype.stopPropagation = function() {
+	this.isPropagationStopped = true;
+};
 
 /**
  * This is the baseclass that all content items inherit from.
@@ -2883,13 +2893,4 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		this.layoutManager.dropTargetIndicator.highlightArea( highlightArea );
 		this._dropSegment = segment;
 	}
-});
-lm.utils.BubblingEvent = function( name, origin ) {
-	this.name = name;
-	this.origin = origin;
-	this.isPropagationStopped = false;
-};
-
-lm.utils.BubblingEvent.prototype.stopPropagation = function() {
-	this.isPropagationStopped = true;
-};})(window.$);
+});})(window.$);

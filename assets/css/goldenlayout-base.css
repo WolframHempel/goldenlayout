@@ -159,6 +159,14 @@
 	display: none;
 }
 
+.lm_dropTargetIndicator .lm_inner{
+	position: relative;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+}
+
 .lm_transition_indicator{
 	position: absolute;
 	top: 0;
