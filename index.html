@@ -62,31 +62,37 @@
 <div id="startPageFeatures">
 	<ul>
 		<li>
+			<div class="bg"></div>
 			<img src="assets/images/features_interaction.png" width="140" height="87" />
 			<small>breathtaking</small>
 			<strong>interactions</strong>
 		</li>
 		<li>
+			<div class="bg"></div>
 			<img src="assets/images/features_themeable.png" width="140" height="87" />
 			<small>completely</small>
 			<strong>themeable</strong>
 		</li>
 		<li class="last">
+			<div class="bg"></div>
 			<img src="assets/images/features_api.png" width="140" height="87" />
 			<small>comprehensive</small>
 			<strong>API</strong>
 		</li>
 		<li>
+			<div class="bg"></div>
 			<img src="assets/images/features_persistance.png" width="140" height="87" />
 			<small>powerful</small>
 			<strong>persistance</strong>
 		</li>
 		<li>
+			<div class="bg"></div>
 			<img src="assets/images/features_browser.png" width="140" height="87" />
 			<small>works in</small>
 			<strong>IE8+, FF and Chrome</strong>
 		</li>
 		<li class="last">
+			<div class="bg"></div>
 			<img src="assets/images/features_creative_commonsr.png" width="140" height="87" />
 			<small>non-commercial use</small>
 			<strong>free</strong>
@@ -96,75 +102,10 @@
 
 
 <script type="text/javascript" src="assets/js/goldenlayout.min.js"></script>
-<script type="text/javascript" src="assets/js/TestComponent.js"></script>
+
 <link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-base.css" />
 <link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-dark-theme.css" />
-<link type="text/css" rel="stylesheet" href="assets/css/testcomponent.css" />
 
-<template id="test-component" type="text/html">
-	<div class="test-component">
-		<div class="category events">
-			<h5>Events</h5>
-			<ul class="events">
-				<li>
-					<label>open</label>
-					<div class="count">x <span>3</span></div>
-				</li>
-				<li>
-					<label>resize</label>
-					<div class="count">x <span>2</span></div>
-				</li>
-				<li>
-					<label>destroy</label>
-					<div class="count">x <span>1</span></div>
-				</li>
-				<li>
-					<label>close</label>
-					<div class="count">x <span>4</span></div>
-				</li>
-				<li>
-					<label>hide</label>
-					<div class="count">x <span>12</span></div>
-				</li>
-				<li>
-					<label>show</label>
-					<div class="count">x <span>1</span></div>
-				</li>
-			</ul>
-		</div>
-		<div class="category metrics">
-			<h5>Metrics</h5>
-			<ul class="metrics">
-				<li>
-					<label>width</label>
-					<div class="count width"></div>
-				</li>
-				<li>
-					<label>height</label>
-					<div class="count height"></div>
-				</li>
-				<li>
-					<label>title</label>
-					<div class="count title"></div>
-				</li>
-			</ul>
-		</div>
-		<div class="category actions">
-			<h5>Actions</h5>
-			<ul class="actions">
-				<li>
-					<label>close</label>
-				</li>
-				<li>
-					<label>maximise</label>
-				</li>
-				<li>
-					<label>changeTitle</label>
-				</li>
-			</ul>
-		</div>
-	</div>
-</template>
 <script type="text/javascript">
 	var adjustLis = function() {
 		var imageWidth = $( '#startPageBackground' ).width();
@@ -179,6 +120,11 @@
 				'background-position': '-' + offsetLeft + 'px -' + top + 'px'
 			});
 		});
+	};
+
+	TestComponent = function( container, state ) {
+		var src = 'assets/images/example_bg_' + state.bg + '.jpg';
+		container.getElement().append( '<img class="testImg" src="' + src + '" />' );
 	};
 
 	$(adjustLis);
@@ -196,7 +142,7 @@
 							{
 								type: 'component',
 								componentName: 'watchlist',
-								componentState: { 'instruments': [ 'MSFT', 'GOOG', 'AAPL' ] }
+								componentState: { bg: 1 }
 							},
 							{
 								isClosable: false,
@@ -204,11 +150,13 @@
 								content:[
 									{
 										type: 'component',
-										componentName: 'research'
+										componentName: 'research',
+										componentState: { bg: 2 }
 									},
 									{
 										type: 'component',
-										componentName: 'research'
+										componentName: 'research',
+										componentState: { bg: 3 }
 									}
 								]
 							},
@@ -218,18 +166,18 @@
 									{
 										type: 'component',
 										componentName: 'research',
-										componentState: { index: 1 }
+										componentState: { bg: 4 }
 									},
 									{
 										isClosable: false,
 										type: 'component',
 										componentName: 'research',
-										componentState: { index: 2 }
+										componentState: { bg: 4 }
 									},
 									{
 										type: 'component',
 										componentName: 'research',
-										componentState: { index: 3 }
+										componentState: { bg: 4 }
 									}
 								]
 							}
@@ -243,12 +191,12 @@
 								height: 30,
 								type: 'component',
 								componentName: 'commentary',
-								componentState: { 'feedTopic': 'us-bluechips' }
+								componentState: { bg: 5 }
 							},
 							{
 								type: 'component',
 								componentName: 'commentary',
-								componentState: { 'feedTopic': 'lse' }
+								componentState: { bg: 6 }
 							}
 						]
 					}

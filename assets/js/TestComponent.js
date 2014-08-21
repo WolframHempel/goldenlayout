@@ -1,4 +1,4 @@
 TestComponent = function( container, state ) {
-	this._element = $( $( '#test-component' ).html() );
-	container.getElement().append( this._element );
+	var src = 'assets/images/example_bg_' + state.bg + '.jpg';
+	container.getElement().append( '<img class="testImg" src="' + src + '" />' );
 };

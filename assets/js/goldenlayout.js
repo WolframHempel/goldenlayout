@@ -700,6 +700,14 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	_setContainer: function() {
 		var container = $( this.container || document.body );
 
+		if( container.length === 0 ) {
+			throw new Error( 'GoldenLayout container not found' );
+		}
+
+		if( container.length > 1 ) {
+			throw new Error( 'GoldenLayout more than one container element specified' );
+		}
+
 		if( container[ 0 ] === document.body ) {
 			this._isFullPage = true;
 
@@ -2152,13 +2160,13 @@ lm.utils.copy( lm.items.RowOrColumn.prototype, {
 		var newItemSize, itemSize, i, splitterElement;
 	
 		contentItem = this.layoutManager._$normalizeContentItem( contentItem, this );
-		
+
 		if( index === undefined ) {
 			index = this.contentItems.length;
 		}
 	
 		if( this.contentItems.length > 0 ) {
-			splitterElement = this._createSplitter( index ).element;
+			splitterElement = this._createSplitter( Math.max( 0, index - 1 ) ).element;
 	
 			if( index > 0 ) {
 				this.contentItems[ index - 1 ].element.after( splitterElement );
@@ -2491,7 +2499,7 @@ lm.utils.copy( lm.items.RowOrColumn.prototype, {
 	 * @returns {void}
 	 */
 	_onSplitterDragStop: function( splitter ) {
-	
+
 		var items = this._getItemsForSplitter( splitter ),
 			sizeBefore = items.before.element[ this._dimension ](),
 			sizeAfter = items.after.element[ this._dimension ](),
