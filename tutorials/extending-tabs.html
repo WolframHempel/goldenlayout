@@ -76,13 +76,13 @@
 		<a href="adding-controls-to-header.html">Header Controls</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
-	<li >
+	<li class="active">
 		<a href="extending-tabs.html">Extending Tabs</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
 
 	<li class="head">Usage with...</li>
-	<li class="active">
+	<li >
 		<a href="requirejs.html">RequireJS</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
@@ -104,39 +104,23 @@
 	</li>
 </ul>
 			<div id="content">
-				<h1>Using GoldenLayout with RequireJS</h1><p>Like most modern libraries GoldenLayout uses UMD (Universal Module Definition) to ensure compatibility with AMD / RequireJS and CommonJS alike. That means that when it comes to using it with RequireJS, there really isn&#39;t much to it.</p><h3>jQuery</h3><p>GoldenLayout depends on jQuery. When requiring GoldenLayout it in turn will require &#39;jquery&#39; (all lowercase) which is the name that jQuery registeres itself under as a named module. So all that&#39;s left is telling RequireJS where this model can be found, e.g. like this:</p><pre><code>requirejs<span class="token punctuation" >.</span><span class="token function" >config<span class="token punctuation" >(</span></span><span class="token punctuation" >{</span>
-    paths<span class="token punctuation" >:</span> <span class="token punctuation" >{</span>
-        <span class="token string" >'jquery'</span><span class="token punctuation" >:</span> <span class="token string" >'lib/jquery'</span>
-    <span class="token punctuation" >}</span>
-<span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-</code></pre><p>And that&#39;s it. Now you can require GoldenLayout and your components and start it, e.g. like that:</p><pre><code>requirejs<span class="token punctuation" >.</span><span class="token function" >config<span class="token punctuation" >(</span></span><span class="token punctuation" >{</span>
-    baseUrl<span class="token punctuation" >:</span> <span class="token string" >'../js'</span><span class="token punctuation" >,</span>
-    paths<span class="token punctuation" >:</span> <span class="token punctuation" >{</span>
-        <span class="token string" >'jquery'</span><span class="token punctuation" >:</span> <span class="token string" >'lib/jquery'</span>
-    <span class="token punctuation" >}</span>
-<span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+				<h1>Extending Tabs</h1><p>GoldenLayout makes it easy to add new functionality to pretty much anything - and tabs are no exception. This tutorial shows how to add a simple counter to a tab, for instance to show new messages.</p><p>Here’s what we’re after:</p><p><p data-height="268" data-theme-id="7376" data-slug-hash="9cb7e16c6e3a5ad427297cc4d390b971" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/wolframhempel/pen/9cb7e16c6e3a5ad427297cc4d390b971/'>Extending Tabs</a> by Wolfram Hempel (<a href='http://codepen.io/wolframhempel'>@wolframhempel</a>) on <a href='http://codepen.io'>CodePen</a>.</p></p><script async src="//codepen.io/assets/embed/ei.js"></script>
 
-<span class="token function" >require<span class="token punctuation" >(</span></span> <span class="token punctuation" >[</span> <span class="token string" >'lib/goldenlayout'</span><span class="token punctuation" >,</span> <span class="token string" >'src/TestComponent'</span> <span class="token punctuation" >]</span><span class="token punctuation" >,</span> 
-    <span class="token keyword" >function</span><span class="token punctuation" >(</span> GoldenLayout<span class="token punctuation" >,</span> TestComponent <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
+<h3>Accessing the Tab</h3><p>There are two ways to access an instance of a <a href="../docs/Tab.html">Tab object</a>. Either by traversing the item-tree, e.g.</p><pre><code>tab <span class="token operator" >=</span> myLayout<span class="token punctuation" >.</span>root<span class="token punctuation" >.</span>contentItems<span class="token punctuation" >[</span> <span class="token number" >0</span> <span class="token punctuation" >]</span><span class="token punctuation" >.</span>header<span class="token punctuation" >.</span>tabs<span class="token punctuation" >[</span> <span class="token number" >1</span> <span class="token punctuation" >]</span>
+</code></pre><p>or, more commonly, via a container. The tricky bit though is that GoldenLayout changes the tab that’s associated with a component whilst it is dragged around the layout. So in order to manipulate the tab, we have to listen to the container’s <code>tab</code> event.</p><pre><code>container<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'tab'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> tab <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
+    tab<span class="token punctuation" >.</span>element<span class="token punctuation" >.</span><span class="token function" >append<span class="token punctuation" >(</span></span> counter <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+</code></pre><p>To put it into perspective, here&#39;s what the essential bits of our example-component look like:</p><pre><code>myLayout<span class="token punctuation" >.</span><span class="token function" >registerComponent<span class="token punctuation" >(</span></span> <span class="token string" >'example'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> container <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
+    <span class="token keyword" >var</span> counter <span class="token operator" >=</span> $<span class="token punctuation" >(</span> <span class="token string" >'&lt;div class="messageCounter">0&lt;/div>'</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 
-    <span class="token keyword" >var</span> myLayout <span class="token operator" >=</span> <span class="token keyword" >new</span> <span class="token class-name" >GoldenLayout</span><span class="token punctuation" >(</span><span class="token punctuation" >{</span>
-        content<span class="token punctuation" >:</span><span class="token punctuation" >[</span><span class="token punctuation" >{</span>
-            type<span class="token punctuation" >:</span> <span class="token string" >'row'</span><span class="token punctuation" >,</span>
-            content<span class="token punctuation" >:</span> <span class="token punctuation" >[</span><span class="token punctuation" >{</span>
-                type<span class="token punctuation" >:</span> <span class="token string" >'component'</span><span class="token punctuation" >,</span>
-                componentName<span class="token punctuation" >:</span> <span class="token string" >'testComponent'</span><span class="token punctuation" >,</span>
-                componentState<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> title<span class="token punctuation" >:</span> <span class="token string" >'First Item'</span> <span class="token punctuation" >}</span>
-            <span class="token punctuation" >}</span><span class="token punctuation" >,</span><span class="token punctuation" >{</span>
-                type<span class="token punctuation" >:</span> <span class="token string" >'component'</span><span class="token punctuation" >,</span>
-                componentName<span class="token punctuation" >:</span> <span class="token string" >'testComponent'</span><span class="token punctuation" >,</span>
-                componentState<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> title<span class="token punctuation" >:</span> <span class="token string" >'Second Item'</span> <span class="token punctuation" >}</span>
-            <span class="token punctuation" >}</span><span class="token punctuation" >]</span>
-        <span class="token punctuation" >}</span><span class="token punctuation" >]</span>
+    container<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'tab'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> tab <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
+        tab<span class="token punctuation" >.</span>element<span class="token punctuation" >.</span><span class="token function" >append<span class="token punctuation" >(</span></span> counter <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
     <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-
-    myLayout<span class="token punctuation" >.</span><span class="token function" >registerComponent<span class="token punctuation" >(</span></span> <span class="token string" >'testComponent'</span><span class="token punctuation" >,</span> TestComponent <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-    myLayout<span class="token punctuation" >.</span><span class="token function" >init<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+</code></pre><p>Please note that the counter DOM element (the orange bubble with the number) is only created once and then moved to every new tab that&#39;s created. This way we only have to bind events to it once.
+Another note-worthy bit is the css. We distinguish between selected and un-selected tabs by checking if they&#39;re a child of an element with an .lm_active class.</p><pre><code><span class="token punctuation" >.</span>lm_active <span class="token punctuation" >.</span>messageCounter<span class="token punctuation" >{</span>
+    background<span class="token punctuation" >:</span> #ee7813<span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span>
 </code></pre>
 				
 				<h3>Comments and Questions</h3>

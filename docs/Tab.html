@@ -64,7 +64,7 @@
 		<a href="Config.html">Layout Config</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
-	<li class="active">
+	<li >
 		<a href="ItemConfig.html">Item Config</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
@@ -86,7 +86,7 @@
 		<a href="Header.html">Header</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
-	<li >
+	<li class="active">
 		<a href="Tab.html">Tab</a>
 		<div class="isActiveIndicator orangeGradient"></div>
 	</li>
@@ -96,20 +96,7 @@
 	</li>
 </ul>
 			<div id="content">
-				<h1>Item Configuration</h1><pre><code><span class="token keyword" >var</span> layout <span class="token operator" >=</span> <span class="token keyword" >new</span> <span class="token class-name" >GoldenLayout</span><span class="token punctuation" >(</span><span class="token punctuation" >{</span>
-    content<span class="token punctuation" >:</span> <span class="token punctuation" >[</span><span class="token punctuation" >{</span>
-        type<span class="token punctuation" >:</span> <span class="token string" >'component'</span><span class="token punctuation" >,</span>
-        content<span class="token punctuation" >:</span> <span class="token punctuation" >[</span><span class="token punctuation" >]</span><span class="token punctuation" >,</span>
-        componentName<span class="token punctuation" >:</span> <span class="token string" >'someName'</span><span class="token punctuation" >,</span>
-        componentState<span class="token punctuation" >:</span> <span class="token punctuation" >{</span> is<span class="token punctuation" >:</span> <span class="token string" >'someState'</span> <span class="token punctuation" >}</span><span class="token punctuation" >,</span>
-        id<span class="token punctuation" >:</span> <span class="token string" >'some id'</span><span class="token punctuation" >,</span>
-        width<span class="token punctuation" >:</span> <span class="token number" >30</span><span class="token punctuation" >,</span>
-        height<span class="token punctuation" >:</span> <span class="token number" >30</span><span class="token punctuation" >,</span>
-        isClosable<span class="token punctuation" >:</span> <span class="token keyword" >true</span><span class="token punctuation" >,</span>
-        title<span class="token punctuation" >:</span> <span class="token string" >'some title'</span><span class="token punctuation" >,</span>
-    <span class="token punctuation" >}</span><span class="token punctuation" >]</span>
-<span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-</code></pre><p>&nbsp;</p><div class="section"><h2>General</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">type</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The type of the item. Possible values are &#39;row&#39;, &#39;column&#39;, &#39;stack&#39; and &#39;component&#39;</td></tr><tr><td class="argument">content</td><td class="type">Array</td><td class="optional">true</td><td class="default">-</td><td class="description">An array of configurations for items that will be created as children of this item</td></tr><tr><td class="argument">width</td><td class="type">Number</td><td class="optional">true</td><td class="default">-</td><td class="description">The width of this item, relative to the other children of its parent in percent</td></tr><tr><td class="argument">height</td><td class="type">Number</td><td class="optional">true</td><td class="default">-</td><td class="description">The height of this item, relative to the other children of its parent in percent</td></tr><tr><td class="argument">id</td><td class="type">Various</td><td class="optional">true</td><td class="default">-</td><td class="description">A String or an Array of strings. Used to retrieve the item using item.getItemsById()</td></tr><tr><td class="argument">isClosable</td><td class="type">boolean</td><td class="optional">true</td><td class="default">true</td><td class="description">Determines if the item is closable. If false, the x on the items tab will be hidden and container.close() will return false</td></tr><tr><td class="argument">title</td><td class="type">String</td><td class="optional">true</td><td class="default">componentName or &#39;&#39;</td><td class="description">The title of the item as displayed on its tab and on draggable windows</td></tr></tbody></table><p>&nbsp;</p></div><div class="section"><h2>Component Specific</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">componentName</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The name of the component as specified in layout.registerComponent. Mandatory if type == &#39;component&#39;</td></tr><tr><td class="argument">componentState</td><td class="type">Various</td><td class="optional">true</td><td class="default">-</td><td class="description">Any serialisable object. Will be passed to the component constructor function</td></tr></tbody></table><p></div></p>
+				<div class="section"><h2>Properties</h2><h3>isActive</h3><p>True if this tab is the selected tab</p><h3>header</h3><p>A reference to the header this tab is a child of</p><h3>contentIten</h3><p>A reference to the content item this tab relates to</p><h3>element</h3><p>The tabs outer (jQuery) DOM element</p><h3>titleElement</h3><p>The (jQuery) DOM element containing the title</p><h3>isActive</h3><p>The (jQuery) DOM element that closes the tab</p></div><div class="section"><h2>setTitle( title )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">title</td><td class="type">String</td><td class="optional">false</td><td class="default">-</td><td class="description">The new title</td></tr></tbody></table><p>Sets the tab&#39;s title. Does not affect the contentItem&#39;s title!</p></div><div class="section"><h2>setActive( isActive )</h2><table class="args"><thead><tr><th>argument</th><th>type</th><th>optional</th><th>default</th><th>description</th></tr></thead><tbody><tr><td class="argument">isActive</td><td class="type">Boolean</td><td class="optional">false</td><td class="default">-</td><td class="description">Whether the tab is active</td></tr></tbody></table><p>Sets this tab&#39;s active state. To programmatically switch tabs, use header.setActiveContentItem( item ) instead.</p><p></div></p>
 				
 				<h3>Comments and Questions</h3>
 				<div id="disqusContainer">
