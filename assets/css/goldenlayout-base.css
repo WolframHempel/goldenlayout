@@ -2,10 +2,6 @@
 	position: relative;
 }
 
-.lm_item{
-	overflow: hidden;
-}
-
 .lm_row > .lm_item{
 	float: left;
 }
@@ -88,7 +84,6 @@
 }
 
 .lm_header .lm_tabs{
-	overflow: hidden;
 	position: absolute;
 }
 

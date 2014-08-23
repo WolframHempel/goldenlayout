@@ -1,4 +1,4 @@
-(function($){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
+(function($){var lm={"controls":{},"config":{},"items":{},"utils":{},"container":{},"errors":{}};
 
 lm.utils.F = function () {};
 	
@@ -1395,6 +1395,15 @@ lm.controls.Tab = function( header, contentItem ) {
 
 	this.element.click( this._onTabClickFn );
 	this.closeElement.click( this._onCloseClickFn );
+
+
+	this.contentItem.tab = this;
+	this.contentItem.emit( 'tab', this );
+
+	if( this.contentItem.isComponent ) {
+		this.contentItem.container.tab = this;
+		this.contentItem.container.emit( 'tab', this );
+	}
 };
 
 lm.controls.Tab._template = '<li class="lm_tab"><i class="lm_left"></i>' +
@@ -1510,25 +1519,6 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 		};
 	}
 });
-lm.errors.ConfigurationError = function( message, node ) {
-	Error.call( this );
-
-	this.name = 'Configuration Error';
-	this.message = message;
-	this.node = node;
-};
-
-lm.errors.ConfigurationError.prototype = new Error();
-
-lm.utils.BubblingEvent = function( name, origin ) {
-	this.name = name;
-	this.origin = origin;
-	this.isPropagationStopped = false;
-};
-
-lm.utils.BubblingEvent.prototype.stopPropagation = function() {
-	this.isPropagationStopped = true;
-};
 
 /**
  * This is the baseclass that all content items inherit from.
@@ -2893,4 +2883,23 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		this.layoutManager.dropTargetIndicator.highlightArea( highlightArea );
 		this._dropSegment = segment;
 	}
-});})(window.$);
+});
+lm.errors.ConfigurationError = function( message, node ) {
+	Error.call( this );
+
+	this.name = 'Configuration Error';
+	this.message = message;
+	this.node = node;
+};
+
+lm.errors.ConfigurationError.prototype = new Error();
+
+lm.utils.BubblingEvent = function( name, origin ) {
+	this.name = name;
+	this.origin = origin;
+	this.isPropagationStopped = false;
+};
+
+lm.utils.BubblingEvent.prototype.stopPropagation = function() {
+	this.isPropagationStopped = true;
+};})(window.$);
