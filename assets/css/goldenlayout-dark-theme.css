@@ -58,6 +58,7 @@
 	padding-bottom: 4px;
 	font-family: Arial, sans-serif;
 	margin-right: 2px;
+	box-shadow: 2px -2px 2px #000;
 }
 
 .lm_tab.lm_active, 
@@ -69,6 +70,7 @@
 .lm_header .lm_tab.lm_active{
 	padding-bottom: 5px;
 	border-bottom: none;
+	box-shadow: 0 -2px 2px #000;
 }
 
 .lm_header .lm_tab .lm_close_tab{

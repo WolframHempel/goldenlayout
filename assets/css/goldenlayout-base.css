@@ -113,6 +113,12 @@
 	top: 0;
 }
 
+.lm_header .lm_tab .lm_title{
+	text-overflow: ellipsis;
+	display: inline-block;
+	overflow: hidden;
+}
+
 .lm_header .lm_tab .lm_close_tab{
 	position: absolute;
 	right: 0;

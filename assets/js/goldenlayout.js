@@ -1,4 +1,4 @@
-(function($){var lm={"controls":{},"config":{},"items":{},"utils":{},"container":{},"errors":{}};
+(function($){var lm={"config":{},"controls":{},"container":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -1217,6 +1217,12 @@ lm.utils.copy( lm.controls.DropTargetIndicator.prototype, {
 		this.element.hide();
 	}
 });
+/**
+ * This class represents a header above a Stack ContentItem.
+ *
+ * @param {lm.LayoutManager} layoutManager
+ * @param {lm.item.AbstractContentItem} parent
+ */
 lm.controls.Header = function( layoutManager, parent ) {
 	lm.utils.EventEmitter.call( this );
 
@@ -1232,8 +1238,10 @@ lm.controls.Header = function( layoutManager, parent ) {
 	this.tabsContainer = this.element.find( '.lm_tabs' );
 	this.controlsContainer = this.element.find( '.lm_controls' );
 	this.parent = parent;
+	this.parent.on( 'resize', this._updateTabSizes, this );
 	this.tabs = [];
 	this.activeComponent = null;
+
 	this._createControls();
 };
 
@@ -1246,6 +1254,14 @@ lm.controls.Header._template = [
 
 lm.utils.copy( lm.controls.Header.prototype, {
 
+	/**
+	 * Creates a new tab and associates it with a contentItem
+	 *
+	 * @param   {lm.item.AbstractContentItem} contentItem
+	 * @param   {Integer} index The position of the tab
+	 *
+	 * @returns {void}
+	 */
 	createTab: function( contentItem, index ) {
 		var tab = new lm.controls.Tab( this, contentItem );
 		
@@ -1267,7 +1283,61 @@ lm.utils.copy( lm.controls.Header.prototype, {
 	
 		this.tabs.splice( index, 0, tab );
 	},
+
+	/**
+	 * Finds a tab based on the contentItem its associated with and removes it.
+	 *
+	 * @param   {lm.item.AbstractContentItem} contentItem
+	 *
+	 * @returns {void}
+	 */
+	removeTab: function( contentItem ) {
+		for( var i = 0; i < this.tabs.length; i++ ) {
+			if( this.tabs[ i ].contentItem === contentItem ) {
+				this.tabs[ i ]._$destroy();
+				this.tabs.splice( i, 1 );
+				return;
+			}
+		}
 	
+		throw new Error( 'contentItem is not controlled by this header' );
+	},
+	
+	/**
+	 * The programmatical equivalent of clicking a Tab.
+	 *
+	 * @param {lm.item.AbstractContentItem} contentItem
+	 */
+	setActiveContentItem: function( contentItem ) {
+		for( var i = 0; i < this.tabs.length; i++ ) {
+			this.tabs[ i ].setActive( this.tabs[ i ].contentItem === contentItem );
+		}
+
+		this._updateTabSizes();
+	},
+
+	/**
+	 * Destroys the entire header
+	 *
+	 * @package private
+	 * 
+	 * @returns {void}
+	 */
+	_$destroy: function() {
+		this.emit( 'destroy' );
+	
+		for( var i = 0; i < this.tabs.length; i++ ) {
+			this.tabs[ i ]._$destroy();
+		}
+	
+		this.element.remove();
+	},
+
+	/**
+	 * Creates the popout, maximise and close buttons in the header's top right corner
+	 *
+	 * @returns {void}
+	 */
 	_createControls: function() {
 		var closeStack, popout, label, maximise;
 
@@ -1295,38 +1365,54 @@ lm.utils.copy( lm.controls.Header.prototype, {
 		}
 	},
 
-	_$destroy: function() {
-		this.emit( 'destroy' );
-	
-		for( var i = 0; i < this.tabs.length; i++ ) {
-			this.tabs[ i ]._$destroy();
-		}
-	
-		this.element.remove();
-	},
-
+	/**
+	 * Invoked when the header's background is clicked (not it's tabs or controls)
+	 *
+	 * @param   {jQuery DOM event} event
+	 *
+	 * @returns {void}
+	 */
 	_onHeaderClick: function( event ) {
 		if( event.target === this.element[ 0 ] ) {
 			this.parent.select();
 		}
 	},
-	
-	setActiveContentItem: function( contentItem ) {
-		for( var i = 0; i < this.tabs.length; i++ ) {
-			this.tabs[ i ].setActive( this.tabs[ i ].contentItem === contentItem );
+
+	/**
+	 * Shrinks the tabs if the available space is not sufficient
+	 *
+	 * @returns {void}
+	 */
+	_updateTabSizes: function() {
+		var availableWidth = this.element.outerWidth() - this.controlsContainer.outerWidth(),
+			totalTabWidth = 0,
+			tabElement,
+			i,
+			gap;
+
+		for( i = 0; i < this.tabs.length; i++ ) {
+			tabElement = this.tabs[ i ].element;
+
+			/*
+			 * In order to show every tab's close icon, decrement the z-index from left to right
+			 */
+			tabElement.css( 'z-index', this.tabs.length - i );
+			totalTabWidth += tabElement.outerWidth() + parseInt( tabElement.css( 'margin-right' ), 10 );
 		}
-	},
-	
-	removeContentItem: function( contentItem ) {
-		for( var i = 0; i < this.tabs.length; i++ ) {
-			if( this.tabs[ i ].contentItem === contentItem ) {
-				this.tabs[ i ]._$destroy();
-				this.tabs.splice( i, 1 );
-				return;
+
+		gap = ( totalTabWidth - availableWidth ) / ( this.tabs.length - 1 )
+
+		for( i = 0; i < this.tabs.length; i++ ) {
+
+			/*
+			 * The active tab keeps it's original width
+			 */
+			if( !this.tabs[ i ].isActive ) {
+				this.tabs[ i ].element.css( 'margin-left', '-' + Math.floor( gap )+ 'px' );
+			} else {
+				this.tabs[ i ].element.css( 'margin-left', '' );
 			}
 		}
-	
-		throw new Error( 'contentItem is not controlled by this header' );
 	}
 });
 
@@ -1413,6 +1499,7 @@ lm.controls.Tab._template = '<li class="lm_tab"><i class="lm_left"></i>' +
 lm.utils.copy( lm.controls.Tab.prototype,{
 
 	setTitle: function( title ) {
+		this.element.attr( 'title', title );
 		this.titleElement.html( title );
 	},
 
@@ -1519,6 +1606,16 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 		};
 	}
 });
+lm.errors.ConfigurationError = function( message, node ) {
+	Error.call( this );
+
+	this.name = 'Configuration Error';
+	this.message = message;
+	this.node = node;
+};
+
+lm.errors.ConfigurationError.prototype = new Error();
+
 
 /**
  * This is the baseclass that all content items inherit from.
@@ -2264,6 +2361,7 @@ lm.utils.copy( lm.items.RowOrColumn.prototype, {
 			this._setAbsoluteSizes();
 		}
 		this.emitBubblingEvent( 'stateChanged' );
+		this.emit( 'resize' );
 	},
 	
 	/**
@@ -2555,6 +2653,7 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		for( i = 0; i < this.contentItems.length; i++ ) {
 			this.contentItems[ i ].element.width( contentWidth ).height( contentHeight );
 		}
+		this.emit( 'resize' );
 		this.emitBubblingEvent( 'stateChanged' );
 	},
 
@@ -2601,7 +2700,7 @@ lm.utils.copy( lm.items.Stack.prototype, {
 	removeChild: function( contentItem, keepChild ) {
 		var index = lm.utils.indexOf( contentItem, this.contentItems );
 		lm.items.AbstractContentItem.prototype.removeChild.call( this, contentItem, keepChild );
-		this.header.removeContentItem( contentItem );
+		this.header.removeTab( contentItem );
 		
 		if( this.contentItems.length > 0 ) {
 			this.setActiveContentItem( this.contentItems[ Math.max( index -1 , 0 ) ] );
@@ -2884,16 +2983,6 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		this._dropSegment = segment;
 	}
 });
-lm.errors.ConfigurationError = function( message, node ) {
-	Error.call( this );
-
-	this.name = 'Configuration Error';
-	this.message = message;
-	this.node = node;
-};
-
-lm.errors.ConfigurationError.prototype = new Error();
-
 lm.utils.BubblingEvent = function( name, origin ) {
 	this.name = name;
 	this.origin = origin;
