@@ -196,6 +196,7 @@ html, body{
 #header.micro a.download{
 	display: none;
 }
+
 /****************************
 * FOOTER
 ****************************/
@@ -296,6 +297,7 @@ html, body{
 	width: 100%;
 	height: 100%;
 }
+
 /****************************
 * FEATURES OVERVIEW
 ****************************/
@@ -362,12 +364,14 @@ html, body{
 	top: 71px;
 	z-index: 1;
 }
+
 /****************************
 * PAYMENT FORM
 ****************************/
 #payment label{
 	display: block;
 }
+
 
 /****************************
 * EXAMPLES PAGE
@@ -587,6 +591,115 @@ html, body{
 	border:1px solid #ea351c !important;
 }
 
+/**********************************
+* DOWNLOAD PAGE
+**********************************/
+#downloads{
+	width: 960px;
+	margin: 20px auto;
+	overflow: hidden;
+}
+
+#downloads *{
+	font: 12px/16px Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#downloads .column{
+	float: left;
+	width: 450px;
+}
+
+#downloads .column.left{
+	margin-right: 60px;
+}
+
+#downloads h2{
+	font: 18px Kalinga;
+	padding-bottom: 2px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
+}
+
+#downloads a.latest{
+	display: inline-block;
+	position: relative;
+	overflow: visible;
+	width: auto;
+	padding: 5px 15px 6px;
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	margin-right: 2em;
+	background: #222;
+	color: #fff!important;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 1;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	cursor: pointer;
+
+}
+
+#downloads a.latest:hover{
+	background: #444;
+}
+
+#downloads a.latest:active{
+	position: relative;
+	top: 1px;
+}
+
+#downloads a.latest,
+#downloads a.latest *{
+	color: #CCC;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#downloads a.latest div{
+	color: #fff;
+	font-size: 18px;
+	margin: 5px 0;
+}
+
+#downloads a.latest small{
+	font-size: 10px;
+}
+
+#downloads .individual_files h3{
+	font: 14px Kalinga;
+	margin: 30px 0 5px;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 2px;
+}
+
+#downloads .individual_files div{
+	margin-top: 10px;
+	font-size: 14px;
+}
+
+#downloads .individual_files a,
+#downloads .previous a{
+	color: #444;
+	display: block;
+	margin: 2px 0;
+}
+
+#downloads .previous a{
+	margin-bottom: 10px;
+}
+
+#downloads .previous a .date{
+	color: #666;
+}
 /**********************************
 * MODAL WINDOW
 **********************************/
