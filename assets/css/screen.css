@@ -392,13 +392,13 @@ html, body{
 }
 
 .examplesNavigation li{
-	background: #222;
 	margin-bottom: 1px;
 	color:#fff;
 }
 
 .examplesNavigation li a{
-	padding: 5px 5px 5px 30px;
+	padding: 2px 0 2px 30px;
+	color:#eee;
 	display: block;
 	text-decoration: none;
 	transition: all 300ms ease;
@@ -413,11 +413,62 @@ html, body{
 }
 
 .examplesNavigation li.head{
-	padding: 5px;
-	background: #555;
-	box-shadow:0 3px 3px rgba(0,0,0,0.9)
+	padding: 14px 16px 2px;
+	color: #999;
 }
 
+.category_examples #loadingBlind{
+	position: absolute;
+	z-index: 99;
+	background: #000;
+	left: 0;
+	top:0;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.category_examples #loadingBlind .loadingText{
+	margin-top: 200px;
+	padding-top: 49px;
+	text-align: center;
+	color: #999;
+	font: 12px Arial,sans-serif;
+	background: url(../images/ajax-loader.gif) no-repeat top center;
+}
+
+.category_examples .codePenContainer{
+	position: relative;
+}
+
+.category_examples .exampleStage{
+	float: left;
+	padding: 0;
+}
+
+.exampleDescription{
+	padding: 14px;
+	font: 12px Arial, sans-serif;
+	color: #EEE;
+	background: #000;
+}
+
+.exampleDescription .head{
+	color: #999;
+}
+
+.exampleDescription .name{
+	color:#ff8e3c;
+}
+
+.exampleDescription .desc{
+	color:#EEE;
+}
+
+.exampleDescription a{
+	color: #eee;
+	text-decoration: underline;
+}
 /**********************************
 * EMBEDDED CONTENT
 **********************************/
@@ -431,7 +482,6 @@ html, body{
 	border-top: 1px solid #fff;
 	padding: 10px;
 }
-
 /**********************************
 * LICENSE PAGE
 **********************************/
