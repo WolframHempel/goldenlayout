@@ -62,7 +62,7 @@
 
 .lm_header{
 	position: relative;
-	overflow-x: hidden;
+	overflow: visible;
 }
 
 .lm_header * {
