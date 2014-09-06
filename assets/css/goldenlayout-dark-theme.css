@@ -1,11 +1,9 @@
 .lm_goldenlayout{
 	background: #000;
-	background-repeat: repeat;
-	background: -webkit-linear-gradient(#000, #222);
 }
 
 .lm_content{
-	background: #333;
+	background: #222;
 }
 
 .lm_dragProxy .lm_content{
@@ -52,7 +50,7 @@
 }
 
 .lm_header .lm_tab{
-	background: #222;
+	background: #111;
 	color: #999;
 	font-size: 13px;
 	padding-bottom: 4px;
@@ -64,7 +62,7 @@
 .lm_tab.lm_active, 
 .lm_tab:hover{
 	color: #eee;
-	background: #333;
+	background: #222;
 }
 
 .lm_header .lm_tab.lm_active{

@@ -109,14 +109,14 @@ html, body{
 }
 
 #nav li{
-	opacity: 0.8;
+	opacity: 1;
 	float: left;
 	transition: opacity 300ms ease;
 }
 
 #nav li.active,
 #nav li:hover{
-	opacity: 1;
+	opacity: 0.8;
 }
 
 #nav a{
@@ -133,19 +133,15 @@ html, body{
 ****************************/
 .orangeGradient{
 	background: #ef7d17; /* Old browsers */
-	background: -moz-linear-gradient(top,  #ef7d17 0%, #ec6804 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ef7d17), color-stop(100%,#ec6804)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #ef7d17 0%,#ec6804 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #ef7d17 0%,#ec6804 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef7d17', endColorstr='#ec6804',GradientType=0 ); /* IE6-9 */
 }
+
 
 #header{
 	height: 140px;
 	width: 100%;
 	position: relative;
+	box-shadow: 0px 4px 13px 0px rgba(0,0,0,0.3);
+	z-index: 2;
 }
 
 #header.micro{
@@ -156,7 +152,7 @@ html, body{
 #header h1{
 	width: 343px;
 	height: 60px;
-	background: url(../images/golden-layout.png );
+	background: url(../images/golden_layout_flat.png ) no-repeat center center;
 	position: absolute;
 	left: 49%;
 	margin-left: -172px;
@@ -337,8 +333,8 @@ html, body{
 
 #startPageFeatures li .bg{
 	background: #000;
-	opacity: 0.5;
-	filter:alpha(opacity=50);
+	opacity: 0.7;
+	filter:alpha(opacity=70);
 	width: 400px;
 	height: 110px;
 }

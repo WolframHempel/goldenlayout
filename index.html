@@ -34,11 +34,7 @@
 	</div>
 	<div id="outerWrapper">
 		<div class="topSection">
-			<div id="header" class="orangeGradient ">
-				<h1><a href=".">GoldenLayout the ultimate webapp layout manager</a></h1>
-				
-			</div>  
-
+			
 			<div id="nav" >
 				
 				<ul>
@@ -53,7 +49,7 @@
 		</div>
 		
 		<div class="content main">
-			<img id="startPageBackground" src="assets/images/hoxton-background.jpg" />
+			<img id="startPageBackground" src="assets/images/background-abstract.jpg" />
 <div class="startExample">
 	<div id="exampleScreen">
 		<div id="tryMeArrow"></div>
@@ -123,10 +119,7 @@
 		});
 	};
 
-	TestComponent = function( container, state ) {
-		var src = 'assets/images/example_bg_' + state.bg + '.jpg';
-		container.getElement().append( '<img class="testImg" src="' + src + '" />' );
-	};
+	
 
 	$(adjustLis);
 	$(window).resize(adjustLis);
@@ -141,9 +134,9 @@
 						type: 'column',
 						content:[
 							{
+								title: 'GoldenLayout demo',
 								type: 'component',
-								componentName: 'watchlist',
-								componentState: { bg: 1 }
+								componentName: 'demo'
 							},
 							{
 								isClosable: false,
@@ -151,13 +144,16 @@
 								content:[
 									{
 										type: 'component',
-										componentName: 'research',
-										componentState: { bg: 2 }
+										title: 'logo',
+										componentName: 'demo',
+										width: 30,
+										componentState: { bg: 'golden_layout_spiral.png' }
 									},
 									{
+										title: 'title',
 										type: 'component',
-										componentName: 'research',
-										componentState: { bg: 3 }
+										componentName: 'demo',
+										componentState: { bg: 'golden_layout_text.png' }
 									}
 								]
 							},
@@ -166,19 +162,19 @@
 								content:[
 									{
 										type: 'component',
-										componentName: 'research',
-										componentState: { bg: 4 }
+										title: 'three',
+										componentName: 'demo'
 									},
 									{
-										isClosable: false,
+										
 										type: 'component',
-										componentName: 'research',
-										componentState: { bg: 4 }
+										title: 'stacked',
+										componentName: 'demo'
 									},
 									{
 										type: 'component',
-										componentName: 'research',
-										componentState: { bg: 4 }
+										title: 'components',
+										componentName: 'demo'
 									}
 								]
 							}
@@ -189,15 +185,14 @@
 						type: 'column',
 						content: [
 							{
-								height: 30,
 								type: 'component',
-								componentName: 'commentary',
-								componentState: { bg: 5 }
+								title: 'two',
+								componentName: 'demo'
 							},
 							{
 								type: 'component',
-								componentName: 'commentary',
-								componentState: { bg: 6 }
+								title: 'more',
+								componentName: 'demo'
 							}
 						]
 					}
@@ -206,12 +201,14 @@
 		]
 	};
 	var myLayout = new GoldenLayout( config, '#exampleLayoutContainer' );
-	var Component = function( container, state ){
-		container.getElement().html( 'Do something useful' );
-	};
-	myLayout.registerComponent( 'commentary', TestComponent );
-	myLayout.registerComponent( 'research', TestComponent );
-	myLayout.registerComponent( 'watchlist', TestComponent );
+	
+	myLayout.registerComponent( 'demo', function( container, state ) {
+		if( state.bg ) {
+			container
+				.getElement()
+				.append( '<img class="testImg" src="assets/images/' + state.bg + '" />' );
+		}
+	});
 	myLayout.init();
 </script>
 		</div>
