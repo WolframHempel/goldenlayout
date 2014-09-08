@@ -1,4 +1,4 @@
-(function($){var lm={"controls":{},"container":{},"config":{},"errors":{},"items":{},"utils":{}};
+(function($){var lm={"config":{},"container":{},"errors":{},"controls":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -132,6 +132,12 @@ lm.utils.now = function() {
 	} else {
 		return ( new Date() ).getTime();
 	}
+};
+
+lm.utils.getUniqueId = function() {
+	return ( Math.random() * 1000000000000000 )
+		.toString(36)
+		.replace( '.', '' );
 };
 lm.utils.EventEmitter = function()
 {
@@ -336,7 +342,7 @@ lm.LayoutManager = function( config, container ) {
 	this.width = null;
 	this.height = null;
 	this.root =  null;
-	this.openWindows = [];
+	this.openPopouts = [];
 	this.selectedItem = null;
 	this.isSubWindow = false;
 	this.config = this._createConfig( config );
@@ -469,13 +475,12 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		}
 
 		/*
-		 * Windows
+		 * Retrieve config for subwindows
 		 */
-		config.openWindows = [];
-		for( i = 0; i < this.openWindows.length; i++ ) {
-			config.openWindows.push({
-				
-			});
+		this._$reconcilePopoutWindows();
+		config.openPopouts = [];
+		for( i = 0; i < this.openPopouts.length; i++ ) {
+			config.openPopouts.push( this.openPopouts[ i ].toConfig() );
 		}
 
 		return config;
@@ -639,6 +644,97 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	},
 
 	/**
+	 * Creates a popout window with the specified content and dimensions
+	 *
+	 * @param   {Object|lm.itemsAbstractContentItem} configOrContentItem
+	 * @param   {[Object]} dimensions A map with width, height, left and top
+	 * @param 	{[String]} parentId the id of the element this item will be appended to 
+	 *                             when popIn is called
+	 * @param 	{[Number]} indexInParent The position of this item within its parent element
+	 
+	 * @returns {lm.controls.BrowserPopout}
+	 */
+	createPopout: function( configOrContentItem, dimensions, parentId, indexInParent ) {
+		var config,
+			isItem = configOrContentItem instanceof lm.items.AbstractContentItem,
+			self = this,
+			windowLeft,
+			windowTop,
+			offset,
+			parent,
+			child,
+			browserPopout;
+
+		parentId = parentId || null;
+
+		if( isItem ) {
+			config = this.toConfig( configOrContentItem ).content;
+			parentId = lm.utils.getUniqueId();
+			
+			/**
+			 * If the item is the only component within a stack or for some
+			 * other reason the only child of its parent the parent will be destroyed
+			 * when the child is removed.
+			 *
+			 * In order to support this we move up the tree until we find something
+			 * that will remain after the item is being popped out
+			 */
+			parent = configOrContentItem.parent;
+			child = configOrContentItem;
+			while( parent.contentItems.length === 1 && !parent.isRoot ) {
+				parent = parent.parent;
+				child = child.parent;
+			}
+		}
+
+		parent.addId( parentId );
+
+		if( isNaN( indexInParent ) ) {
+			indexInParent = lm.utils.indexOf( child, parent.contentItems );
+		}
+
+		if( !dimensions && isItem ) {
+			windowLeft = window.screenX || window.screenLeft;
+			windowTop = window.screenY || window.screenTop;
+			offset = configOrContentItem.element.offset();
+
+			dimensions = {
+				left: windowLeft + offset.left,
+				top: windowTop + offset.top,
+				width: configOrContentItem.element.width(),
+				height: configOrContentItem.element.height()
+			};
+		}
+		
+		if( !dimensions && !isItem ) {
+			dimensions = {
+				left: window.screenX || window.screenLeft + 20,
+				top: window.screenY || window.screenTop + 20,
+				width: 500,
+				height: 309
+			};
+		}
+
+		if( isItem ) {
+			configOrContentItem.remove();
+		}
+
+		browserPopout = new lm.controls.BrowserPopout( config, dimensions, parentId, indexInParent, this );
+		
+		browserPopout.on( 'initialised', function(){
+			self.emit( 'windowOpened', browserPopout );
+		});
+
+		browserPopout.on( 'closed', function(){
+			self._$reconcilePopoutWindows();
+		});
+
+		this.openPopouts.push( browserPopout );
+
+		return browserPopout;
+	},
+
+	/**
 	 * Attaches DragListener to any given DOM element
 	 * and turns it into a way of creating new ContentItems
 	 * by 'dragging' the DOM element into the layout
@@ -786,7 +882,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 			return contentItemOrConfig;
 		}
 
-		if( contentItemOrConfig instanceof Object && contentItemOrConfig.type ) {
+		if( $.isPlainObject( contentItemOrConfig ) && contentItemOrConfig.type ) {
 			var newContentItem = this.createContentItem( contentItemOrConfig, parent );
 			newContentItem.callDownwards( '_$init' );
 			return newContentItem;
@@ -805,19 +901,19 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {void}
 	 */
 	_$reconcilePopoutWindows: function() {
-		var openWindows = [], i;
+		var openPopouts = [], i;
 
-		for( i = 0; i < this.openWindows.length; i++ ) {
-			if( this.openWindows[ i ].closed === false ) {
-				openWindows.push( this.openWindows[ i ] );
+		for( i = 0; i < this.openPopouts.length; i++ ) {
+			if( this.openPopouts[ i ].getWindow().closed === false ) {
+				openPopouts.push( this.openPopouts[ i ] );
 			} else {
-				this.emit( 'windowClosed', this.openWindows[ i ] );
+				this.emit( 'windowClosed', this.openPopouts[ i ] );
 			}
 		}
 
-		if( this.openWindows.length !== openWindows.length ) {
+		if( this.openPopouts.length !== openPopouts.length ) {
 			this.emit( 'stateChanged' );
-			this.openWindows = openWindows;
+			this.openPopouts = openPopouts;
 		}
 		
 	},
@@ -913,11 +1009,23 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {void}
 	 */
 	_adjustToWindowMode: function() {
+		var popInButton = $( '<div class="lm_popin" title="' + this.config.labels.popin + '">' +
+				'<div class="lm_icon"></div>' +
+				'<div class="lm_bg"></div>' +
+			'</div>');
+		
+		popInButton.click(lm.utils.fnBind(function(){
+			this.emit( 'popIn' );
+		}, this));
+
 		document.title = this.config.content[ 0 ].title;
+
+		$( 'head' ).append( $( 'body link, body style' ) );
 
 		this.container = $( 'body' )
 				.html( '' )
-				.css( 'visibility', 'visible' );
+				.css( 'visibility', 'visible' )
+				.append( popInButton );
 
 		/*
 		 * Expose this instance on the window object
@@ -1008,7 +1116,7 @@ lm.config.itemDefaultConfig = {
 	title: ''
 };
 lm.config.defaultConfig = {
-	openWindows:[],
+	openPopouts:[],
 	settings:{
 		hasHeaders: true,
 		constrainDragToContainer: true,
@@ -1027,9 +1135,170 @@ lm.config.defaultConfig = {
 		close: 'close',
 		maximise: 'maximise',
 		minimise: 'minimise',
-		popout: 'open in new window'
+		popout: 'open in new window',
+		popin: 'pop in'
 	}
 };
+lm.container.ItemContainer = function( config, parent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.width = null;
+	this.height = null;
+	this.title = config.componentName;
+	this.parent = parent;
+	this._config = config;
+	this._layoutManager = layoutManager;
+	this.isHidden = false;
+	this._element = $([
+		'<div class="lm_item_container">',
+			'<div class="lm_content"></div>',
+		'</div>'
+	].join( '' ));
+	
+	this._contentElement = this._element.find( '.lm_content' );
+};
+
+lm.utils.copy( lm.container.ItemContainer.prototype, {
+
+	/**
+	 * Get the inner DOM element the container's content
+	 * is intended to live in
+	 *
+	 * @returns {DOM element}
+	 */
+	getElement: function() {
+		return this._contentElement;
+	},
+	
+	/**
+	 * Hide the container. Notifies the containers content first
+	 * and then hides the DOM node. If the container is already hidden
+	 * this should have no effect
+	 *
+	 * @returns {void}
+	 */
+	hide: function() {
+		this.emit( 'hide' );
+		this.isHidden = true;
+		this._element.hide();
+	},
+	
+	/**
+	 * Shows a previously hidden container. Notifies the
+	 * containers content first and then shows the DOM element.
+	 * If the container is already visible this has no effect.
+	 *
+	 * @returns {void}
+	 */
+	show: function() {
+		this.emit( 'show' );
+		this.isHidden = false;
+		this._element.show();
+	},
+
+	/**
+	 * Set the size from within the container. Traverses up
+	 * the item tree until it finds a row or column element
+	 * and resizes its items accordingly.
+	 *
+	 * If this container isn't a descendant of a row or column
+	 * it returns false
+	 * @todo  Rework!!!
+	 * @param {Number} width  The new width in pixel
+	 * @param {Number} height The new height in pixel
+	 * 
+	 * @returns {Boolean} resizeSuccesful
+	 */
+	setSize: function( width, height ) {
+		var rowOrColumn = this.parent,
+			rowOrColumnChild = this,
+			totalPixelHeight,
+			percentageHeight,
+			heightDelta,
+			i;
+
+		while( !rowOrColumn.isColumn && !rowOrColumn.isRow ) {
+			rowOrColumnChild = rowOrColumn;
+			rowOrColumn = rowOrColumn.parent;
+			
+
+			/**
+			 * No row or column has been found
+			 */
+			if( rowOrColumn.isRoot ) {
+				return false;
+			}
+		}
+
+		totalPixelHeight = this.height * ( 1 / ( rowOrColumnChild.config.height / 100 ) );
+		percentageHeight = ( height / totalPixelHeight ) * 100;
+		heightDelta = ( rowOrColumnChild.config.height - percentageHeight ) / rowOrColumn.contentItems.length;
+
+		for( i = 0; i < rowOrColumn.contentItems.length; i++ ) {
+			if( rowOrColumn.contentItems[ i ] === rowOrColumnChild ) {
+				rowOrColumn.contentItems[ i ].config.height = percentageHeight;
+			} else {
+				rowOrColumn.contentItems[ i ].config.height += heightDelta;
+			}
+		}
+
+		rowOrColumn.callDownwards( 'setSize' );
+
+		return true;
+	},
+	
+	/**
+	 * Closes the container if it is closable. Can be called by
+	 * both the component within at as well as the contentItem containing
+	 * it. Emits a close event before the container itself is closed.
+	 *
+	 * @returns {void}
+	 */
+	close: function() {
+		if( this._config.isClosable ) {
+			this.emit( 'close' );
+			this.parent.close();
+		}
+	},
+
+	/**
+	 * Notifies the layout manager of a stateupdate
+	 *
+	 * @param {serialisable} state
+	 */
+	setState: function( state ) {
+		this._config.componentState = state;
+		this.parent.emitBubblingEvent( 'stateChanged' );
+	},
+
+	/**
+	 * Set's the components title
+	 *
+	 * @param {String} title
+	 */
+	setTitle: function( title ) {
+		this.parent.setTitle( title );
+	},
+
+	/**
+	 * Set's the containers size. Called by the container's component.
+	 * To set the size programmatically from within the container please
+	 * use the public setSize method
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	_$setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
+	}
+});
 /**
  * Pops a content item out into a new browser window.
  * This is achieved by
@@ -1040,16 +1309,78 @@ lm.config.defaultConfig = {
  * 	- GoldenLayout when opened in the new window will look for the GET parameter
  * 	  and use it instead of the provided configuration
  *
- * @param {lm.item.AbstractContentItem} contentItem
+ * @param {Object} config GoldenLayout item config
+ * @param {Object} dimensions A map with width, height, top and left
+ * @param {String} parentId The id of the element the item will be appended to on popIn
+ * @param {Number} indexInParent The position of this element within its parent
+ * @param {lm.LayoutManager} layoutManager
  */
-lm.controls.BrowserPopout = function( contentItem ) {
-	this._contentItem = contentItem;
+lm.controls.BrowserPopout = function( config, dimensions, parentId, indexInParent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.isInitialised = false;
+
+	this._config = config;
+	this._dimensions = dimensions;
+	this._parentId = parentId;
+	this._indexInParent = indexInParent;
+	this._layoutManager = layoutManager;
 	this._popoutWindow = null;
+	this._id = null;
 	this._createWindow();
-	this._contentItem.remove();
 };
 
 lm.utils.copy( lm.controls.BrowserPopout.prototype, {
+
+	toConfig: function() {
+		return {
+			dimensions:{
+				width: this.getGlInstance().width,
+				height: this.getGlInstance().height,
+				left: this._popoutWindow.screenX || this._popoutWindow.screenLeft,
+				top: this._popoutWindow.screenY || this._popoutWindow.screenTop
+			},
+			config: this.getGlInstance().toConfig(),
+			parentId: this._parentId,
+			indexInParent: this._indexInParent
+		};
+	},
+
+	getGlInstance: function() {
+		return this._popoutWindow.__glInstance;
+	},
+
+	getWindow: function() {
+		return this._popoutWindow;
+	},
+
+	close: function() {
+		this._popoutWindow.close();
+	},
+
+	/**
+	 * Returns the popped out item to its original position. If the original 
+	 * parent isn't available anymore it falls back to the layout's topmost element
+	 */
+	popIn: function() {
+		var childConfig, 
+			parentItem, 
+			index = this._indexInParent;
+
+		if( this._parentId ) {
+			childConfig = this.getGlInstance().toConfig().content[ 0 ];
+			parentItem = this._layoutManager.root.getItemsById( this._parentId )[ 0 ];
+			
+			//Fallback
+			if( !parentItem ) {
+				parentItem = this._layoutManager.root.contentItems[ 0 ];
+				index = 0;
+			}
+		}
+
+		parentItem.addChild( childConfig, this._indexInParent );
+		this.close();
+	},
 
 	/**
 	 * Creates the URL and window parameter
@@ -1060,8 +1391,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	 * @returns {void}
 	 */
 	_createWindow: function() {
-		var offset,
-			self = this,
+		var checkReadyInterval,
 			url = this._createUrl(),
 			
 			/**
@@ -1070,11 +1400,15 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 			 * GoldenLayout instance if it detects that it is in subWindowMode
 			 */
 			title = Math.floor( Math.random() * 1000000 ).toString( 36 ),
+
+			/**
+			 * The options as used in the window.open string
+			 */
 			options = this._serializeWindowOptions({
-				width: this._contentItem.element.width(),
-				height: this._contentItem.element.height(),
-				innerWidth: this._contentItem.element.width(),
-				innerHeight: this._contentItem.element.height(),
+				width: this._dimensions.width,
+				height: this._dimensions.height,
+				innerWidth: this._dimensions.width,
+				innerHeight: this._dimensions.height,
 				menubar: 'no',
 				toolbar: 'no',
 				location: 'no',
@@ -1090,19 +1424,22 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 			throw new Error( 'Popout blocked' );
 		}
 
-		offset = this._contentItem.element.offset();
-
 		$( this._popoutWindow )
-			.on( 'load', function(){
-				self._positionWindow( offset.left, offset.top );
-			})
-			.on( 'unload beforeunload', function(){
-				setTimeout(function(){
-					self._contentItem.layoutManager._$reconcilePopoutWindows();
-				}, 100 );
-			});
+			.on( 'load', lm.utils.fnBind( this._positionWindow, this ) )
+			.on( 'unload beforeunload', lm.utils.fnBind( this._onClose, this ) );
 
-		this._contentItem.layoutManager.openWindows.push( this._popoutWindow );
+		/**
+		 * Polling the childwindow to find out if GoldenLayout has been initialised
+		 * doesn't seem optimal, but the alternatives - adding a callback to the parent
+		 * window or raising an event on the window object - both would introduce knowledge
+		 * about the parent to the child window which we'd rather avoid
+		 */
+		checkReadyInterval = setInterval(lm.utils.fnBind(function(){
+			if( this._popoutWindow.__glInstance && this._popoutWindow.__glInstance.isInitialised ) {
+				this._onInitialised();
+				clearInterval( checkReadyInterval );
+			}
+		}, this ), 10 );
 	},
 
 	/**
@@ -1129,10 +1466,9 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	 * @returns {String} URL
 	 */
 	_createUrl: function() {
-		var config, urlParts;
+		var config = { content: this._config }, 
+			urlParts;
 
-		config = this._contentItem.layoutManager.toConfig( this._contentItem );
-		delete config.openWindows;
 		config = ( new lm.utils.ConfigMinifier() ).minifyConfig( config );
 		config = window.encodeURIComponent( JSON.stringify( config ) );
 		urlParts = document.location.href.split( '?' );
@@ -1155,13 +1491,32 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	 * 
 	 * @returns {void}
 	 */
-	_positionWindow: function( left, top ) {
-		var windowLeft = window.screenX || window.screenLeft,
-			windowTop = window.screenY || window.screenTop;
-
-		this._popoutWindow.moveTo( windowLeft + left, windowTop + top );
+	_positionWindow: function() {
+		this._popoutWindow.moveTo( this._dimensions.left, this._dimensions.top );
 		this._popoutWindow.focus();
-		this._contentItem.layoutManager.emit( 'windowOpened', this._popoutWindow );
+	},
+
+	/**
+	 * Callback when the new window is opened and the GoldenLayout instance
+	 * within it is initialised
+	 *
+	 * @returns {void}
+	 */
+	_onInitialised: function() {
+		this.isInitialised = true;
+		this.getGlInstance().on( 'popIn', this.popIn, this );
+		this.emit( 'initialised' );
+	},
+
+	/**
+	 * Invoked 50ms after the window unload event
+	 *
+	 * @private
+	 * 
+	 * @returns {void}
+	 */
+	_onClose: function() {
+		setTimeout(lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
 	}
 });
 lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem, originalParent ) {
@@ -1773,166 +2128,6 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 		};
 	}
 });
-lm.container.ItemContainer = function( config, parent, layoutManager ) {
-	lm.utils.EventEmitter.call( this );
-
-	this.width = null;
-	this.height = null;
-	this.title = config.componentName;
-	this.parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
-	this.isHidden = false;
-	this._element = $([
-		'<div class="lm_item_container">',
-			'<div class="lm_content"></div>',
-		'</div>'
-	].join( '' ));
-	
-	this._contentElement = this._element.find( '.lm_content' );
-};
-
-lm.utils.copy( lm.container.ItemContainer.prototype, {
-
-	/**
-	 * Get the inner DOM element the container's content
-	 * is intended to live in
-	 *
-	 * @returns {DOM element}
-	 */
-	getElement: function() {
-		return this._contentElement;
-	},
-	
-	/**
-	 * Hide the container. Notifies the containers content first
-	 * and then hides the DOM node. If the container is already hidden
-	 * this should have no effect
-	 *
-	 * @returns {void}
-	 */
-	hide: function() {
-		this.emit( 'hide' );
-		this.isHidden = true;
-		this._element.hide();
-	},
-	
-	/**
-	 * Shows a previously hidden container. Notifies the
-	 * containers content first and then shows the DOM element.
-	 * If the container is already visible this has no effect.
-	 *
-	 * @returns {void}
-	 */
-	show: function() {
-		this.emit( 'show' );
-		this.isHidden = false;
-		this._element.show();
-	},
-
-	/**
-	 * Set the size from within the container. Traverses up
-	 * the item tree until it finds a row or column element
-	 * and resizes its items accordingly.
-	 *
-	 * If this container isn't a descendant of a row or column
-	 * it returns false
-	 * @todo  Rework!!!
-	 * @param {Number} width  The new width in pixel
-	 * @param {Number} height The new height in pixel
-	 * 
-	 * @returns {Boolean} resizeSuccesful
-	 */
-	setSize: function( width, height ) {
-		var rowOrColumn = this.parent,
-			rowOrColumnChild = this,
-			totalPixelHeight,
-			percentageHeight,
-			heightDelta,
-			i;
-
-		while( !rowOrColumn.isColumn && !rowOrColumn.isRow ) {
-			rowOrColumnChild = rowOrColumn;
-			rowOrColumn = rowOrColumn.parent;
-			
-
-			/**
-			 * No row or column has been found
-			 */
-			if( rowOrColumn.isRoot ) {
-				return false;
-			}
-		}
-
-		totalPixelHeight = this.height * ( 1 / ( rowOrColumnChild.config.height / 100 ) );
-		percentageHeight = ( height / totalPixelHeight ) * 100;
-		heightDelta = ( rowOrColumnChild.config.height - percentageHeight ) / rowOrColumn.contentItems.length;
-
-		for( i = 0; i < rowOrColumn.contentItems.length; i++ ) {
-			if( rowOrColumn.contentItems[ i ] === rowOrColumnChild ) {
-				rowOrColumn.contentItems[ i ].config.height = percentageHeight;
-			} else {
-				rowOrColumn.contentItems[ i ].config.height += heightDelta;
-			}
-		}
-
-		rowOrColumn.callDownwards( 'setSize' );
-
-		return true;
-	},
-	
-	/**
-	 * Closes the container if it is closable. Can be called by
-	 * both the component within at as well as the contentItem containing
-	 * it. Emits a close event before the container itself is closed.
-	 *
-	 * @returns {void}
-	 */
-	close: function() {
-		if( this._config.isClosable ) {
-			this.emit( 'close' );
-			this.parent.close();
-		}
-	},
-
-	/**
-	 * Notifies the layout manager of a stateupdate
-	 *
-	 * @param {serialisable} state
-	 */
-	setState: function( state ) {
-		this._config.componentState = state;
-		this.parent.emitBubblingEvent( 'stateChanged' );
-	},
-
-	/**
-	 * Set's the components title
-	 *
-	 * @param {String} title
-	 */
-	setTitle: function( title ) {
-		this.parent.setTitle( title );
-	},
-
-	/**
-	 * Set's the containers size. Called by the container's component.
-	 * To set the size programmatically from within the container please
-	 * use the public setSize method
-	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
-	 * 
-	 * @returns {void}
-	 */
-	_$setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
-		}
-	}
-});
 lm.errors.ConfigurationError = function( message, node ) {
 	Error.call( this );
 
@@ -1971,7 +2166,6 @@ lm.items.AbstractContentItem = function( layoutManager, config, parent ) {
 	this.type = config.type;
 	this.contentItems = [];
 	this.parent = parent;
-	this.id = config.id;
 
 	this.isInitialised = false;
 	this.isMaximised = false;
@@ -2141,11 +2335,23 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		this.parent.removeChild( this );
 	},
 
+	/**
+	 * Removes the component from the layout and creates a new 
+	 * browser window with the component and its children inside
+	 *
+	 * @returns {lm.controls.BrowserPopout}
+	 */
 	popout: function() {
-		new lm.controls.BrowserPopout( this );
+		var browserPopout = this.layoutManager.createPopout( this );
 		this.emitBubblingEvent( 'stateChanged' );
+		return browserPopout;
 	},
 
+	/**
+	 * Maximises the Item or minimises it if it is already maximised
+	 *
+	 * @returns {void}
+	 */
 	toggleMaximise: function() {
 		if( this.isMaximised === true ) {
 			this.layoutManager._$minimiseItem( this );
@@ -2157,6 +2363,11 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		this.emitBubblingEvent( 'stateChanged' );
 	},
 
+	/**
+	 * Selects the item if it is not already selected
+	 *
+	 * @returns {void}
+	 */
 	select: function() {
 		if( this.layoutManager.selectedItem !== this ) {
 			this.layoutManager.selectItem( this, true );
@@ -2164,6 +2375,11 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		}
 	},
 
+	/**
+	 * De-selects the item if it is selected
+	 *
+	 * @returns {void}
+	 */
 	deselect: function() {
 		if( this.layoutManager.selectedItem === this ) {
 			this.layoutManager.selectedItem = null;
@@ -2171,10 +2387,81 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		}
 	},
 
+	/**
+	 * Set this component's title
+	 * 
+	 * @public
+	 * @param {String} title
+	 *
+	 * @returns {void}
+	 */
 	setTitle: function( title ) {
 		this.config.title = title;
 		this.emit( 'titleChanged', title );
 		this.emit( 'stateChanged' );
+	},
+
+	/**
+	 * Checks whether a provided id is present
+	 *
+	 * @public
+	 * @param   {String}  id
+	 *
+	 * @returns {Boolean} isPresent
+	 */
+	hasId: function( id ) {
+		if( !this.config.id ) {
+			return false;
+		} else if( typeof this.config.id === 'string' ) {
+			return this.config.id === id;
+		} else if( this.config.id instanceof Array ) {
+			return lm.utils.indexOf( id, this.config.id ) !== -1;
+		}
+	},
+
+	/**
+	 * Adds an id. Adds it as a string if the component doesn't
+	 * have an id yet or creates/uses an array
+	 *
+	 * @public
+	 * @param {String} id
+	 *
+	 * @returns {void}
+	 */
+	addId: function( id ) {
+		if( this.hasId( id ) ) {
+			return;
+		}
+
+		if( !this.config.id ) {
+			this.config.id = id;
+		} else if( typeof this.config.id === 'string' ) {
+			this.config.id = [ this.config.id, id ];
+		} else if( this.config.id instanceof Array ) {
+			this.config.id.push( id );
+		}
+	},
+
+	/**
+	 * Removes an existing id. Throws an error
+	 * if the id is not present
+	 *
+	 * @public
+	 * @param   {String} id
+	 *
+	 * @returns {void}
+	 */
+	removeId: function( id ) {
+		if( !this.hasId( id ) ) {
+			throw new Error( 'Id not found' );
+		}
+		
+		if( typeof this.config.id === 'string' ) {
+			delete this.config.id;
+		} else if( this.config.id instanceof Array ) {
+			var index = lm.utils.indexOf( id, this.config.id );
+			this.config.id.splice( index, 1 );
+		}
 	},
 
 	/****************************************
@@ -2199,10 +2486,10 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 
 	getItemsById: function( id ) {
 		return this.getItemsByFilter( function( item ){
-			if( item.id instanceof Array ) {
-				return lm.utils.indexOf( id, item.id ) !== -1;
+			if( item.config.id instanceof Array ) {
+				return lm.utils.indexOf( id, item.config.id ) !== -1;
 			} else {
-				return item.id === id;
+				return item.config.id === id;
 			}
 		});
 	},
@@ -3353,8 +3640,8 @@ lm.utils.ConfigMinifier = function(){
 		'isClosable',
 		'title',
 		'popoutWholeStack',
-		'openWindows'
-
+		'openPopouts',
+		'parentId'
 
 
 
