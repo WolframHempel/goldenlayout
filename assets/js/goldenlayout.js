@@ -1,4 +1,4 @@
-(function($){var lm={"config":{},"container":{},"errors":{},"controls":{},"items":{},"utils":{}};
+(function($){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -52,6 +52,7 @@ lm.utils.copy = function( target, source ) {
 	for( var key in source ) {
 		target[ key ] = source[ key ];
 	}
+	return target;
 };
 
 /**
@@ -338,6 +339,7 @@ lm.LayoutManager = function( config, container ) {
 	this._maximisedItem = null;
 	this._maximisePlaceholder = $( '<div class="lm_maximise_place"></div>' );
 	this._creationTimeoutPassed = false;
+	this._subWindowsCreated = false;
 
 	this.width = null;
 	this.height = null;
@@ -354,6 +356,8 @@ lm.LayoutManager = function( config, container ) {
 	if( this.isSubWindow === true ) {
 		$( 'body' ).css( 'visibility', 'hidden' );
 	}
+
+	$( window ).on( 'unload beforeunload', lm.utils.fnBind( this._onUnload, this) );
 
 	this._typeToItem = {
 		'column': lm.utils.fnBind( lm.items.RowOrColumn, this, [ true ] ),
@@ -443,7 +447,10 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		/*
 		 * settings & labels
 		 */
-		config = $.extend( true, {}, this.config );
+		config = {
+			settings: lm.utils.copy( {}, this.config.settings ),
+			labels: lm.utils.copy( {}, this.config.labels )
+		};
 
 		/*
 		 * Content
@@ -516,6 +523,20 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 */
 	init: function() {
 
+		/**
+		 * Create the popout windows straight away. If popouts are blocked
+		 * an error is thrown on the same 'thread' rather than a timeout and can
+		 * be caught. This also prevents any further initilisation from taking place.
+		 */
+		if( this._subWindowsCreated === false ) {
+			this._createSubWindows();
+			this._subWindowsCreated = true;
+		}
+		
+
+		/**
+		 * If the document isn't ready yet, wait for it.
+		 */
 		if( document.readyState === 'loading' || document.body === null ) {
 			$(document).ready( lm.utils.fnBind( this.init, this ));
 			return;
@@ -655,7 +676,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {lm.controls.BrowserPopout}
 	 */
 	createPopout: function( configOrContentItem, dimensions, parentId, indexInParent ) {
-		var config,
+		var config = configOrContentItem,
 			isItem = configOrContentItem instanceof lm.items.AbstractContentItem,
 			self = this,
 			windowLeft,
@@ -685,13 +706,14 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 				parent = parent.parent;
 				child = child.parent;
 			}
+
+			parent.addId( parentId );
+			if( isNaN( indexInParent ) ) {
+				indexInParent = lm.utils.indexOf( child, parent.contentItems );
+			}
 		}
 
-		parent.addId( parentId );
-
-		if( isNaN( indexInParent ) ) {
-			indexInParent = lm.utils.indexOf( child, parent.contentItems );
-		}
+		
 
 		if( !dimensions && isItem ) {
 			windowLeft = window.screenX || window.screenLeft;
@@ -1036,6 +1058,27 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	},
 
 	/**
+	 * Creates Subwindows (if there are any). Throws an error
+	 * if popouts are blocked.
+	 *
+	 * @returns {void}
+	 */
+	_createSubWindows: function() {
+		var i, popout;
+
+		for( i = 0; i < this.config.openPopouts.length; i++ ) {
+			popout = this.config.openPopouts[ i ];
+
+			this.createPopout(
+				popout.config, 
+				popout.dimensions,
+				popout.parentId,
+				popout.indexInParent
+			);
+		}
+	},
+
+	/**
 	 * Determines what element the layout will be created in
 	 *
 	 * @private
@@ -1094,6 +1137,20 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 
 		this.root = new lm.items.Root( this, { content: config.content }, this.container );
 		this.root.callDownwards( '_$init' );
+	},
+
+	/**
+	 * Called when the window is closed or the user navigates away
+	 * from the page
+	 *
+	 * @returns {void}
+	 */
+	_onUnload: function() {
+		if( this.config.settings.closePopoutsOnUnload === true ) {
+			for( var i = 0; i < this.openPopouts.length; i++ ) {
+				this.openPopouts[ i ].close();
+			}
+		}
 	}
 });
 
@@ -1121,7 +1178,9 @@ lm.config.defaultConfig = {
 		hasHeaders: true,
 		constrainDragToContainer: true,
 		selectionEnabled: false,
-		popoutWholeStack: false
+		popoutWholeStack: false,
+		blockedPopoutsThrowError: true,
+		closePopoutsOnUnload: true
 	},
 	dimensions: {
 		borderWidth: 5,
@@ -1139,166 +1198,6 @@ lm.config.defaultConfig = {
 		popin: 'pop in'
 	}
 };
-lm.container.ItemContainer = function( config, parent, layoutManager ) {
-	lm.utils.EventEmitter.call( this );
-
-	this.width = null;
-	this.height = null;
-	this.title = config.componentName;
-	this.parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
-	this.isHidden = false;
-	this._element = $([
-		'<div class="lm_item_container">',
-			'<div class="lm_content"></div>',
-		'</div>'
-	].join( '' ));
-	
-	this._contentElement = this._element.find( '.lm_content' );
-};
-
-lm.utils.copy( lm.container.ItemContainer.prototype, {
-
-	/**
-	 * Get the inner DOM element the container's content
-	 * is intended to live in
-	 *
-	 * @returns {DOM element}
-	 */
-	getElement: function() {
-		return this._contentElement;
-	},
-	
-	/**
-	 * Hide the container. Notifies the containers content first
-	 * and then hides the DOM node. If the container is already hidden
-	 * this should have no effect
-	 *
-	 * @returns {void}
-	 */
-	hide: function() {
-		this.emit( 'hide' );
-		this.isHidden = true;
-		this._element.hide();
-	},
-	
-	/**
-	 * Shows a previously hidden container. Notifies the
-	 * containers content first and then shows the DOM element.
-	 * If the container is already visible this has no effect.
-	 *
-	 * @returns {void}
-	 */
-	show: function() {
-		this.emit( 'show' );
-		this.isHidden = false;
-		this._element.show();
-	},
-
-	/**
-	 * Set the size from within the container. Traverses up
-	 * the item tree until it finds a row or column element
-	 * and resizes its items accordingly.
-	 *
-	 * If this container isn't a descendant of a row or column
-	 * it returns false
-	 * @todo  Rework!!!
-	 * @param {Number} width  The new width in pixel
-	 * @param {Number} height The new height in pixel
-	 * 
-	 * @returns {Boolean} resizeSuccesful
-	 */
-	setSize: function( width, height ) {
-		var rowOrColumn = this.parent,
-			rowOrColumnChild = this,
-			totalPixelHeight,
-			percentageHeight,
-			heightDelta,
-			i;
-
-		while( !rowOrColumn.isColumn && !rowOrColumn.isRow ) {
-			rowOrColumnChild = rowOrColumn;
-			rowOrColumn = rowOrColumn.parent;
-			
-
-			/**
-			 * No row or column has been found
-			 */
-			if( rowOrColumn.isRoot ) {
-				return false;
-			}
-		}
-
-		totalPixelHeight = this.height * ( 1 / ( rowOrColumnChild.config.height / 100 ) );
-		percentageHeight = ( height / totalPixelHeight ) * 100;
-		heightDelta = ( rowOrColumnChild.config.height - percentageHeight ) / rowOrColumn.contentItems.length;
-
-		for( i = 0; i < rowOrColumn.contentItems.length; i++ ) {
-			if( rowOrColumn.contentItems[ i ] === rowOrColumnChild ) {
-				rowOrColumn.contentItems[ i ].config.height = percentageHeight;
-			} else {
-				rowOrColumn.contentItems[ i ].config.height += heightDelta;
-			}
-		}
-
-		rowOrColumn.callDownwards( 'setSize' );
-
-		return true;
-	},
-	
-	/**
-	 * Closes the container if it is closable. Can be called by
-	 * both the component within at as well as the contentItem containing
-	 * it. Emits a close event before the container itself is closed.
-	 *
-	 * @returns {void}
-	 */
-	close: function() {
-		if( this._config.isClosable ) {
-			this.emit( 'close' );
-			this.parent.close();
-		}
-	},
-
-	/**
-	 * Notifies the layout manager of a stateupdate
-	 *
-	 * @param {serialisable} state
-	 */
-	setState: function( state ) {
-		this._config.componentState = state;
-		this.parent.emitBubblingEvent( 'stateChanged' );
-	},
-
-	/**
-	 * Set's the components title
-	 *
-	 * @param {String} title
-	 */
-	setTitle: function( title ) {
-		this.parent.setTitle( title );
-	},
-
-	/**
-	 * Set's the containers size. Called by the container's component.
-	 * To set the size programmatically from within the container please
-	 * use the public setSize method
-	 *
-	 * @param {[Int]} width  in px
-	 * @param {[Int]} height in px
-	 * 
-	 * @returns {void}
-	 */
-	_$setSize: function( width, height ) {
-		if( width !== this.width || height !== this.height ) {
-			this.width = width;
-			this.height = height;
-			this._contentElement.width( this.width ).height( this.height );
-			this.emit( 'resize' );
-		}
-	}
-});
 /**
  * Pops a content item out into a new browser window.
  * This is achieved by
@@ -1317,7 +1216,6 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
  */
 lm.controls.BrowserPopout = function( config, dimensions, parentId, indexInParent, layoutManager ) {
 	lm.utils.EventEmitter.call( this );
-
 	this.isInitialised = false;
 
 	this._config = config;
@@ -1340,7 +1238,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 				left: this._popoutWindow.screenX || this._popoutWindow.screenLeft,
 				top: this._popoutWindow.screenY || this._popoutWindow.screenTop
 			},
-			config: this.getGlInstance().toConfig(),
+			config: this.getGlInstance().toConfig().content,
 			parentId: this._parentId,
 			indexInParent: this._indexInParent
 		};
@@ -1368,10 +1266,22 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 			index = this._indexInParent;
 
 		if( this._parentId ) {
-			childConfig = this.getGlInstance().toConfig().content[ 0 ];
+			
+			/*
+			 * The $.extend call seems a bit pointless, but it's crucial to
+			 * copy the config returned by this.getGlInstance().toConfig()
+			 * onto a new object. Internet Explorer keeps the references
+			 * to objects on the child window, resulting in the following error
+			 * once the child window is closed:
+			 *
+			 * The callee (server [not server application]) is not available and disappeared
+			 */
+			childConfig = $.extend( true, {}, this.getGlInstance().toConfig() ).content[ 0 ];
 			parentItem = this._layoutManager.root.getItemsById( this._parentId )[ 0 ];
 			
-			//Fallback
+			/*
+			 * Fallback if parentItem is not available
+			 */
 			if( !parentItem ) {
 				parentItem = this._layoutManager.root.contentItems[ 0 ];
 				index = 0;
@@ -1421,7 +1331,13 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 		this._popoutWindow = window.open( url, title, options );
 
 		if( !this._popoutWindow ) {
-			throw new Error( 'Popout blocked' );
+			if( this._layoutManager.config.settings.blockedPopoutsThrowError === true ) {
+				var error = new Error( 'Popout blocked' );
+				error.type = 'popoutBlocked';
+				throw error;
+			} else {
+				return;
+			}
 		}
 
 		$( this._popoutWindow )
@@ -1516,7 +1432,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	 * @returns {void}
 	 */
 	_onClose: function() {
-		setTimeout(lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
+		setTimeout( lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
 	}
 });
 lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem, originalParent ) {
@@ -2126,6 +2042,166 @@ lm.utils.copy( lm.controls.TransitionIndicator.prototype, {
 			width: element.outerWidth(),
 			height: element.outerHeight()
 		};
+	}
+});
+lm.container.ItemContainer = function( config, parent, layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+
+	this.width = null;
+	this.height = null;
+	this.title = config.componentName;
+	this.parent = parent;
+	this._config = config;
+	this._layoutManager = layoutManager;
+	this.isHidden = false;
+	this._element = $([
+		'<div class="lm_item_container">',
+			'<div class="lm_content"></div>',
+		'</div>'
+	].join( '' ));
+	
+	this._contentElement = this._element.find( '.lm_content' );
+};
+
+lm.utils.copy( lm.container.ItemContainer.prototype, {
+
+	/**
+	 * Get the inner DOM element the container's content
+	 * is intended to live in
+	 *
+	 * @returns {DOM element}
+	 */
+	getElement: function() {
+		return this._contentElement;
+	},
+	
+	/**
+	 * Hide the container. Notifies the containers content first
+	 * and then hides the DOM node. If the container is already hidden
+	 * this should have no effect
+	 *
+	 * @returns {void}
+	 */
+	hide: function() {
+		this.emit( 'hide' );
+		this.isHidden = true;
+		this._element.hide();
+	},
+	
+	/**
+	 * Shows a previously hidden container. Notifies the
+	 * containers content first and then shows the DOM element.
+	 * If the container is already visible this has no effect.
+	 *
+	 * @returns {void}
+	 */
+	show: function() {
+		this.emit( 'show' );
+		this.isHidden = false;
+		this._element.show();
+	},
+
+	/**
+	 * Set the size from within the container. Traverses up
+	 * the item tree until it finds a row or column element
+	 * and resizes its items accordingly.
+	 *
+	 * If this container isn't a descendant of a row or column
+	 * it returns false
+	 * @todo  Rework!!!
+	 * @param {Number} width  The new width in pixel
+	 * @param {Number} height The new height in pixel
+	 * 
+	 * @returns {Boolean} resizeSuccesful
+	 */
+	setSize: function( width, height ) {
+		var rowOrColumn = this.parent,
+			rowOrColumnChild = this,
+			totalPixelHeight,
+			percentageHeight,
+			heightDelta,
+			i;
+
+		while( !rowOrColumn.isColumn && !rowOrColumn.isRow ) {
+			rowOrColumnChild = rowOrColumn;
+			rowOrColumn = rowOrColumn.parent;
+			
+
+			/**
+			 * No row or column has been found
+			 */
+			if( rowOrColumn.isRoot ) {
+				return false;
+			}
+		}
+
+		totalPixelHeight = this.height * ( 1 / ( rowOrColumnChild.config.height / 100 ) );
+		percentageHeight = ( height / totalPixelHeight ) * 100;
+		heightDelta = ( rowOrColumnChild.config.height - percentageHeight ) / rowOrColumn.contentItems.length;
+
+		for( i = 0; i < rowOrColumn.contentItems.length; i++ ) {
+			if( rowOrColumn.contentItems[ i ] === rowOrColumnChild ) {
+				rowOrColumn.contentItems[ i ].config.height = percentageHeight;
+			} else {
+				rowOrColumn.contentItems[ i ].config.height += heightDelta;
+			}
+		}
+
+		rowOrColumn.callDownwards( 'setSize' );
+
+		return true;
+	},
+	
+	/**
+	 * Closes the container if it is closable. Can be called by
+	 * both the component within at as well as the contentItem containing
+	 * it. Emits a close event before the container itself is closed.
+	 *
+	 * @returns {void}
+	 */
+	close: function() {
+		if( this._config.isClosable ) {
+			this.emit( 'close' );
+			this.parent.close();
+		}
+	},
+
+	/**
+	 * Notifies the layout manager of a stateupdate
+	 *
+	 * @param {serialisable} state
+	 */
+	setState: function( state ) {
+		this._config.componentState = state;
+		this.parent.emitBubblingEvent( 'stateChanged' );
+	},
+
+	/**
+	 * Set's the components title
+	 *
+	 * @param {String} title
+	 */
+	setTitle: function( title ) {
+		this.parent.setTitle( title );
+	},
+
+	/**
+	 * Set's the containers size. Called by the container's component.
+	 * To set the size programmatically from within the container please
+	 * use the public setSize method
+	 *
+	 * @param {[Int]} width  in px
+	 * @param {[Int]} height in px
+	 * 
+	 * @returns {void}
+	 */
+	_$setSize: function( width, height ) {
+		if( width !== this.width || height !== this.height ) {
+			this.width = width;
+			this.height = height;
+			this._contentElement.width( this.width ).height( this.height );
+			this.emit( 'resize' );
+		}
 	}
 });
 lm.errors.ConfigurationError = function( message, node ) {
