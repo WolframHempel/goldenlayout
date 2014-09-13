@@ -1,4 +1,4 @@
-(function($){var lm={"config":{},"container":{},"errors":{},"controls":{},"items":{},"utils":{}};
+(function($){var lm={"config":{},"container":{},"controls":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -52,6 +52,7 @@ lm.utils.copy = function( target, source ) {
 	for( var key in source ) {
 		target[ key ] = source[ key ];
 	}
+	return target;
 };
 
 /**
@@ -139,6 +140,31 @@ lm.utils.getUniqueId = function() {
 		.toString(36)
 		.replace( '.', '' );
 };
+
+lm.utils.fireDomEvent = function( element, eventName, args, emittingGl ) {
+	 var event; 
+
+	  if (document.createEvent) {
+	    event = document.createEvent( 'HTMLEvents' );
+	    event.initEvent( eventName, true, true);
+	  } else {
+	    event = document.createEventObject();
+	    event.eventType = eventName;
+	  }
+
+	  event.eventName = eventName;
+	  event.__glArgs = args;
+	  event.__gl = emittingGl;
+
+	  if (document.createEvent) {
+	  	console.log( element.dispatchEvent, event );
+	    element.dispatchEvent(event);
+	  } else {
+	    element.fireEvent( 'on' + event.eventType, event );
+	  }
+};
+
+
 lm.utils.EventEmitter = function()
 {
 	this._mSubscriptions = { };
@@ -338,6 +364,7 @@ lm.LayoutManager = function( config, container ) {
 	this._maximisedItem = null;
 	this._maximisePlaceholder = $( '<div class="lm_maximise_place"></div>' );
 	this._creationTimeoutPassed = false;
+	this._subWindowsCreated = false;
 
 	this.width = null;
 	this.height = null;
@@ -345,6 +372,7 @@ lm.LayoutManager = function( config, container ) {
 	this.openPopouts = [];
 	this.selectedItem = null;
 	this.isSubWindow = false;
+	this.eventHub = new lm.utils.EventHub( this );
 	this.config = this._createConfig( config );
 	this.container = container;
 	this.dropTargetIndicator = null;
@@ -354,6 +382,8 @@ lm.LayoutManager = function( config, container ) {
 	if( this.isSubWindow === true ) {
 		$( 'body' ).css( 'visibility', 'hidden' );
 	}
+
+	$( window ).on( 'unload beforeunload', lm.utils.fnBind( this._onUnload, this) );
 
 	this._typeToItem = {
 		'column': lm.utils.fnBind( lm.items.RowOrColumn, this, [ true ] ),
@@ -443,7 +473,10 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		/*
 		 * settings & labels
 		 */
-		config = $.extend( true, {}, this.config );
+		config = {
+			settings: lm.utils.copy( {}, this.config.settings ),
+			labels: lm.utils.copy( {}, this.config.labels )
+		};
 
 		/*
 		 * Content
@@ -516,6 +549,20 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 */
 	init: function() {
 
+		/**
+		 * Create the popout windows straight away. If popouts are blocked
+		 * an error is thrown on the same 'thread' rather than a timeout and can
+		 * be caught. This also prevents any further initilisation from taking place.
+		 */
+		if( this._subWindowsCreated === false ) {
+			this._createSubWindows();
+			this._subWindowsCreated = true;
+		}
+		
+
+		/**
+		 * If the document isn't ready yet, wait for it.
+		 */
 		if( document.readyState === 'loading' || document.body === null ) {
 			$(document).ready( lm.utils.fnBind( this.init, this ));
 			return;
@@ -655,7 +702,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {lm.controls.BrowserPopout}
 	 */
 	createPopout: function( configOrContentItem, dimensions, parentId, indexInParent ) {
-		var config,
+		var config = configOrContentItem,
 			isItem = configOrContentItem instanceof lm.items.AbstractContentItem,
 			self = this,
 			windowLeft,
@@ -685,13 +732,14 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 				parent = parent.parent;
 				child = child.parent;
 			}
+
+			parent.addId( parentId );
+			if( isNaN( indexInParent ) ) {
+				indexInParent = lm.utils.indexOf( child, parent.contentItems );
+			}
 		}
 
-		parent.addId( parentId );
-
-		if( isNaN( indexInParent ) ) {
-			indexInParent = lm.utils.indexOf( child, parent.contentItems );
-		}
+		
 
 		if( !dimensions && isItem ) {
 			windowLeft = window.screenX || window.screenLeft;
@@ -1020,7 +1068,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 
 		document.title = this.config.content[ 0 ].title;
 
-		$( 'head' ).append( $( 'body link, body style' ) );
+		$( 'head' ).append( $( 'body link, body style, template, .gl_keep' ) );
 
 		this.container = $( 'body' )
 				.html( '' )
@@ -1033,6 +1081,27 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		 * it
 		 */
 		window.__glInstance = this;
+	},
+
+	/**
+	 * Creates Subwindows (if there are any). Throws an error
+	 * if popouts are blocked.
+	 *
+	 * @returns {void}
+	 */
+	_createSubWindows: function() {
+		var i, popout;
+
+		for( i = 0; i < this.config.openPopouts.length; i++ ) {
+			popout = this.config.openPopouts[ i ];
+
+			this.createPopout(
+				popout.config, 
+				popout.dimensions,
+				popout.parentId,
+				popout.indexInParent
+			);
+		}
 	},
 
 	/**
@@ -1094,6 +1163,20 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 
 		this.root = new lm.items.Root( this, { content: config.content }, this.container );
 		this.root.callDownwards( '_$init' );
+	},
+
+	/**
+	 * Called when the window is closed or the user navigates away
+	 * from the page
+	 *
+	 * @returns {void}
+	 */
+	_onUnload: function() {
+		if( this.config.settings.closePopoutsOnUnload === true ) {
+			for( var i = 0; i < this.openPopouts.length; i++ ) {
+				this.openPopouts[ i ].close();
+			}
+		}
 	}
 });
 
@@ -1121,7 +1204,9 @@ lm.config.defaultConfig = {
 		hasHeaders: true,
 		constrainDragToContainer: true,
 		selectionEnabled: false,
-		popoutWholeStack: false
+		popoutWholeStack: false,
+		blockedPopoutsThrowError: true,
+		closePopoutsOnUnload: true
 	},
 	dimensions: {
 		borderWidth: 5,
@@ -1146,9 +1231,10 @@ lm.container.ItemContainer = function( config, parent, layoutManager ) {
 	this.height = null;
 	this.title = config.componentName;
 	this.parent = parent;
-	this._config = config;
-	this._layoutManager = layoutManager;
+	this.layoutManager = layoutManager;
 	this.isHidden = false;
+	
+	this._config = config;
 	this._element = $([
 		'<div class="lm_item_container">',
 			'<div class="lm_content"></div>',
@@ -1262,6 +1348,26 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 	},
 
 	/**
+	 * Returns the current state object
+	 *
+	 * @returns {Object} state
+	 */
+	getState: function() {
+		return this._config.componentState;
+	},
+
+	/**
+	 * Merges the provided state into the current one
+	 *
+	 * @param   {Object} state
+	 *
+	 * @returns {void}
+	 */
+	extendState: function( state ) {
+		this.setState( $.extend( true, this.getState(), state ) );
+	},
+
+	/**
 	 * Notifies the layout manager of a stateupdate
 	 *
 	 * @param {serialisable} state
@@ -1317,7 +1423,6 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
  */
 lm.controls.BrowserPopout = function( config, dimensions, parentId, indexInParent, layoutManager ) {
 	lm.utils.EventEmitter.call( this );
-
 	this.isInitialised = false;
 
 	this._config = config;
@@ -1340,7 +1445,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 				left: this._popoutWindow.screenX || this._popoutWindow.screenLeft,
 				top: this._popoutWindow.screenY || this._popoutWindow.screenTop
 			},
-			config: this.getGlInstance().toConfig(),
+			config: this.getGlInstance().toConfig().content,
 			parentId: this._parentId,
 			indexInParent: this._indexInParent
 		};
@@ -1368,10 +1473,22 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 			index = this._indexInParent;
 
 		if( this._parentId ) {
-			childConfig = this.getGlInstance().toConfig().content[ 0 ];
+			
+			/*
+			 * The $.extend call seems a bit pointless, but it's crucial to
+			 * copy the config returned by this.getGlInstance().toConfig()
+			 * onto a new object. Internet Explorer keeps the references
+			 * to objects on the child window, resulting in the following error
+			 * once the child window is closed:
+			 *
+			 * The callee (server [not server application]) is not available and disappeared
+			 */
+			childConfig = $.extend( true, {}, this.getGlInstance().toConfig() ).content[ 0 ];
 			parentItem = this._layoutManager.root.getItemsById( this._parentId )[ 0 ];
 			
-			//Fallback
+			/*
+			 * Fallback if parentItem is not available
+			 */
 			if( !parentItem ) {
 				parentItem = this._layoutManager.root.contentItems[ 0 ];
 				index = 0;
@@ -1421,7 +1538,13 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 		this._popoutWindow = window.open( url, title, options );
 
 		if( !this._popoutWindow ) {
-			throw new Error( 'Popout blocked' );
+			if( this._layoutManager.config.settings.blockedPopoutsThrowError === true ) {
+				var error = new Error( 'Popout blocked' );
+				error.type = 'popoutBlocked';
+				throw error;
+			} else {
+				return;
+			}
 		}
 
 		$( this._popoutWindow )
@@ -1516,7 +1639,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	 * @returns {void}
 	 */
 	_onClose: function() {
-		setTimeout(lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
+		setTimeout( lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
 	}
 });
 lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem, originalParent ) {
@@ -3799,4 +3922,126 @@ lm.utils.copy( lm.utils.ConfigMinifier.prototype, {
 		return value;
 	}
 });
-})(window.$);
+
+/**
+ * An EventEmitter singleton that propagates events
+ * across multiple windows. This is a little bit trickier since
+ * windows are allowed to open childWindows in their own right
+ *
+ * This means that we deal with a tree of windows. Hence the rules for event propagation are:
+ *
+ * - Propagate events from this layout to both parents and children
+ * - Propagate events from parent to this and children
+ * - Propagate events from children to the other children (but not the emitting one) and the parent
+ *
+ * @constructor
+ * 
+ * @param {lm.LayoutManager} layoutManager
+ */
+lm.utils.EventHub = function( layoutManager ) {
+	lm.utils.EventEmitter.call( this );
+	this._layoutManager = layoutManager;
+	this._dontPropagateToParent = null;
+	this._childEventSource = null;
+	this.on( lm.utils.EventEmitter.ALL_EVENT, lm.utils.fnBind( this._onEventFromThis, this ) );
+	$(window).on( 'gl_child_event', lm.utils.fnBind( this._onEventFromChild, this ) );
+};
+
+/**
+ * Called on every event emitted on this eventHub, regardles of origin.
+ *
+ * @private
+ *
+ * @param {Mixed}
+ * 
+ * @returns {void}
+ */
+lm.utils.EventHub.prototype._onEventFromThis = function() {
+	var args = Array.prototype.slice.call( arguments );
+
+	if( this._layoutManager.isSubWindow && args[ 0 ] !== this._dontPropagateToParent ) {
+		this._propagateToParent( args );
+	}
+	this._propagateToChildren( args );
+
+	//Reset
+	this._dontPropagateToParent = null;
+	this._childEventSource = null;
+};
+
+/**
+ * Called by the parent layout.
+ *
+ * @param   {Array} args Event name + arguments
+ *
+ * @returns {void}
+ */
+lm.utils.EventHub.prototype._$onEventFromParent = function( args ) {
+	this._dontPropagateToParent = args[ 0 ];
+	this.emit.apply( this, args );
+};
+
+/**
+ * Callback for child events raised on the window
+ *
+ * @param   {DOMEvent} event
+ * @private
+ *
+ * @returns {void}
+ */
+lm.utils.EventHub.prototype._onEventFromChild = function( event ) {
+	this._childEventSource = event.originalEvent.__gl;
+	this.emit.apply( this, event.originalEvent.__glArgs );
+};
+
+/**
+ * Propagates the event to the parent by emitting
+ * it on the parent's DOM window
+ *
+ * @param   {Array} args Event name + arguments
+ * @private
+ *
+ * @returns {void}
+ */
+lm.utils.EventHub.prototype._propagateToParent = function( args ) {
+	var event,
+		eventName = 'gl_child_event'; 
+
+	if (document.createEvent) {
+		event = window.opener.document.createEvent( 'HTMLEvents' );
+		event.initEvent( eventName, true, true);
+	} else {
+		event = window.opener.document.createEventObject();
+		event.eventType = eventName;
+	}
+
+	event.eventName = eventName;
+	event.__glArgs = args;
+	event.__gl = this._layoutManager;
+
+	if (document.createEvent) {
+		window.opener.dispatchEvent(event);
+	} else {
+		window.opener.fireEvent( 'on' + event.eventType, event );
+	}
+};
+
+/**
+ * Propagate events to children
+ *
+ * @param   {Array} args Event name + arguments
+ * @private
+ *
+ * @returns {void}
+ */
+lm.utils.EventHub.prototype._propagateToChildren = function( args ) {
+	var childGl, i;
+
+	for( i = 0; i < this._layoutManager.openPopouts.length; i++ ) {
+		childGl = this._layoutManager.openPopouts[ i ].getGlInstance();
+
+		if( childGl !== this._childEventSource ) {
+			childGl.eventHub._$onEventFromParent( args );
+		}
+	}
+};})(window.$);

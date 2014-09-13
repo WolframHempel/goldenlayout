@@ -128,6 +128,13 @@ nav{
 	font-weight:bold;
 }
 
+#wrapper > #content h5{
+	font: 12px Arial, sans-serif;
+	margin-top: 20px;
+	margin-bottom: 5px;
+	font-weight:bold;
+}
+
 #wrapper > #content table.args{
 	text-align: left;
 	width: 100%;
