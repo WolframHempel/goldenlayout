@@ -5,19 +5,30 @@ $(function(){
 
 	$(window).resize( resizeSubNav );
 	resizeSubNav();
+	
+	$('#content a[name]').each(function(){
+		$(this).attr( 'name', '_' + $(this).attr( 'name' ) );
+	});
+
 	$('.overview a').click(function( e ){
-		e.preventDefault();
-		e.stopPropagation();
-		var href = $(this).attr( 'href' ),
-			target = $( 'a[name="' + href.substr( 1 ) + '"]' );
+		scrollTo( $(this).attr( 'href' ) );
+	});
+
+	var scrollTo = function( href ) {
+		var target = $( 'a[name="_' + href.substr( 1 ) + '"]' );
 
 		$('.target').removeClass( 'target' );
 		$('a.active').removeClass( 'active' );
-		$(this).addClass('active');
+		$('a[href="' + href + '"]' ).addClass('active');
 		target.parents( '.section' ).addClass( 'target' );
 		
 		$('body, html').animate({
 			scrollTop: target.offset().top - 30
 		}, 500 );
-	});
+	};
+
+	if( document.location.hash ) {
+		scrollTo( document.location.hash );
+	}
 });
+
