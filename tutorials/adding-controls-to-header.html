@@ -109,11 +109,13 @@
 	</li>
 </ul>
 			<div id="content">
-				<h1>Adding controls to headers</h1><p>GoldenLayout provides a number of hooks that make it easy to extend its native functionality, e.g. by adding additional controls to all headers.</p><h3>The goal</h3><p>For this tutorial we&#39;ll add a background-color selection dropdown to every header.</p><p>It needs to:</p><ul>
+				<h1>Adding controls to headers</h1><p>GoldenLayout provides a number of hooks that make it easy to extend its native functionality, e.g. by adding additional controls to all headers.</p><h3>The goal</h3><p>For this tutorial we&#39;ll add a dropdown to every header that allows the user to change the background color.</p><p>It needs to:</p><ul>
 <li>Change the component&#39;s background color when a color is selected</li>
 <li>Set the initial color based on the component&#39;s configuration</li>
 <li>Notify the LayoutManager about state changes when a new color is selected</li>
 </ul>
+<h3>The result</h3><p><p data-height="268" data-theme-id="7376" data-slug-hash="e15391fb136593e265013408cf68e561" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/wolframhempel/pen/e15391fb136593e265013408cf68e561/'>Add Control to Header</a> by Wolfram Hempel (<a href='http://codepen.io/wolframhempel'>@wolframhempel</a>) on <a href='http://codepen.io'>CodePen</a>.</p></p><script async src="//codepen.io/assets/embed/ei.js"></script>
+
 <h3>The approach</h3><p>Whenever a new Row, Column, Stack or Component is created, GoldenLayout emits an event, providing the new item as an argument.</p><pre><code>myLayout<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'stackCreated'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> stack <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
    <span class="token comment" spellcheck="true"> // ...manipulate the stack
 </span><span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
@@ -121,7 +123,7 @@
 myLayout<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'componentCreated'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> component <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
    <span class="token comment" spellcheck="true"> // ...manipulate the component
 </span><span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-</code></pre><p>All these items expose the <a href="../docs/Item.html">Item API</a>.</p><div class="info">Please note: All components are children of stacks (the item with the header and the tabs)! Even if a component is not configured as a child of a stack one will implicitly be added.</div>
+</code></pre><p>Stacks, Rows, Columns and Components expose the <a href="../docs/Item.html">Item API</a>.</p><div class="info">Please note: All components are children of Stacks (the item with the header and the tabs)! Even if a component is not configured as a child of a stack one will implicitly be added.</div>
 
 <p>The stack item provides access to its header and the components within it. Some examples:</p><pre><code>myLayout<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'stackCreated'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> stack <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
 
@@ -131,7 +133,7 @@ myLayout<span class="token punctuation" >.</span><span class="token function" >o
     stack<span class="token punctuation" >.</span>header<span class="token punctuation" >.</span>controlsContainer<span class="token punctuation" >.</span><span class="token function" >prepend<span class="token punctuation" >(</span></span> <span class="token string" >'&lt;div>foo&lt;/div>'</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 
     <span class="token comment" spellcheck="true">/*
-     * Read the value color from the first components `componentState`
+     * Read the color from the first component's state
      */</span>
     <span class="token keyword" >var</span> color <span class="token operator" >=</span> stack<span class="token punctuation" >.</span>contentItems<span class="token punctuation" >[</span> <span class="token number" >0</span> <span class="token punctuation" >]</span><span class="token punctuation" >.</span>config<span class="token punctuation" >.</span>componentState<span class="token punctuation" >.</span>color<span class="token punctuation" >;</span>
 
@@ -140,9 +142,7 @@ myLayout<span class="token punctuation" >.</span><span class="token function" >o
      */</span>
     stack<span class="token punctuation" >.</span><span class="token function" >emitBubblingEvent<span class="token punctuation" >(</span></span> <span class="token string" >'stateChanged'</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-</code></pre><h3>The result</h3><p><p data-height="268" data-theme-id="7376" data-slug-hash="e15391fb136593e265013408cf68e561" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/wolframhempel/pen/e15391fb136593e265013408cf68e561/'>Add Control to Header</a> by Wolfram Hempel (<a href='http://codepen.io/wolframhempel'>@wolframhempel</a>) on <a href='http://codepen.io'>CodePen</a>.</p></p><script async src="//codepen.io/assets/embed/ei.js"></script>
-
-<h3>The code</h3><pre><code><span class="token comment" spellcheck="true">/*
+</code></pre><h3>The code</h3><pre><code><span class="token comment" spellcheck="true">/*
  * Callback for every created stack
  */</span>
 myLayout<span class="token punctuation" >.</span><span class="token function" >on<span class="token punctuation" >(</span></span> <span class="token string" >'stackCreated'</span><span class="token punctuation" >,</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> stack <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
@@ -151,9 +151,9 @@ myLayout<span class="token punctuation" >.</span><span class="token function" >o
      * Copy the html for the color selection dropdown from
      * a template tag
      */</span>
-    <span class="token keyword" >var</span> colorControlElement <span class="token operator" >=</span> $<span class="token punctuation" >(</span> $<span class="token punctuation" >(</span> <span class="token string" >'template'</span> <span class="token punctuation" >)</span><span class="token punctuation" >.</span><span class="token function" >html<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
-        selectedColorElement <span class="token operator" >=</span> colorControlElement<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'.selectedColor'</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
-        contentElement <span class="token operator" >=</span> stack<span class="token punctuation" >.</span>element<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'.lm_content'</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
+    <span class="token keyword" >var</span> colorSelectionDropdown <span class="token operator" >=</span> $<span class="token punctuation" >(</span> $<span class="token punctuation" >(</span> <span class="token string" >'template'</span> <span class="token punctuation" >)</span><span class="token punctuation" >.</span><span class="token function" >html<span class="token punctuation" >(</span></span><span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
+        selectedColor <span class="token operator" >=</span> colorSelectionDropdown<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'.selectedColor'</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
+        containerContent <span class="token operator" >=</span> stack<span class="token punctuation" >.</span>element<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'.lm_content'</span> <span class="token punctuation" >)</span><span class="token punctuation" >,</span>
         component <span class="token operator" >=</span> stack<span class="token punctuation" >.</span>contentItems<span class="token punctuation" >[</span> <span class="token number" >0</span> <span class="token punctuation" >]</span><span class="token punctuation" >,</span>
 
         <span class="token comment" spellcheck="true">/*
@@ -163,8 +163,8 @@ myLayout<span class="token punctuation" >.</span><span class="token function" >o
         componentState <span class="token operator" >=</span> component<span class="token punctuation" >.</span>config<span class="token punctuation" >.</span>componentState<span class="token punctuation" >,</span>
 
         setColor <span class="token operator" >=</span> <span class="token keyword" >function</span><span class="token punctuation" >(</span> color <span class="token punctuation" >)</span><span class="token punctuation" >{</span>
-            selectedColorElement<span class="token punctuation" >.</span><span class="token function" >css<span class="token punctuation" >(</span></span> <span class="token string" >'background-color'</span><span class="token punctuation" >,</span> color <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
-            contentElement<span class="token punctuation" >.</span><span class="token function" >css<span class="token punctuation" >(</span></span> <span class="token string" >'background-color'</span><span class="token punctuation" >,</span> color <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+            selectedColor<span class="token punctuation" >.</span><span class="token function" >css<span class="token punctuation" >(</span></span> <span class="token string" >'background-color'</span><span class="token punctuation" >,</span> color <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+            containerContent<span class="token punctuation" >.</span><span class="token function" >css<span class="token punctuation" >(</span></span> <span class="token string" >'background-color'</span><span class="token punctuation" >,</span> color <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 
             <span class="token comment" spellcheck="true">/*
              * Update the componentState with the new color and
@@ -175,10 +175,10 @@ myLayout<span class="token punctuation" >.</span><span class="token function" >o
             component<span class="token punctuation" >.</span><span class="token function" >emitBubblingEvent<span class="token punctuation" >(</span></span> <span class="token string" >'stateChanged'</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
         <span class="token punctuation" >}</span><span class="token punctuation" >;</span>
 
-    stack<span class="token punctuation" >.</span>header<span class="token punctuation" >.</span>controlsContainer<span class="token punctuation" >.</span><span class="token function" >prepend<span class="token punctuation" >(</span></span> colorControlElement <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+    stack<span class="token punctuation" >.</span>header<span class="token punctuation" >.</span>controlsContainer<span class="token punctuation" >.</span><span class="token function" >prepend<span class="token punctuation" >(</span></span> colorSelectionDropdown <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
     <span class="token function" >setColor<span class="token punctuation" >(</span></span> componentState<span class="token punctuation" >.</span>color <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 
-    colorControlElement<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'li'</span> <span class="token punctuation" >)</span><span class="token punctuation" >.</span><span class="token function" >click<span class="token punctuation" >(</span></span><span class="token keyword" >function</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >{</span>
+    colorSelectionDropdown<span class="token punctuation" >.</span><span class="token function" >find<span class="token punctuation" >(</span></span> <span class="token string" >'li'</span> <span class="token punctuation" >)</span><span class="token punctuation" >.</span><span class="token function" >click<span class="token punctuation" >(</span></span><span class="token keyword" >function</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >{</span>
         <span class="token function" >setColor<span class="token punctuation" >(</span></span> $<span class="token punctuation" >(</span><span class="token keyword" >this</span><span class="token punctuation" >)</span><span class="token punctuation" >.</span><span class="token function" >css<span class="token punctuation" >(</span></span> <span class="token string" >'background-color'</span> <span class="token punctuation" >)</span> <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
     <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>

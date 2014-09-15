@@ -140,31 +140,6 @@ lm.utils.getUniqueId = function() {
 		.toString(36)
 		.replace( '.', '' );
 };
-
-lm.utils.fireDomEvent = function( element, eventName, args, emittingGl ) {
-	 var event; 
-
-	  if (document.createEvent) {
-	    event = document.createEvent( 'HTMLEvents' );
-	    event.initEvent( eventName, true, true);
-	  } else {
-	    event = document.createEventObject();
-	    event.eventType = eventName;
-	  }
-
-	  event.eventName = eventName;
-	  event.__glArgs = args;
-	  event.__gl = emittingGl;
-
-	  if (document.createEvent) {
-	  	console.log( element.dispatchEvent, event );
-	    element.dispatchEvent(event);
-	  } else {
-	    element.fireEvent( 'on' + event.eventType, event );
-	  }
-};
-
-
 lm.utils.EventEmitter = function()
 {
 	this._mSubscriptions = { };
@@ -737,6 +712,10 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 			if( isNaN( indexInParent ) ) {
 				indexInParent = lm.utils.indexOf( child, parent.contentItems );
 			}
+		} else {
+			if( !( config instanceof Array ) ) {
+				config = [ config ];
+			}
 		}
 
 		
@@ -1096,7 +1075,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 			popout = this.config.openPopouts[ i ];
 
 			this.createPopout(
-				popout.config, 
+				popout.content, 
 				popout.dimensions,
 				popout.parentId,
 				popout.indexInParent
@@ -1206,7 +1185,10 @@ lm.config.defaultConfig = {
 		selectionEnabled: false,
 		popoutWholeStack: false,
 		blockedPopoutsThrowError: true,
-		closePopoutsOnUnload: true
+		closePopoutsOnUnload: true,
+		showPopoutIcon: true,
+		showMaximiseIcon: true,
+		showCloseIcon: true
 	},
 	dimensions: {
 		borderWidth: 5,
@@ -1445,7 +1427,7 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 				left: this._popoutWindow.screenX || this._popoutWindow.screenLeft,
 				top: this._popoutWindow.screenY || this._popoutWindow.screenTop
 			},
-			config: this.getGlInstance().toConfig().content,
+			content: this.getGlInstance().toConfig().content,
 			parentId: this._parentId,
 			indexInParent: this._indexInParent
 		};
@@ -1642,6 +1624,21 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 		setTimeout( lm.utils.fnBind( this.emit, this, [ 'closed' ] ), 50 );
 	}
 });
+/**
+ * This class creates a temporary container
+ * for the component whilst it is being dragged
+ * and handles drag events
+ *
+ * @constructor
+ * @private
+ *
+ * @param {Number} x              The initial x position
+ * @param {Number} y              The initial y position
+ * @param {lm.utils.DragListener} dragListener   
+ * @param {lm.LayoutManager} layoutManager
+ * @param {lm.item.AbstractContentItem} contentItem
+ * @param {lm.item.AbstractContentItem} originalParent
+ */
 lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem, originalParent ) {
 	this._dragListener = dragListener;
 	this._layoutManager = layoutManager;
@@ -1656,6 +1653,7 @@ lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem
 
 	this.element = $( lm.controls.DragProxy._template );
 	this.element.css({ left: x, top: y });
+	this.element.find( '.lm_title' ).text( this._contentItem.config.title );
 	this.childElementContainer = this.element.find( '.lm_content' );
 	this.childElementContainer.append( contentItem.element );
 
@@ -1679,7 +1677,7 @@ lm.controls.DragProxy._template = '<div class="lm_dragProxy">' +
 									'<div class="lm_header">' +
 										'<ul class="lm_tabs">' +
 											'<li class="lm_tab lm_active"><i class="lm_left"></i>' +
-											'<span class="lm_title">todo - title</span>' +
+											'<span class="lm_title"></span>' +
 											'<i class="lm_right"></i></li>' +
 										'</ul>' +
 									'</div>' +
@@ -1688,6 +1686,19 @@ lm.controls.DragProxy._template = '<div class="lm_dragProxy">' +
 
 lm.utils.copy( lm.controls.DragProxy.prototype, {
 
+	/**
+	 * Callback on every mouseMove event during a drag. Determines if the drag is
+	 * still within the valid drag area and calls the layoutManager to highlight the
+	 * current drop area
+	 *
+	 * @param   {Number} offsetX The difference from the original x position in px
+	 * @param   {Number} offsetY The difference from the original y position in px
+	 * @param   {jQuery DOM event} event
+	 *
+	 * @private
+	 *
+	 * @returns {void}
+	 */
 	_onDrag: function( offsetX, offsetY, event ) {
 		var x = event.pageX,
 			y = event.pageY,
@@ -1706,6 +1717,14 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 		}
 	},
 	
+	/**
+	 * Callback when the drag has finished. Determines the drop area
+	 * and adds the child to it
+	 *
+	 * @private
+	 *
+	 * @returns {void}
+	 */
 	_onDrop: function() {
 		this._layoutManager.dropTargetIndicator.hide();
 
@@ -1734,7 +1753,15 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 		this.element.remove();
 	},
 	
+	/**
+	 * Removes the item from it's original position within the tree
+	 *
+	 * @private
+	 *
+	 * @returns {void}
+	 */
 	_updateTree: function() {
+		
 		/**
 		 * parent is null if the drag had been initiated by a external drag source
 		 */
@@ -1745,6 +1772,13 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 		this._contentItem._$setParent( this );
 	},
 	
+	/**
+	 * Updates the Drag Proxie's dimensions
+	 *
+	 * @private
+	 *
+	 * @returns {void}
+	 */
 	_setDimensions: function() {
 		var dimensions = this._layoutManager.config.dimensions,
 			width = dimensions.dragProxyWidth,
@@ -1972,21 +2006,23 @@ lm.utils.copy( lm.controls.Header.prototype, {
 		/**
 		 * Popout control to launch component in new window.
 		 */
-		popout = lm.utils.fnBind( this._onPopoutClick, this );
-		label = this.layoutManager.config.labels.popout;
-		new lm.controls.HeaderButton( this, label, 'lm_popout', popout );
-
+		if( this.layoutManager.config.settings.showPopoutIcon ) {
+			popout = lm.utils.fnBind( this._onPopoutClick, this );
+			label = this.layoutManager.config.labels.popout;
+			new lm.controls.HeaderButton( this, label, 'lm_popout', popout );
+		}
 		/**
 		 * Maximise control - set the component to the full size of the layout
 		 */
-		maximise = lm.utils.fnBind( this.parent.toggleMaximise, this.parent );
-		label = this.layoutManager.config.labels.maximise;
-		new lm.controls.HeaderButton( this, label, 'lm_maximise', maximise );
-
+		if( this.layoutManager.config.settings.showMaximiseIcon ) {
+			maximise = lm.utils.fnBind( this.parent.toggleMaximise, this.parent );
+			label = this.layoutManager.config.labels.maximise;
+			new lm.controls.HeaderButton( this, label, 'lm_maximise', maximise );
+		}
 		/**
 		 * Close button
 		 */
-		if( this.parent.config.isClosable ) {
+		if( this.parent.config.isClosable && this.layoutManager.config.settings.showCloseIcon ) {
 			closeStack = lm.utils.fnBind( this.parent.remove, this.parent );
 			label = this.layoutManager.config.labels.close;
 			new lm.controls.HeaderButton( this, label, 'lm_close', closeStack );
@@ -2020,6 +2056,10 @@ lm.utils.copy( lm.controls.Header.prototype, {
 	 * @returns {void}
 	 */
 	_updateTabSizes: function() {
+		if( this.tabs.length === 0 ) {
+			return;
+		}
+		
 		var availableWidth = this.element.outerWidth() - this.controlsContainer.outerWidth(),
 			totalTabWidth = 0,
 			tabElement,
@@ -2168,6 +2208,9 @@ lm.utils.copy( lm.controls.Tab.prototype,{
 	},
 
 	_onDragStart: function( x, y ) {
+		if( this.contentItem.parent.isMaximised === true ) {
+			this.contentItem.parent.toggleMaximise();
+		}
 		new lm.controls.DragProxy(
 			x,
 			y,
@@ -3397,6 +3440,8 @@ lm.utils.copy( lm.items.Stack.prototype, {
 	_$init: function() {
 		if( this.isInitialised === true ) return;
 
+		lm.items.AbstractContentItem.prototype._$init.call( this );
+
 		for( var i = 0; i < this.contentItems.length; i++ ) {
 			this.header.createTab( this.contentItems[ i ] );
 			this.contentItems[ i ]._$hide();
@@ -3405,13 +3450,11 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		if( this.contentItems.length > 0 ) {
 			this.setActiveContentItem( this.contentItems[ 0 ] );
 		}
-
-		lm.items.AbstractContentItem.prototype._$init.call( this );
 	},
 
 	setActiveContentItem: function( contentItem ) {
 		if( lm.utils.indexOf( contentItem, this.contentItems ) === -1 ) {
-			throw new Error( 'Component is not a child of this stack' );
+			throw new Error( 'contentItem is not a child of this stack' );
 		}
 
 		if( this._activeContentItem !== null ) {
@@ -3421,7 +3464,12 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		this._activeContentItem = contentItem;
 		this.header.setActiveContentItem( contentItem );
 		contentItem._$show();
+		this.emit( 'activeContentItemChanged', contentItem );
 		this.emitBubblingEvent( 'stateChanged' );
+	},
+
+	getActiveContentItem: function() {
+		return this.header.activeContentItem;
 	},
 
 	addChild: function( contentItem, index ) {
@@ -3503,6 +3551,7 @@ lm.utils.copy( lm.items.Stack.prototype, {
 		 */
 		if( contentItem.isComponent ) {
 			stack = this.layoutManager.createContentItem({ type: 'stack' }, this );
+			stack._$init();
 			stack.addChild( contentItem );
 			contentItem = stack;
 		}
