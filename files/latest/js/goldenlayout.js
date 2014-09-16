@@ -1938,6 +1938,7 @@ lm.utils.copy( lm.controls.Header.prototype, {
 		}
 	
 		this.tabs.splice( index, 0, tab );
+		this._updateTabSizes();
 	},
 
 	/**
@@ -2093,7 +2094,7 @@ lm.utils.copy( lm.controls.Header.prototype, {
 			this.tabs[ i ].element.css( 'margin-left', marginLeft );
 		}
 
-		if( this.element.outerWidth() < this.tabs[ 0 ].element.outerWidth() ) {
+		if( availableWidth < totalTabWidth ) {
 			this.element.css( 'overflow', 'hidden' );
 		} else {
 			this.element.css( 'overflow', 'visible' );
