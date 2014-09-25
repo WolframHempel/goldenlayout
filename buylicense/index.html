@@ -131,9 +131,16 @@
 	</div>
 </div>
 <div class="templateContainer">
-
+	<div class="purchaseError">
+		<p>
+			Oh dear, we apologize. Your purchase was successful, yet there was an error while retrieving your license key. Please have a look into your email inbox, if it isn’t there either, please give us a shout at <a href="mailto:support@golden-layout.com">support@golden-layout.com</a> quoting <b class="stripe-purchase-id"></b> and we’ll look for it immediately.
+		</p>
+	</div>
 	<div class="purchaseSuccess">
 		<h3>Thank you for licensing your copy of GoldenLayout</h3>
+		<div class="info">
+			A confirmation receipt containing your license key was sent to <span class="email"></span>.
+		</div>
 		<ul>
 			<li>
 				<label>License Type:</label>
@@ -150,8 +157,10 @@
 		</ul>
 		<h3>License</h3>
 		<div class="yourLicense"></div>
-		<a href="#" class="closeModal">Close</a>
-		<a class="downloadLink" href="#" download>download license</a>
+		<div class="footerLinks">
+			<a href="#" class="closeModal">close</a>
+			<a class="downloadLink" href="#" download>download license</a>
+		</div>
 	</div>
 </div>
 <img src="../assets/images/logo_128_128.png" id="stripeImage" style="display:none" />

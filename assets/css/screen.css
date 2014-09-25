@@ -849,3 +849,24 @@ html, body{
 	padding: 5px;
 	margin-top: 10px;
 }
+
+.purchaseSuccess .info{
+	font: 12px Arial, sans-serif;
+	margin-bottom: 10px;
+	margin-top: 3px;
+}
+
+.purchaseSuccess .email{
+	font-weight: bold;
+}
+
+.purchaseSuccess .footerLinks{
+	text-align: right;
+}
+
+.purchaseSuccess .footerLinks a{
+	font: 14px Arial, sans-serif;
+	display: inline-block;
+	padding: 5px 0 0 10px;
+	color: #333;
+}

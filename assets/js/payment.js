@@ -55,7 +55,8 @@ $(function(){
 			.setLoading( true )
 			.show();
 
-		var url = 'http://frozen-anchorage-5911.herokuapp.com/purchase/', 
+		var url = 'https://frozen-anchorage-5911.herokuapp.com/purchase/', 
+		// var url = 'http://localhost:5000/purchase/', 
 		data = {};
 		
 		if( isSingleDomainLicense ) {
@@ -89,6 +90,7 @@ $(function(){
 			element = $( '.templateContainer .purchaseSuccess' ).clone(),
 			link = $( 'a[data-licenseId=' + data.product.id + ']' );
 
+		element.find( '.email' ).html( data.license.email );
 		element.find( '.licenseType' ).html( link.attr( 'title' ) );
 		element.find( '.licenseKey' ).html( data.license.key );
 		element.find( '.licenseUrl' ).html( data.license.url );

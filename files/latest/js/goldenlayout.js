@@ -504,7 +504,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 */
 	getComponent: function( name ) {
 		if( this._components[ name ] === undefined ) {
-			throw new lm.errors.ConfigurationError( 'Unknown component ' + name );
+			throw new lm.errors.ConfigurationError( 'Unknown component "' + name + '"' );
 		}
 
 		return this._components[ name ];
@@ -661,7 +661,6 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		}
 
 		contentItem = new this._typeToItem[ config.type ]( this, config, parent );
-
 		return contentItem;
 	},
 
@@ -1173,39 +1172,6 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	}
 })();
 
-lm.config.itemDefaultConfig = {
-	isClosable: true,
-	title: ''
-};
-lm.config.defaultConfig = {
-	openPopouts:[],
-	settings:{
-		hasHeaders: true,
-		constrainDragToContainer: true,
-		selectionEnabled: false,
-		popoutWholeStack: false,
-		blockedPopoutsThrowError: true,
-		closePopoutsOnUnload: true,
-		showPopoutIcon: true,
-		showMaximiseIcon: true,
-		showCloseIcon: true
-	},
-	dimensions: {
-		borderWidth: 5,
-		minItemHeight: 10,
-		minItemWidth: 10,
-		headerHeight: 20,
-		dragProxyWidth: 300,
-		dragProxyHeight: 200
-	},
-	labels: {
-		close: 'close',
-		maximise: 'maximise',
-		minimise: 'minimise',
-		popout: 'open in new window',
-		popin: 'pop in'
-	}
-};
 lm.container.ItemContainer = function( config, parent, layoutManager ) {
 	lm.utils.EventEmitter.call( this );
 
@@ -1387,6 +1353,40 @@ lm.utils.copy( lm.container.ItemContainer.prototype, {
 		}
 	}
 });
+lm.config.itemDefaultConfig = {
+	isClosable: true,
+	title: ''
+};
+lm.config.defaultConfig = {
+	openPopouts:[],
+	settings:{
+		hasHeaders: true,
+		constrainDragToContainer: true,
+		reorderEnabled: true,
+		selectionEnabled: false,
+		popoutWholeStack: false,
+		blockedPopoutsThrowError: true,
+		closePopoutsOnUnload: true,
+		showPopoutIcon: true,
+		showMaximiseIcon: true,
+		showCloseIcon: true
+	},
+	dimensions: {
+		borderWidth: 5,
+		minItemHeight: 10,
+		minItemWidth: 10,
+		headerHeight: 20,
+		dragProxyWidth: 300,
+		dragProxyHeight: 200
+	},
+	labels: {
+		close: 'close',
+		maximise: 'maximise',
+		minimise: 'minimise',
+		popout: 'open in new window',
+		popin: 'pop in'
+	}
+};
 /**
  * Pops a content item out into a new browser window.
  * This is achieved by
@@ -1973,10 +1973,12 @@ lm.utils.copy( lm.controls.Header.prototype, {
 			this.tabs[ i ].setActive( isActive );
 			if( isActive === true ) {
 				this.activeContentItem = contentItem;
+				this.parent.config.activeItemIndex = i;
 			}
 		}
 
 		this._updateTabSizes();
+		this.parent.emitBubblingEvent( 'stateChanged' );
 	},
 
 	/**
@@ -2159,15 +2161,23 @@ lm.controls.Tab = function( header, contentItem ) {
 	this.contentItem.on( 'titleChanged', this.setTitle, this );
 
 	this._layoutManager = this.contentItem.layoutManager;
-	this._dragListener = new lm.utils.DragListener( this.element );
-	this._dragListener.on( 'dragStart', this._onDragStart, this );
-
+	
+	if( this._layoutManager.config.settings.reorderEnabled === true ) {
+		this._dragListener = new lm.utils.DragListener( this.element );
+		this._dragListener.on( 'dragStart', this._onDragStart, this );
+	}
+	
 	this._onTabClickFn = lm.utils.fnBind( this._onTabClick, this );
 	this._onCloseClickFn = lm.utils.fnBind( this._onCloseClick, this );
 
 	this.element.click( this._onTabClickFn );
-	this.closeElement.click( this._onCloseClickFn );
 
+	if( this._layoutManager.config.settings.showCloseIcon === true ) {
+		this.closeElement.click( this._onCloseClickFn );
+	} else {
+		this.closeElement.remove();
+	}
+	
 
 	this.contentItem.tab = this;
 	this.contentItem.emit( 'tab', this );
@@ -2462,6 +2472,10 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 
 		this.config.content.splice( index, 0, contentItem.config );
 		contentItem.parent = this;
+		
+		if( contentItem.parent.isInitialised === true && contentItem.isInitialised === false ) {
+			contentItem._$init();
+		}
 	},
 
 	/**
@@ -2490,6 +2504,9 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 		this.contentItems[ index ] = newChild;
 		newChild.parent = this;
 		//TODO This doesn't update the config... refactor to leave item nodes untouched after creation
+		if( newChild.parent.isInitialised === true && newChild.isInitialised === false ) {
+			newChild._$init();
+		}
 	},
 
 	/**
@@ -2785,7 +2802,7 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 
 	/**
 	 * Private method, creates all content items for this node at initialisation time
-	 * PLEASE NOTE, please see addChiold for adding contentItems add runtime
+	 * PLEASE NOTE, please see addChild for adding contentItems add runtime
 	 * @private
 	 * @param   {configuration item node} config
 	 *
@@ -3439,17 +3456,25 @@ lm.utils.copy( lm.items.Stack.prototype, {
 	},
 
 	_$init: function() {
+		var i, initialItem;
+
 		if( this.isInitialised === true ) return;
 
 		lm.items.AbstractContentItem.prototype._$init.call( this );
 
-		for( var i = 0; i < this.contentItems.length; i++ ) {
+		for( i = 0; i < this.contentItems.length; i++ ) {
 			this.header.createTab( this.contentItems[ i ] );
 			this.contentItems[ i ]._$hide();
 		}
 
 		if( this.contentItems.length > 0 ) {
-			this.setActiveContentItem( this.contentItems[ 0 ] );
+			initialItem = this.contentItems[ this.config.activeItemIndex || 0 ];
+
+			if( !initialItem ) {
+				throw new Error( 'Configured activeItemIndex out of bounds' );
+			}
+			
+			this.setActiveContentItem( initialItem );
 		}
 	},
 
@@ -3814,8 +3839,9 @@ lm.utils.ConfigMinifier = function(){
 		'title',
 		'popoutWholeStack',
 		'openPopouts',
-		'parentId'
-
+		'parentId',
+		'activeItemIndex',
+		'reorderEnabled'
 
 
 

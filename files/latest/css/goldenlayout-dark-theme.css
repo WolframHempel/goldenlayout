@@ -35,6 +35,11 @@
 
 .lm_header{
 	height: 20px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .lm_header.lm_selectable{
