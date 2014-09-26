@@ -55,8 +55,8 @@ $(function(){
 			.setLoading( true )
 			.show();
 
-		var url = 'https://frozen-anchorage-5911.herokuapp.com/purchase/', 
-		// var url = 'http://localhost:5000/purchase/', 
+		// var url = 'https://frozen-anchorage-5911.herokuapp.com/purchase/', 
+		var url = 'http://localhost:5000/purchase/', 
 		data = {};
 		
 		if( isSingleDomainLicense ) {
@@ -112,8 +112,23 @@ $(function(){
 	};
 
 	var onRequestError = function( xhr, type, message ) {
-		console.log( 'Error ' + xhr.status + ': '+ message );
+		var error = JSON.parse( xhr.responseText ), template;
+
+		if( error.charged === true ) {
+			template = $( '.templateContainer .purchaseErrorCharged' ).clone();
+		} else {
+			template = $( '.templateContainer .purchaseErrorNotCharged' ).clone();
+		}
+
+		template.find( '.stripeToken' ).text( error.token );
+		template.find( '.errorMessage' ).text( error.message );
+		
+		modal
+			.setContent( template )
+			.setTitle( 'Error' )
+			.setLoading( false );
 	};
+
 
 	var handler = StripeCheckout.configure({
 		key: 'pk_test_4OUzlBtu1YsKrRACe8jOjzfX',
@@ -152,7 +167,3 @@ $(function(){
 		});
 	});
 });
-
-// 
-
-// <input type="hidden" name="time" value="" />

@@ -131,10 +131,15 @@
 	</div>
 </div>
 <div class="templateContainer">
-	<div class="purchaseError">
+	<div class="purchaseErrorCharged purchaseError">
 		<p>
-			Oh dear, we apologize. Your purchase was successful, yet there was an error while retrieving your license key. Please have a look into your email inbox, if it isn’t there either, please give us a shout at <a href="mailto:support@golden-layout.com">support@golden-layout.com</a> quoting <b class="stripe-purchase-id"></b> and we’ll look for it immediately.
+			Oh dear, we apologize. Your purchase was successful, yet there was an error while retrieving your license key. Please have a look into your email inbox, if it isn’t there either, please give us a shout at <a href="mailto:support@golden-layout.com">support@golden-layout.com</a> quoting <b class="stripeToken"></b> and we’ll look for it immediately.
 		</p>
+		<div class="errorMessage">error message here</div>
+	</div>
+	<div class="purchaseErrorNotCharged purchaseError">
+		<p>
+		Oh dear, we apologize. Your purchase was not successful. <b>Your credit card has not been charged</b>. Please give us a shout at <a href="mailto:support@golden-layout.com">support@golden-layout.com</a>, quoting purchase-id <b class="stripeToken"></b> and error message <b class="errorMessage"></b> and we’ll look into it immediately.
 	</div>
 	<div class="purchaseSuccess">
 		<h3>Thank you for licensing your copy of GoldenLayout</h3>
@@ -151,7 +156,7 @@
 				<span class="licenseKey"></span>
 			</li>
 			<li>
-				<label>Licensed URL:</label>
+				<label>Licensed Domain:</label>
 				<span class="licenseUrl"></span>
 			</li>
 		</ul>
