@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GOLDEN LAYOUT - the ultimate javascript layout manager</title>
+	
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="HTML5, JavaScript, Layout Manager, webapp" />
+	<meta name="description" content="GOLDEN LAYOUT - the ultimate javascript layout manager" />
+	<meta name="author" content="Wolfram Hempel" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="assets/css/screen.css" />
+	
+	<script type="text/javascript">
+	document.createElement( 'header' );
+	document.createElement( 'nav' );
+	</script>
+	<script type="text/javascript" src="assets/js/jquery.js"></script>
+</head>
+<body class="category_">
+	<div id="modal" class="loading">
+		<div class="background"></div>
+		<div class="content-wrapper">
+			<div class="head">
+				<div class="close"></div>
+				<span class="title"></span>
+			</div>
+			<div class="content"></div>
+		</div>
+	</div>
+	<div id="development_warning">
+		<blink>In Development. Not yet released !!!</blink>
+	</div>
+	<div id="outerWrapper">
+		<div class="topSection">
+			
+			<div id="nav" >
+				
+				<ul>
+					<li ><a href=".">START</a></li>
+					<li ><a href="download">DOWNLOAD</a></li>
+					<li ><a href="examples">EXAMPLES</a></li>
+					<li ><a href="tutorials">TUTORIALS</a></li>
+					<li ><a href="docs">DOCS</a></li>
+					<li ><a href="buylicense">BUY</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="content main">
+			<img id="startPageBackground" src="assets/images/background-abstract.jpg" />
+<div class="startExample">
+	<div id="exampleScreen">
+		<div id="tryMeArrow"></div>
+		<div id="exampleLayoutContainer"></div>
+	</div>
+</div>
+<div id="startPageFeatures">
+	<ul>
+		<li>
+			<div class="bg"></div>
+			<img src="assets/images/features_interaction.png" width="140" height="87" />
+			<small>breathtaking</small>
+			<strong>interactions</strong>
+		</li>
+		<li>
+			<div class="bg"></div>
+			<img src="assets/images/features_themeable.png" width="140" height="87" />
+			<small>completely</small>
+			<strong>themeable</strong>
+		</li>
+		<li class="last">
+			<div class="bg"></div>
+			<img src="assets/images/features_api.png" width="140" height="87" />
+			<small>comprehensive</small>
+			<strong>API</strong>
+		</li>
+		<li>
+			<div class="bg"></div>
+			<img src="assets/images/features_persistance.png" width="140" height="87" />
+			<small>powerful</small>
+			<strong>persistance</strong>
+		</li>
+		<li>
+			<div class="bg"></div>
+			<img src="assets/images/features_browser.png" width="140" height="87" />
+			<small>works in</small>
+			<strong>IE8+, FF and Chrome</strong>
+		</li>
+		<li class="last">
+			<div class="bg"></div>
+			<img src="assets/images/features_creative_commonsr.png" width="140" height="87" />
+			<small>non-commercial use</small>
+			<strong>free</strong>
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript" src="assets/js/goldenlayout.min.js"></script>
+
+<link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-base.css" />
+<link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-dark-theme.css" />
+
+<script type="text/javascript">
+	var adjustLis = function() {
+		var imageWidth = $( '#startPageBackground' ).width();
+	
+		$('#startPageFeatures li').each(function( i ){
+			var li = $( this ),
+				offsetLeft = li.offset().left,
+				top = i > 2 ? 130 : 0;
+
+			li.css({	
+				'background-size': imageWidth + 'px 120px',
+				'background-position': '-' + offsetLeft + 'px -' + top + 'px'
+			});
+		});
+	};
+
+	
+
+	$(adjustLis);
+	$(window).resize(adjustLis);
+
+	var config = {
+		content:[
+			{
+				type: 'row',
+				content:[
+					{
+						width: 80,
+						type: 'column',
+						content:[
+							{
+								title: 'GoldenLayout demo',
+								type: 'component',
+								componentName: 'demo'
+							},
+							{
+								isClosable: false,
+								type: 'row',
+								content:[
+									{
+										type: 'component',
+										title: 'logo',
+										componentName: 'demo',
+										width: 30,
+										componentState: { bg: 'golden_layout_spiral.png' }
+									},
+									{
+										title: 'title',
+										type: 'component',
+										componentName: 'demo',
+										componentState: { bg: 'golden_layout_text.png' }
+									}
+								]
+							},
+							{
+								type: 'stack',
+								content:[
+									{
+										type: 'component',
+										title: 'three',
+										componentName: 'demo'
+									},
+									{
+										
+										type: 'component',
+										title: 'stacked',
+										componentName: 'demo'
+									},
+									{
+										type: 'component',
+										title: 'components',
+										componentName: 'demo'
+									}
+								]
+							}
+						]
+					},
+					{
+						width: 20,
+						type: 'column',
+						content: [
+							{
+								type: 'component',
+								title: 'two',
+								componentName: 'demo'
+							},
+							{
+								type: 'component',
+								title: 'more',
+								componentName: 'demo'
+							}
+						]
+					}
+				]
+			}
+		]
+	};
+	var myLayout = new GoldenLayout( config, '#exampleLayoutContainer' );
+	
+	myLayout.registerComponent( 'demo', function( container, state ) {
+		if( state.bg ) {
+			container
+				.getElement()
+				.append( '<img class="testImg" src="assets/images/' + state.bg + '" />' );
+		}
+	});
+	myLayout.init();
+</script>
+		</div>
+		
+		<div id="footerPush"></div>
+	</div>
+	<div id="footer">
+		<div class="copyright">&copy;2014 Hoxton One Ltd. All rights reserved.</div>
+		<ul class="footerItems">
+			<li class="news">
+				<h4>News</h4>
+				<ul>
+					<li>Nothing yet, still in development</li>
+				</ul>
+			</li>
+
+			<li class="contact">
+				<h4>Contact</h4>
+				<p>
+					Like to learn more?
+					<a href="mailto:info@golden-layout.com">info@goldenlayout.com</a>
+				</p>
+				<p>
+					Support for licensees
+					<a href="mailto:support@golden-layout.com">support@goldenlayout.com</a>
+				</p>
+				<p>
+					For technical questions please also check the comment section at the bottom of docs and tutorials
+				</p>
+			</li>
+
+			<li class="footerItem about">
+				<h4>About</h4>
+				<p>
+					GoldenLayout was developed by a small Company called Hoxton One Ltd., based in London's dodgy, yet glorious East.
+				</p>
+				<p>It's run by <a href="http://wolframhempel.com/">Wolfram Hempel</a></p>
+			</li>
+		</ul>
+	</div>
+
+	<script type="text/javascript" src="assets/js/Modal.js"></script>
+	
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-53022077-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+	
+</body>
+</html>
