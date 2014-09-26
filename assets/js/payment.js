@@ -55,9 +55,13 @@ $(function(){
 			.setLoading( true )
 			.show();
 
-		// var url = 'https://frozen-anchorage-5911.herokuapp.com/purchase/', 
-		var url = 'http://localhost:5000/purchase/', 
-		data = {};
+		var url, data = {};
+
+		if( document.location.href.indexOf('localhost') === -1 ) {
+			url = 'https://frozen-anchorage-5911.herokuapp.com/purchase/';
+		} else {
+			url = 'http://localhost:5000/purchase/';
+		}
 		
 		if( isSingleDomainLicense ) {
 			url += '07f3459c-639d-41af-9a59-f05299b27180';
