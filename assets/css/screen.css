@@ -169,6 +169,14 @@ html, body{
 	background: url(../images/golden-layout-small.png ) no-repeat center;
 }
 
+#header.micro h1 a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	text-indent: -9999px;
+}
+
 #header a.download{
 	background: #111;
 	background: rgba( 0, 0, 0, 0.4 );
@@ -197,7 +205,7 @@ html, body{
 * FOOTER
 ****************************/
 #footer{
-	height: 136px;
+	height: 140px;
 	clear: left;
 	padding: 5px;
 	background: url(../images/bg_dark_pattern.png);
@@ -212,6 +220,10 @@ html, body{
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
+}
+
+#footer b{
+	font-weight: bold;
 }
 
 #footer .copyright{
@@ -548,8 +560,24 @@ html, body{
 #license .licenseType .price small{
 	color: #ec6804;
 	font-family: Kalinga;
+	font-size: 18px;
+	position: relative;
 }
 
+#license .licenseType .price b{
+	color: #ec6804;
+	font-family: Kalinga;
+	font-size: 19px;
+	position: relative;
+	top: -19px;
+}
+
+#license .licenseType .vat{
+	font-size: 11px;
+	color: #ec6804;
+	font-family: Arial, sans-serif;
+	margin-top: 10px;
+}
 #license .licenseType form{
 	margin-top: 20px;
 }
@@ -798,6 +826,7 @@ html, body{
 #modal .content{
 	padding: 10px;
 	background: #fff;
+	background:linear-gradient( 0deg, #ddd, #fff );
 	min-height: 200px;
 	max-height: 600px;
 	overflow-y: auto;
@@ -838,7 +867,7 @@ html, body{
 .purchaseSuccess ul li label{
 	font-weight: bold;
 	display: inline-block;
-	width: 100px;
+	width: 120px;
 }
 
 .purchaseSuccess .yourLicense{
@@ -848,12 +877,15 @@ html, body{
 	overflow-y: scroll;
 	padding: 5px;
 	margin-top: 10px;
+	background: #fff;
+	box-shadow: inset 2px 2px 3px rgba(0,0,0,0.1);
 }
 
 .purchaseSuccess .info{
 	font: 12px Arial, sans-serif;
 	margin-bottom: 10px;
 	margin-top: 3px;
+	color: green;
 }
 
 .purchaseSuccess .email{
@@ -865,10 +897,30 @@ html, body{
 }
 
 .purchaseSuccess .footerLinks a{
-	font: 14px Arial, sans-serif;
+	-moz-box-shadow: inset 0px 1px 0px 0px #666;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #666;
+	box-shadow: inset 0px 1px 0px 0px #666;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #333), color-stop(1, #444));
+	background: -moz-linear-gradient(top, #333 5%, #444 100%);
+	background: -webkit-linear-gradient(top, #333 5%, #444 100%);
+	background: -o-linear-gradient(top, #333 5%, #444 100%);
+	background: -ms-linear-gradient(top, #333 5%, #444 100%);
+	background: linear-gradient(to bottom, #333 5%, #444 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#333', endColorstr='#444',GradientType=0);
+	background-color: #333;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	border: 1px solid #111;
 	display: inline-block;
-	padding: 5px 0 0 10px;
-	color: #333;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: arial;
+	font-size: 13px;
+	padding: 6px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #111;
+	margin-top: 10px;
 }
 
 .purchaseError{
