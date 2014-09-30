@@ -95,120 +95,15 @@
 	</ul>
 </div>
 
-
-<script type="text/javascript" src="assets/js/goldenlayout.min.js"></script>
-
+<link rel="stylesheet" type="text/css" href="assets/css/startpage.css" />
 <link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-base.css" />
 <link type="text/css" rel="stylesheet" href="assets/css/goldenlayout-dark-theme.css" />
 
-<script type="text/javascript">
-	var adjustLis = function() {
-		var imageWidth = $( '#startPageBackground' ).width();
-	
-		$('#startPageFeatures li').each(function( i ){
-			var li = $( this ),
-				offsetLeft = li.offset().left,
-				top = i > 2 ? 130 : 0;
+<script type="text/javascript" src="assets/js/goldenlayout.min.js"></script>
+<script type="text/javascript" src="assets/js/highchart_min.js"></script>
+<script type="text/javascript" src="assets/js/startpage_min.js"></script>
 
-			li.css({	
-				'background-size': imageWidth + 'px 120px',
-				'background-position': '-' + offsetLeft + 'px -' + top + 'px'
-			});
-		});
-	};
 
-	
-
-	$(adjustLis);
-	$(window).resize(adjustLis);
-
-	var config = {
-		content:[
-			{
-				type: 'row',
-				content:[
-					{
-						width: 80,
-						type: 'column',
-						content:[
-							{
-								title: 'GoldenLayout demo',
-								type: 'component',
-								componentName: 'demo'
-							},
-							{
-								isClosable: false,
-								type: 'row',
-								content:[
-									{
-										type: 'component',
-										title: 'logo',
-										componentName: 'demo',
-										width: 30,
-										componentState: { bg: 'golden_layout_spiral.png' }
-									},
-									{
-										title: 'title',
-										type: 'component',
-										componentName: 'demo',
-										componentState: { bg: 'golden_layout_text.png' }
-									}
-								]
-							},
-							{
-								type: 'stack',
-								content:[
-									{
-										type: 'component',
-										title: 'three',
-										componentName: 'demo'
-									},
-									{
-										
-										type: 'component',
-										title: 'stacked',
-										componentName: 'demo'
-									},
-									{
-										type: 'component',
-										title: 'components',
-										componentName: 'demo'
-									}
-								]
-							}
-						]
-					},
-					{
-						width: 20,
-						type: 'column',
-						content: [
-							{
-								type: 'component',
-								title: 'two',
-								componentName: 'demo'
-							},
-							{
-								type: 'component',
-								title: 'more',
-								componentName: 'demo'
-							}
-						]
-					}
-				]
-			}
-		]
-	};
-	var myLayout = new GoldenLayout( config, '#exampleLayoutContainer' );
-	
-	myLayout.registerComponent( 'demo', function( container, state ) {
-		if( state.bg ) {
-			container
-				.getElement()
-				.append( '<img class="testImg" src="assets/images/' + state.bg + '" />' );
-		}
-	});
-	myLayout.init();
-</script>
 		</div>
 		
 		<div id="footerPush"></div>
