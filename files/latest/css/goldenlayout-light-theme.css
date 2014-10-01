@@ -3,8 +3,8 @@
 }
 
 .lm_content{
-	background: #eee;
-	border: 1px solid #ddd;
+	background: #e1e1e1;
+	border: 1px solid #ccc;
 }
 
 .lm_dragProxy .lm_content{
@@ -53,20 +53,22 @@
 
 .lm_header .lm_tab{
 	background: #fafafa;
-	color: #999;
-	font-size: 13px;
+	color: #888;
+	font-size: 12px;
 	padding-bottom: 4px;
 	font-family: Arial, sans-serif;
 	margin-right: 2px;
-	
-	border: 1px solid #ddd;
+	border: 1px solid #ccc;
 	border-bottom: none;
+}
+.lm_header .lm_tab .lm_title{
+	padding-top: 1px;
 }
 
 .lm_tab.lm_active, 
 .lm_tab:hover{
 	color: #777;
-	background: #eee;
+	background: #e1e1e1;
 }
 
 .lm_header .lm_tab.lm_active{
