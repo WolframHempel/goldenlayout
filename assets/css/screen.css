@@ -205,7 +205,7 @@ html, body{
 * FOOTER
 ****************************/
 #footer{
-	height: 140px;
+	height: 160px;
 	clear: left;
 	padding: 5px;
 	background: url(../images/bg_dark_pattern.png);
@@ -259,6 +259,24 @@ html, body{
 	border: none;
 }
 
+#footer .social a{
+	display: block;
+	padding: 5px 0 5px 25px;
+	background-position:left center;
+	background-repeat: no-repeat;
+}
+
+#footer .social .twitter a{
+	background-image: url( ../images/icon_small_twitter.png);
+}
+
+#footer .social .github a{
+	background-image: url( ../images/icon_small_github.png);
+}
+
+#footer .social .bower a{
+	background-image: url( ../images/icon_small_bower.png);
+}
 /****************************
 * EXAMPLE ON STARTPAGE
 ****************************/
@@ -746,6 +764,21 @@ html, body{
 
 #downloads a.latest small{
 	font-size: 10px;
+}
+
+#downloads h2.second{
+	margin-top: 10px;
+}
+
+#downloads .bower{
+	padding: 10px 0 10px 70px;
+	background: url(../images/icon_bower_large.png) left center no-repeat;
+}
+
+#downloads .bower pre{
+	font-size: 16px;
+	font-weight: bold;
+	font-family: "Courier New", monospace;
 }
 
 #downloads .individual_files h3{
