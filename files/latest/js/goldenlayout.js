@@ -1,4 +1,4 @@
-(function($){var lm={"config":{},"container":{},"controls":{},"items":{},"utils":{},"errors":{}};
+(function($){var lm={"config":{},"controls":{},"container":{},"errors":{},"items":{},"utils":{}};
 
 lm.utils.F = function () {};
 	
@@ -607,6 +607,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		if( this.isInitialised === false ) {
 			return;
 		}
+		this._onUnload();
 		$( window ).off( 'resize', this._resizeFunction );
 		this.root.callDownwards( '_$destroy', [], true );
 		this.root.contentItems = [];
@@ -1044,6 +1045,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		if( windowConfig ) {
 			this.isSubWindow = true;
 			config = window.decodeURIComponent( windowConfig );
+			config = this._filterXss( config );
 			config = JSON.parse( config );
 			config = ( new lm.utils.ConfigMinifier() ).unminifyConfig( config );
 		}
@@ -1117,6 +1119,25 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 				popout.indexInParent
 			);
 		}
+	},
+
+	/**
+	 * A basic XSS filter. It is ultimately up to the
+	 * implementing developer to make sure their particular 
+	 * applications and usecases are save from cross site scripting attacks
+	 *
+	 * @param   {String} configString
+	 *
+	 * @returns {String} filtered configString
+	 */
+	_filterXss: function( configString ) {
+		return configString
+			.replace( />/g, '&gt;' )
+			.replace( /</g, '&lt;' )
+			.replace( /javascript/gi, 'j&#97;vascript' )
+			.replace( /expression/gi, 'expr&#101;ssion' )
+			.replace( /onload/gi, 'onlo&#97;d')
+			.replace( /onerror/gi, 'on&#101;rror');
 	},
 
 	/**
@@ -1483,7 +1504,13 @@ lm.utils.copy( lm.controls.BrowserPopout.prototype, {
 	},
 
 	close: function() {
-		this.getGlInstance()._$closeWindow();
+		if( this.getGlInstance() ) {
+			this.getGlInstance()._$closeWindow();
+		} else {
+			try{
+				this.getWindow().close();
+			} catch( e ){}
+		}
 	},
 
 	/**
