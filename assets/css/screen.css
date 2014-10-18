@@ -688,7 +688,7 @@ html, body{
 **********************************/
 #downloads{
 	width: 960px;
-	margin: 20px auto;
+	margin: 0 auto 30px;
 	overflow: hidden;
 }
 
@@ -697,6 +697,10 @@ html, body{
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
+}
+
+#downloads .bower, #downloads .previous{
+	margin-top: 20px;
 }
 
 #downloads .column{
@@ -709,10 +713,11 @@ html, body{
 }
 
 #downloads h2{
-	font: 18px Kalinga;
+	font: 16px Kalinga;
 	padding-bottom: 2px;
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 10px;
+	margin-top: 20px;
 }
 
 #downloads a.latest{
@@ -737,7 +742,6 @@ html, body{
 	box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 	cursor: pointer;
-
 }
 
 #downloads a.latest:hover{
@@ -764,15 +768,6 @@ html, body{
 
 #downloads a.latest small{
 	font-size: 10px;
-}
-
-#downloads h2.second{
-	margin-top: 10px;
-}
-
-#downloads .bower{
-	padding: 10px 0 10px 70px;
-	background: url(../images/icon_bower_large.png) left center no-repeat;
 }
 
 #downloads .bower pre{
@@ -806,6 +801,26 @@ html, body{
 
 #downloads .previous a .date{
 	color: #666;
+}
+
+#downloads .changeLog strong{
+	font-weight: bold;
+	font-size: 14px;
+	margin-top: 6px;
+}
+
+#downloads .changeLog li{
+	list-style-type: disc;
+	margin-left: 15px;
+	padding-left: 5px;
+	margin-top: 5px;
+}
+
+#downloads a.githubIssue{
+	padding-left: 16px;
+	font-weight: bold;
+	background: url(../images/github_16.png) left -4px no-repeat;
+	text-decoration: none;
 }
 /**********************************
 * MODAL WINDOW
