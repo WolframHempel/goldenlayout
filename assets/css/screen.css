@@ -809,6 +809,10 @@ html, body{
 	margin-top: 6px;
 }
 
+#downloads .changeLog ul{
+	margin-bottom: 10px;
+}
+
 #downloads .changeLog li{
 	list-style-type: disc;
 	margin-left: 15px;
