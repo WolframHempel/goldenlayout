@@ -59,11 +59,11 @@
 		<h2>Latest Version</h2>
 		<a href="../files/latest/GoldenLayout.zip" class="latest">
 			<div>Download GoldenLayout.zip</div>
-			<small>V 1.0.5 (17.11.2014)</small>
+			<small>V 1.0.6 (14.12.2014)</small>
 		</a>
 		<h2 class="second">Bower / NPM</h2>
 		<div class="bower">
-			<pre>"golden-layout": "1.0.5"</pre>
+			<pre>"golden-layout": "1.0.6"</pre>
 		</div>
 
 		<h2>Individual Files</h2>
@@ -87,6 +87,10 @@
 
 		<div class="previous">
 			GoldenLayout V&nbsp;&nbsp;<select>
+				
+				<option value="1.0.6">
+					1.0.6 (14.12.2014)
+				</option>
 				
 				<option value="1.0.5">
 					1.0.5 (17.11.2014)
@@ -175,6 +179,20 @@
 
 		<h2>Change log</h2>
 		<div class="changeLog">
+		<strong>Version 1.0.6</strong>
+		<ul>
+			<li>Configuration for new windows is now passed through localStorage rather than URL parameter <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/23">#23</a></li>
+			<li><a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/23">#23</a> also closes the XSS attack vector created by passing config through the url which fixes <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/28">#28</a></li>
+			<li>Allow empty dashboards <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/24">#24</a></li>
+			<li>Fixed resizing bug for maximised components <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/25">#25</a></li>
+			<li>Added strip-tags for title in popout windows. Also removed XSS filtering since configuration is now safely passed through localStorage (see <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/23">#23</a>). <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/18">#18</a></li>
+		</ul>
+		<strong>Version 1.0.5</strong>
+		<ul>
+			<li>Added basic touch event support <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/4">#4</a></li>
+			<li>Fixed state change on DragProxy bug <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/15">#15</a></li>
+			<li>Added support for reorderEnabled attribute on an item level <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/13">#13</a></li>
+		</ul>
 		<strong>Version 1.0.4</strong>
 		<ul>
 			<li>Full support for HTML in title attributes / tabs <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/6">#6</a></li>
@@ -182,12 +200,6 @@
 			<li>layout emits 'tabCreated' event for every tab <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/6">#6</a></li>
 			<li>Added support for empty stacks <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/5">#5</a></li>
 			<li>'isClosable: false' now prevents item from being destroyed if it is the only child of its parent <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/5">#5</a></li>
-		</ul>
-		<strong>Version 1.0.5</strong>
-		<ul>
-			<li>Added basic touch event support <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/4">#4</a></li>
-			<li>Fixed state change on DragProxy bug <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/15">#15</a></li>
-			<li>Added support for reorderEnabled attribute on an item level <a class="githubIssue" href="https://github.com/hoxton-one/golden-layout/issues/13">#13</a></li>
 		</ul>
 		</div>
 	</div>
