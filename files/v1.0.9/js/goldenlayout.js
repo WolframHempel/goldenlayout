@@ -3017,29 +3017,13 @@ lm.utils.copy( lm.items.AbstractContentItem.prototype, {
 	},
 
 	_$hide: function() {
-		this._callOnActiveComponents( 'hide' );
+		this.callDownwards( '_$hide', [], true, true );
 		this.element.hide();
-		this.layoutManager.updateSize();
 	},
 
 	_$show: function() {
-		this._callOnActiveComponents( 'show' );
+		this.callDownwards( '_$show', [], true, true );
 		this.element.show();
-		this.layoutManager.updateSize();
-	},
-
-	_callOnActiveComponents: function( methodName ) {
-		var stacks = this.getItemsByType( 'stack' ),
-			activeContentItem,
-			i;
-
-		for( i = 0; i < stacks.length; i++ ) {
-			activeContentItem = stacks[ i ].getActiveContentItem();
-
-			if( activeContentItem && activeContentItem.isComponent ) {
-				activeContentItem.container[ methodName ]();
-			}
-		}
 	},
 	
 	/**
@@ -3989,10 +3973,6 @@ lm.utils.copy( lm.items.Stack.prototype, {
 	},
 
 	_$getArea: function() {
-		if( this.element.is( ':visible' ) === false ) {
-			return null;
-		}
-		
 		var getArea = lm.items.AbstractContentItem.prototype._$getArea,
 			headerArea = getArea.call( this, this.header.element ),
 			contentArea = getArea.call( this, this.childElementContainer ),
